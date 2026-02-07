@@ -34,21 +34,49 @@ This skill creates a **context management system** that makes Claude persistentl
 
 ### Installation
 
-1. **Copy skill to your project**:
-   ```bash
-   # In your project directory
-   mkdir -p .claude/skills
-   cp -r path/to/skill-context-system .claude/skills/context-system
-   ```
+**Option 1: Clone directly into your project** (Recommended)
+```bash
+# Navigate to your project
+cd /path/to/your-project
 
-2. **Run the setup**:
-   ```bash
-   /context-system
-   ```
+# Clone the skill
+git clone https://github.com/bcbeidel/skill-context-system.git .claude/skills/context-system
 
-3. **Follow the guided setup** (3 progressive phases, 1-2 hours total)
+# Run the setup
+/context-system
+```
 
-That's it! Claude now remembers your preferences.
+**Option 2: Clone once, copy to multiple projects**
+```bash
+# Clone the repo somewhere
+git clone https://github.com/bcbeidel/skill-context-system.git
+
+# Copy to any project
+cd /path/to/your-project
+mkdir -p .claude/skills
+cp -r /path/to/skill-context-system .claude/skills/context-system
+
+# Run the setup
+/context-system
+```
+
+**Option 3: Download ZIP**
+1. Download: https://github.com/bcbeidel/skill-context-system/archive/refs/heads/main.zip
+2. Extract and rename folder to `context-system`
+3. Move to `.claude/skills/context-system` in your project
+4. Run `/context-system`
+
+**Verify installation**:
+```bash
+# Check that the skill files exist
+ls .claude/skills/context-system/SKILL.md
+
+# If you see the file, you're good to go!
+# Now run the setup:
+/context-system
+```
+
+**That's it!** Follow the guided setup (3 phases, 1-2 hours total). Claude will now remember your preferences.
 
 ---
 
