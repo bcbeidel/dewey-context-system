@@ -91,7 +91,7 @@ cp -r /path/to/skill-context-system .claude/skills/init-context-system
 
 **Method C: Download ZIP**
 1. Download: https://github.com/bcbeidel/skill-context-system/archive/refs/heads/main.zip
-2. Extract and rename to `context-system`
+2. Extract and rename folder to `init-context-system`
 3. Move to `.claude/skills/init-context-system` in your project
 4. Run `/init-context-system`
 
@@ -149,7 +149,7 @@ your-project/
 ├── .claude/
 │   ├── CLAUDE.md                    # References context system
 │   └── skills/
-│       └── context-system/          # This skill
+│       └── init-context-system/     # This skill (if installed manually)
 └── context/
     ├── _index.md                    # Navigation hub
     ├── _loading-map.md              # Task → context mappings
@@ -329,5 +329,6 @@ Built with [Claude Code](https://github.com/anthropics/claude-code) using patter
 **Ready to make Claude remember?**
 
 ```bash
+claude plugin install bcbeidel/skill-context-system
 /init-context-system
 ```
