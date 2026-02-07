@@ -44,10 +44,16 @@ skill-context-system/
 ├── SKILL-README.md        # Detailed skill explanation
 ├── SKILL.md              # Implementation guide
 ├── TOOLING-NOTES.md      # Tool compatibility notes
+├── plugin.json           # Plugin manifest (for claude plugin install)
 ├── templates/            # Reusable templates
 ├── examples/             # Real-world examples
 └── CONTRIBUTING.md       # This file
 ```
+
+**Important files**:
+- `plugin.json` - Plugin manifest, must be updated when version changes
+- `SKILL.md` - Main skill implementation (what Claude executes)
+- `README.md` - User-facing documentation
 
 ### Documentation Standards
 
