@@ -7,7 +7,7 @@ Thank you for considering contributing! This project aims to help Claude Code us
 ## Ways to Contribute
 
 ### 1. Report Issues
-- Found a bug? [Open an issue](https://github.com/[username]/skill-context-system/issues)
+- Found a bug? [Open an issue](https://github.com/bcbeidel/skill-context-system/issues)
 - Unclear documentation? Let us know
 - Feature request? Describe your use case
 
@@ -175,7 +175,7 @@ Always include both good and bad examples:
 
 - Open an issue for questions
 - Start a discussion for broader topics
-- Tag maintainers if urgent: @[username]
+- Tag @bcbeidel if urgent
 
 ---
 

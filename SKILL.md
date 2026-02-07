@@ -38,7 +38,7 @@ User invokes: `/init-context-system --phase 3`
 1. **Working directory**: User should be in a project root (has `.claude/` directory or can create one)
 2. **Context system exists?**: Check if `context/` folder already exists
 3. **User intent**: If context system exists, ask if they want to extend it or start fresh
-4. **Read README**: If this is the first invocation, briefly mention the README exists at `.claude/skills/init-context-system/README.md` for reference
+4. **Documentation**: If this is the first invocation, briefly mention that detailed documentation is available at https://github.com/bcbeidel/skill-context-system
 
 **If context system already exists**:
 ```
