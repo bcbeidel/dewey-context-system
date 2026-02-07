@@ -32,9 +32,11 @@ This skill creates a **context management system** that makes Claude persistentl
 
 ## Quick Start
 
-**Install the plugin** (one command):
+**Install globally** (works in all projects):
 ```bash
-claude plugin install bcbeidel/skill-context-system
+# Clone to Claude plugins directory
+git clone https://github.com/bcbeidel/skill-context-system.git \
+  ~/.claude/plugins/skill-context-system
 ```
 
 **Run the setup** (in any project):
@@ -48,16 +50,18 @@ claude plugin install bcbeidel/skill-context-system
 
 ## Installation
 
-### Option 1: Plugin (Recommended) ⭐
+### Option 1: Global Installation (Recommended) ⭐
 
-**One command, works everywhere:**
+**Install once, works everywhere:**
 ```bash
-claude plugin install bcbeidel/skill-context-system
+# Clone to Claude plugins directory
+git clone https://github.com/bcbeidel/skill-context-system.git \
+  ~/.claude/plugins/skill-context-system
 ```
 
-That's it! The skill is now available in all your projects.
+The skills will now be available in all your projects.
 
-**Verify and run**:
+**Verify**:
 ```bash
 # In any project directory
 /init-context-system
@@ -65,7 +69,7 @@ That's it! The skill is now available in all your projects.
 
 ---
 
-#### Option 2: Manual Skill Installation (Advanced)
+### Option 2: Per-Project Installation
 
 <details>
 <summary>Click to expand manual installation options</summary>
@@ -329,6 +333,10 @@ Built with [Claude Code](https://github.com/anthropics/claude-code) using patter
 **Ready to make Claude remember?**
 
 ```bash
-claude plugin install bcbeidel/skill-context-system
+# Install globally
+git clone https://github.com/bcbeidel/skill-context-system.git \
+  ~/.claude/plugins/skill-context-system
+
+# Run in any project
 /init-context-system
 ```
