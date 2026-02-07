@@ -1,6 +1,6 @@
 {
   "name": "context-system",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "Make Claude persistently remember your preferences, decisions, and workflows across conversations",
   "author": "Brandon Beidel",
   "repository": "https://github.com/bcbeidel/skill-context-system",
@@ -17,14 +17,14 @@
   ],
   "skills": [
     {
-      "name": "context-system",
+      "name": "init-context-system",
       "path": ".",
-      "description": "Set up a context management system for persistent Claude preferences, decisions, and workflows"
+      "description": "Initial setup: create context management system for persistent Claude preferences, decisions, and workflows"
     },
     {
       "name": "context-update",
       "path": "context-update",
-      "description": "Review conversations and changes to extract and update context that improves Claude alignment with project preferences"
+      "description": "Ongoing maintenance: extract context from conversations and maintain consistency across guidance locations"
     }
   ]
 }

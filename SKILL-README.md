@@ -144,22 +144,22 @@ your-project/
 
 ### First Time (Full Setup)
 ```bash
-/context-system
+/init-context-system
 ```
 
 Claude will guide you through all three phases interactively. You can pause after any phase and resume later.
 
 ### Resume Later
 ```bash
-/context-system --phase 2    # Resume at Phase 2
-/context-system --phase 3    # Skip to Phase 3
+/init-context-system --phase 2    # Resume at Phase 2
+/init-context-system --phase 3    # Skip to Phase 3
 ```
 
 ### Ongoing Maintenance
 ```bash
-/context-system --extract    # Extract context from recent conversation
-/context-system --validate   # Run quality checks on context
-/context-system --archive    # Archive outdated decisions/retrospectives
+/init-context-system --extract    # Extract context from recent conversation
+/init-context-system --validate   # Run quality checks on context
+/init-context-system --archive    # Archive outdated decisions/retrospectives
 ```
 
 ---
@@ -205,7 +205,7 @@ A: No. Phase 1 gives immediate value. Phase 2 and 3 are optional enhancements. U
 ## Ready to Start?
 
 ```bash
-/context-system
+/init-context-system
 ```
 
 Let's build your context management system.

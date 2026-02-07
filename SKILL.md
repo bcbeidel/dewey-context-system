@@ -1,5 +1,5 @@
 ---
-name: context-system
+name: init-context-system
 description: "Set up a context management system for persistent Claude preferences, decisions, and workflows"
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, AskUserQuestion
 ---
@@ -15,21 +15,21 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash, AskUserQuestion
 ## Skill Invocation Patterns
 
 ### Full Setup (First Time)
-User invokes: `/context-system`
+User invokes: `/init-context-system`
 → Guide through Phase 1 → Phase 2 → Phase 3 (with approval gates)
 
 ### Resume at Phase
-User invokes: `/context-system --phase 2`
+User invokes: `/init-context-system --phase 2`
 → Skip to specified phase (validate previous phases completed)
 
 ### Maintenance Operations
-User invokes: `/context-system --extract`
+User invokes: `/init-context-system --extract`
 → Extract context from recent conversation
 
-User invokes: `/context-system --validate`
+User invokes: `/init-context-system --validate`
 → Run validation checks on context system
 
-User invokes: `/context-system --archive`
+User invokes: `/init-context-system --archive`
 → Archive outdated decisions/retrospectives
 
 ---
@@ -41,7 +41,7 @@ User invokes: `/context-system --archive`
 1. **Working directory**: User should be in a project root (has `.claude/` directory or can create one)
 2. **Context system exists?**: Check if `context/` folder already exists
 3. **User intent**: If context system exists, ask if they want to extend it or start fresh
-4. **Read README**: If this is the first invocation, briefly mention the README exists at `.claude/skills/context-system/README.md` for reference
+4. **Read README**: If this is the first invocation, briefly mention the README exists at `.claude/skills/init-context-system/README.md` for reference
 
 **If context system already exists**:
 ```
@@ -260,7 +260,7 @@ Architectural and process decisions.
 - Periodically reviewing conversations for insights
 
 **How to Update**:
-Use `/context-system --extract` to extract context from recent conversations, or manually create/update files following the template structure.
+Use `/init-context-system --extract` to extract context from recent conversations, or manually create/update files following the template structure.
 
 ---
 
@@ -384,7 +384,7 @@ Ready for Phase 2? (This demonstrates deeper value by showing task-based loading
 
 Options:
 1. Continue to Phase 2 now (30-45 min)
-2. Pause here, resume later with `/context-system --phase 2`
+2. Pause here, resume later with `/init-context-system --phase 2`
 3. Skip Phase 2 and just use what we've built
 ```
 
@@ -758,7 +758,7 @@ Ready for Phase 3? (This sets up long-term evolution)
 
 Options:
 1. Continue to Phase 3 now (15-30 min)
-2. Pause here, resume later with `/context-system --phase 3`
+2. Pause here, resume later with `/init-context-system --phase 3`
 3. Stop here and use what we've built (Phase 3 is optional)
 ```
 
@@ -839,7 +839,7 @@ Ask yourself:
 ### Step 2: Use the Retrospective Extraction Command
 
 ```bash
-/context-system --extract
+/init-context-system --extract
 ```
 
 This will:
@@ -936,9 +936,9 @@ Regular maintenance keeps the context system valuable. Run these checks periodic
 
 ## Validation Checks
 
-### Automated Checks (via `/context-system --validate`)
+### Automated Checks (via `/init-context-system --validate`)
 
-Run: `/context-system --validate`
+Run: `/init-context-system --validate`
 
 This checks:
 - ✓ All wikilinks resolve
@@ -985,7 +985,7 @@ This checks:
 
 ### How to Archive
 
-Run: `/context-system --archive`
+Run: `/init-context-system --archive`
 
 Or manually:
 ```bash
@@ -1027,16 +1027,16 @@ After:
 
 ```bash
 # Extract context from recent conversation
-/context-system --extract
+/init-context-system --extract
 
 # Validate context system
-/context-system --validate
+/init-context-system --validate
 
 # Archive old content
-/context-system --archive
+/init-context-system --archive
 
 # Full system (all checks + cleanup)
-/context-system --maintain
+/init-context-system --maintain
 ```
 
 ---
@@ -1180,7 +1180,7 @@ Guidelines for what belongs in the context system and how to maintain quality.
 ## Maintenance Process
 
 1. **Extract regularly**: After major work sessions
-2. **Validate periodically**: Run `/context-system --validate`
+2. **Validate periodically**: Run `/init-context-system --validate`
 3. **Archive outdated**: Move old decisions/retrospectives
 4. **Refactor large files**: Split if >300 lines
 5. **Update as needed**: Preferences change, context should too
@@ -1276,9 +1276,9 @@ Add to `context/_loading-map.md`:
 - [[context/templates/]] - Templates for creating new context
 
 **When:**
-- User invokes `/context-system --extract`
-- User invokes `/context-system --validate`
-- User invokes `/context-system --archive`
+- User invokes `/init-context-system --extract`
+- User invokes `/init-context-system --validate`
+- User invokes `/init-context-system --archive`
 - User asks about updating or maintaining context
 
 ---
@@ -1297,7 +1297,7 @@ Create `context/QUICK-REFERENCE.md`:
 
 **Extract context from conversation:**
 ```bash
-/context-system --extract
+/init-context-system --extract
 ```
 
 **Reference context in requests:**
@@ -1310,17 +1310,17 @@ Create `context/QUICK-REFERENCE.md`:
 
 **Validate context system:**
 ```bash
-/context-system --validate
+/init-context-system --validate
 ```
 
 **Archive old content:**
 ```bash
-/context-system --archive
+/init-context-system --archive
 ```
 
 **Full maintenance (validate + archive + cleanup):**
 ```bash
-/context-system --maintain
+/init-context-system --maintain
 ```
 
 ## Creating New Context
@@ -1407,9 +1407,9 @@ Your context system is now fully set up for long-term success:
 🔧 Maintenance commands configured
 
 **Long-term sustainability:**
-- After major work: `/context-system --extract` (capture learnings)
-- Monthly: `/context-system --validate` (ensure quality)
-- Quarterly: `/context-system --archive` (remove stale content)
+- After major work: `/init-context-system --extract` (capture learnings)
+- Monthly: `/init-context-system --validate` (ensure quality)
+- Quarterly: `/init-context-system --archive` (remove stale content)
 
 **Your context system now:**
 - Remembers your preferences across conversations ✓
@@ -1428,7 +1428,7 @@ Your context system is now fully set up for long-term success:
 
 **Next steps**:
 1. Use the system naturally
-2. Run `/context-system --extract` after major work
+2. Run `/init-context-system --extract` after major work
 3. Watch your context library grow over time
 
 Questions about using the system?
@@ -1438,7 +1438,7 @@ Questions about using the system?
 
 ## Maintenance Operations
 
-### Extract Context (`/context-system --extract`)
+### Extract Context (`/init-context-system --extract`)
 
 **Purpose**: Extract context from recent conversation or work session
 
@@ -1469,7 +1469,7 @@ Questions about using the system?
 
 ---
 
-### Validate Context (`/context-system --validate`)
+### Validate Context (`/init-context-system --validate`)
 
 **Purpose**: Run quality checks on context system
 
@@ -1523,14 +1523,14 @@ Recommendations:
 2. Add examples to style-preferences.md
 3. Review old decision - still valid or archive?
 
-Run `/context-system --archive` to archive old content.
+Run `/init-context-system --archive` to archive old content.
 ```
 
 If errors found, offer to fix them.
 
 ---
 
-### Archive Content (`/context-system --archive`)
+### Archive Content (`/init-context-system --archive`)
 
 **Purpose**: Move outdated decisions and retrospectives to archive folders
 
@@ -1583,7 +1583,7 @@ If errors found, offer to fix them.
 
 ---
 
-### Full Maintenance (`/context-system --maintain`)
+### Full Maintenance (`/init-context-system --maintain`)
 
 **Purpose**: Run full maintenance sweep (validate + archive + cleanup)
 
@@ -1605,7 +1605,7 @@ If errors found, offer to fix them.
 
 ### Context System Already Exists
 
-If context/ folder exists when user invokes `/context-system`:
+If context/ folder exists when user invokes `/init-context-system`:
 
 ```
 I notice you already have a context system set up.
@@ -1653,12 +1653,12 @@ If user stops or declines to continue:
 ```
 No problem! You can resume anytime:
 
-Resume at Phase 2: `/context-system --phase 2`
-Resume at Phase 3: `/context-system --phase 3`
+Resume at Phase 2: `/init-context-system --phase 2`
+Resume at Phase 3: `/init-context-system --phase 3`
 
 Or continue maintenance:
-- Extract context: `/context-system --extract`
-- Validate system: `/context-system --validate`
+- Extract context: `/init-context-system --extract`
+- Validate system: `/init-context-system --validate`
 
 Your progress so far:
 - [Summarize what was completed]

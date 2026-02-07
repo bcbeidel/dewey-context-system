@@ -39,7 +39,7 @@ claude plugin install bcbeidel/skill-context-system
 
 **Run the setup** (in any project):
 ```bash
-/context-system
+/init-context-system
 ```
 
 **Done!** Follow the 3-phase guided setup. Claude will remember your preferences across all projects.
@@ -60,7 +60,7 @@ That's it! The skill is now available in all your projects.
 **Verify and run**:
 ```bash
 # In any project directory
-/context-system
+/init-context-system
 ```
 
 ---
@@ -73,8 +73,8 @@ That's it! The skill is now available in all your projects.
 **Method A: Clone directly into project**
 ```bash
 cd /path/to/your-project
-git clone https://github.com/bcbeidel/skill-context-system.git .claude/skills/context-system
-/context-system
+git clone https://github.com/bcbeidel/skill-context-system.git .claude/skills/init-context-system
+/init-context-system
 ```
 
 **Method B: Clone once, copy to multiple projects**
@@ -85,19 +85,19 @@ git clone https://github.com/bcbeidel/skill-context-system.git
 # Copy to each project
 cd /path/to/your-project
 mkdir -p .claude/skills
-cp -r /path/to/skill-context-system .claude/skills/context-system
-/context-system
+cp -r /path/to/skill-context-system .claude/skills/init-context-system
+/init-context-system
 ```
 
 **Method C: Download ZIP**
 1. Download: https://github.com/bcbeidel/skill-context-system/archive/refs/heads/main.zip
 2. Extract and rename to `context-system`
-3. Move to `.claude/skills/context-system` in your project
-4. Run `/context-system`
+3. Move to `.claude/skills/init-context-system` in your project
+4. Run `/init-context-system`
 
 **Verify**:
 ```bash
-ls .claude/skills/context-system/SKILL.md
+ls .claude/skills/init-context-system/SKILL.md
 ```
 
 </details>
@@ -132,7 +132,7 @@ ls .claude/skills/context-system/SKILL.md
 
 ## Key Features
 
-- **🚀 Two Skills Included**: `/context-system` for setup, `/context-update` for maintenance
+- **🚀 Two Skills Included**: `/init-context-system` for setup, `/context-update` for maintenance
 - **🎯 Progressive Setup**: Start small (Phase 1), expand as you see value
 - **📊 Evidence-Based**: Extract from actual work, not hypothetical scenarios
 - **🔄 Task-Based Loading**: Context automatically loads for git, code review, documentation, etc.
@@ -165,18 +165,18 @@ your-project/
 
 This plugin includes **two skills**:
 
-### 1. `/context-system` - Initial Setup
+### 1. `/init-context-system` - Initial Setup
 
 **First time setup**:
 ```bash
-/context-system
+/init-context-system
 ```
 Guided through all 3 phases interactively. Can pause after any phase.
 
 **Resume later**:
 ```bash
-/context-system --phase 2    # Resume at Phase 2
-/context-system --phase 3    # Skip to Phase 3
+/init-context-system --phase 2    # Resume at Phase 2
+/init-context-system --phase 3    # Skip to Phase 3
 ```
 
 ---
@@ -266,13 +266,13 @@ See [examples/example-loading-map.md](examples/example-loading-map.md) for task-
 
 After major work sessions (~monthly):
 ```bash
-/context-system --extract     # Capture learnings
+/init-context-system --extract     # Capture learnings
 ```
 
 Quarterly:
 ```bash
-/context-system --validate    # Run quality checks
-/context-system --archive     # Clean up old content
+/init-context-system --validate    # Run quality checks
+/init-context-system --archive     # Clean up old content
 ```
 
 The system compounds over time—early investment pays long-term dividends.
@@ -324,5 +324,5 @@ Built with [Claude Code](https://github.com/anthropics/claude-code) using patter
 **Ready to make Claude remember?**
 
 ```bash
-/context-system
+/init-context-system
 ```

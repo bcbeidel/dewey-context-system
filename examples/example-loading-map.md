@@ -112,8 +112,8 @@ This map helps Claude automatically load the right context for common workflows.
 - [[context/workflows/maintenance-checklist]] - Validation and maintenance
 
 **When:**
-- User invokes `/context-system --extract`
-- User invokes `/context-system --validate`
+- User invokes `/init-context-system --extract`
+- User invokes `/init-context-system --validate`
 - User asks about updating or maintaining context
 - After major work sessions (retrospective time)
 

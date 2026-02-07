@@ -119,10 +119,10 @@ If you want to use this context system with non-markdown tools:
 A future version of this skill could support multiple backends:
 
 ```bash
-/context-system --setup --tool obsidian   # Current default
-/context-system --setup --tool notion     # Adapted for Notion
-/context-system --setup --tool wiki       # Adapted for GitHub wikis
-/context-system --setup --tool confluence # Adapted for Confluence
+/init-context-system --setup --tool obsidian   # Current default
+/init-context-system --setup --tool notion     # Adapted for Notion
+/init-context-system --setup --tool wiki       # Adapted for GitHub wikis
+/init-context-system --setup --tool confluence # Adapted for Confluence
 ```
 
 Each would use the same **core principles** but adapt the **implementation details** to the tool's capabilities.
