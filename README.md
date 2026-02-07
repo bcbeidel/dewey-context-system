@@ -132,10 +132,11 @@ ls .claude/skills/context-system/SKILL.md
 
 ## Key Features
 
+- **🚀 Two Skills Included**: `/context-system` for setup, `/context-update` for maintenance
 - **🎯 Progressive Setup**: Start small (Phase 1), expand as you see value
 - **📊 Evidence-Based**: Extract from actual work, not hypothetical scenarios
 - **🔄 Task-Based Loading**: Context automatically loads for git, code review, documentation, etc.
-- **🛠️ Maintenance Built-In**: Extract, validate, archive commands included
+- **🔄 Continuous Maintenance**: `/context-update` extracts learnings from conversations
 - **📝 Templates & Examples**: Prevent reinventing structure
 - **🧩 Adaptable**: Universal principles + customizable implementation
 
@@ -162,24 +163,44 @@ your-project/
 
 ## Usage
 
-### First Time Setup
+This plugin includes **two skills**:
+
+### 1. `/context-system` - Initial Setup
+
+**First time setup**:
 ```bash
 /context-system
 ```
 Guided through all 3 phases interactively. Can pause after any phase.
 
-### Resume Later
+**Resume later**:
 ```bash
 /context-system --phase 2    # Resume at Phase 2
 /context-system --phase 3    # Skip to Phase 3
 ```
 
-### Ongoing Maintenance
+---
+
+### 2. `/context-update` - Ongoing Maintenance
+
+**Extract context from conversations**:
 ```bash
-/context-system --extract    # Extract context from recent conversation
-/context-system --validate   # Run quality checks
-/context-system --archive    # Archive outdated decisions/retrospectives
+/context-update
 ```
+
+This skill:
+- Reviews recent conversations or work sessions
+- Identifies patterns and preferences
+- Extracts context into appropriate files
+- Maintains consistency across CLAUDE.md, context/, skills/, and templates/
+- Creates retrospectives after major work
+- Archives outdated content
+
+**When to use**:
+- After completing major work sessions
+- Monthly context reviews
+- When you notice recurring patterns
+- After making architectural decisions
 
 ---
 

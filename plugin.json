@@ -20,6 +20,11 @@
       "name": "context-system",
       "path": ".",
       "description": "Set up a context management system for persistent Claude preferences, decisions, and workflows"
+    },
+    {
+      "name": "context-update",
+      "path": "context-update",
+      "description": "Review conversations and changes to extract and update context that improves Claude alignment with project preferences"
     }
   ]
 }
