@@ -167,13 +167,13 @@ This plugin includes **two skills**:
 
 ### 1. `/init-context-system` - Initial Setup
 
-**First time setup**:
+**Run once** to set up the structure:
 ```bash
 /init-context-system
 ```
 Guided through all 3 phases interactively. Can pause after any phase.
 
-**Resume later**:
+**Resume at specific phase**:
 ```bash
 /init-context-system --phase 2    # Resume at Phase 2
 /init-context-system --phase 3    # Skip to Phase 3
@@ -183,17 +183,18 @@ Guided through all 3 phases interactively. Can pause after any phase.
 
 ### 2. `/context-update` - Ongoing Maintenance
 
-**Extract context from conversations**:
+**Run regularly** to maintain and evolve:
 ```bash
 /context-update
 ```
 
-This skill:
+**What it does**:
 - Reviews recent conversations or work sessions
 - Identifies patterns and preferences
 - Extracts context into appropriate files
 - Maintains consistency across CLAUDE.md, context/, skills/, and templates/
 - Creates retrospectives after major work
+- Validates context quality
 - Archives outdated content
 
 **When to use**:
@@ -201,6 +202,7 @@ This skill:
 - Monthly context reviews
 - When you notice recurring patterns
 - After making architectural decisions
+- When context needs validation or cleanup
 
 ---
 
@@ -264,16 +266,19 @@ See [examples/example-loading-map.md](examples/example-loading-map.md) for task-
 
 ## Maintenance
 
-After major work sessions (~monthly):
+After major work sessions:
 ```bash
-/init-context-system --extract     # Capture learnings
+/context-update     # Extract learnings, validate, maintain
 ```
 
-Quarterly:
-```bash
-/init-context-system --validate    # Run quality checks
-/init-context-system --archive     # Clean up old content
-```
+**What `/context-update` does**:
+- Extracts context from recent conversations
+- Validates context quality and consistency
+- Creates retrospectives
+- Archives outdated content
+- Maintains alignment across all guidance locations
+
+Run it regularly (after major work, monthly, or when you notice patterns) to keep your context system fresh and valuable.
 
 The system compounds over time—early investment pays long-term dividends.
 

@@ -157,10 +157,10 @@ Claude will guide you through all three phases interactively. You can pause afte
 
 ### Ongoing Maintenance
 ```bash
-/init-context-system --extract    # Extract context from recent conversation
-/init-context-system --validate   # Run quality checks on context
-/init-context-system --archive    # Archive outdated decisions/retrospectives
+/context-update    # Extract, validate, archive, and maintain context
 ```
+
+The `/context-update` skill handles all ongoing maintenance including extraction, validation, retrospectives, and archival.
 
 ---
 

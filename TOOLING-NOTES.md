@@ -116,18 +116,11 @@ If you want to use this context system with non-markdown tools:
 
 ### Future: Tool-Agnostic Version?
 
-A future version of this skill could support multiple backends:
-
-```bash
-/init-context-system --setup --tool obsidian   # Current default
-/init-context-system --setup --tool notion     # Adapted for Notion
-/init-context-system --setup --tool wiki       # Adapted for GitHub wikis
-/init-context-system --setup --tool confluence # Adapted for Confluence
-```
-
-Each would use the same **core principles** but adapt the **implementation details** to the tool's capabilities.
+A future version of this skill could support multiple tool backends, automatically adapting to different platforms (Notion, Confluence, GitHub wikis) while maintaining the same core principles.
 
 **Current status**: This skill supports **markdown-based workflows only** (Obsidian, Logseq, Foam, plain text).
+
+Tool-specific adaptations could be created as separate skills or variants in the future.
 
 ---
 

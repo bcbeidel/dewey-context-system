@@ -22,15 +22,12 @@ User invokes: `/init-context-system`
 User invokes: `/init-context-system --phase 2`
 → Skip to specified phase (validate previous phases completed)
 
-### Maintenance Operations
-User invokes: `/init-context-system --extract`
-→ Extract context from recent conversation
+User invokes: `/init-context-system --phase 3`
+→ Skip to Phase 3 (validate previous phases completed)
 
-User invokes: `/init-context-system --validate`
-→ Run validation checks on context system
+---
 
-User invokes: `/init-context-system --archive`
-→ Archive outdated decisions/retrospectives
+**Note**: For ongoing maintenance (extraction, validation, archival), users should use the `/context-update` skill, not `/init-context-system`.
 
 ---
 
@@ -260,7 +257,7 @@ Architectural and process decisions.
 - Periodically reviewing conversations for insights
 
 **How to Update**:
-Use `/init-context-system --extract` to extract context from recent conversations, or manually create/update files following the template structure.
+Use `/context-update` to extract context from recent conversations, or manually create/update files following the template structure.
 
 ---
 
@@ -839,7 +836,7 @@ Ask yourself:
 ### Step 2: Use the Retrospective Extraction Command
 
 ```bash
-/init-context-system --extract
+/context-update
 ```
 
 This will:
@@ -936,9 +933,9 @@ Regular maintenance keeps the context system valuable. Run these checks periodic
 
 ## Validation Checks
 
-### Automated Checks (via `/init-context-system --validate`)
+### Automated Checks (via `/context-update`)
 
-Run: `/init-context-system --validate`
+Run: `/context-update`
 
 This checks:
 - ✓ All wikilinks resolve
@@ -985,7 +982,7 @@ This checks:
 
 ### How to Archive
 
-Run: `/init-context-system --archive`
+Run: `/context-update`
 
 Or manually:
 ```bash
@@ -1027,16 +1024,16 @@ After:
 
 ```bash
 # Extract context from recent conversation
-/init-context-system --extract
+/context-update
 
 # Validate context system
-/init-context-system --validate
+/context-update
 
 # Archive old content
-/init-context-system --archive
+/context-update
 
 # Full system (all checks + cleanup)
-/init-context-system --maintain
+/context-update
 ```
 
 ---
@@ -1180,7 +1177,7 @@ Guidelines for what belongs in the context system and how to maintain quality.
 ## Maintenance Process
 
 1. **Extract regularly**: After major work sessions
-2. **Validate periodically**: Run `/init-context-system --validate`
+2. **Validate periodically**: Run `/context-update`
 3. **Archive outdated**: Move old decisions/retrospectives
 4. **Refactor large files**: Split if >300 lines
 5. **Update as needed**: Preferences change, context should too
@@ -1276,9 +1273,9 @@ Add to `context/_loading-map.md`:
 - [[context/templates/]] - Templates for creating new context
 
 **When:**
-- User invokes `/init-context-system --extract`
-- User invokes `/init-context-system --validate`
-- User invokes `/init-context-system --archive`
+- User invokes `/context-update`
+- User invokes `/context-update`
+- User invokes `/context-update`
 - User asks about updating or maintaining context
 
 ---
@@ -1297,7 +1294,7 @@ Create `context/QUICK-REFERENCE.md`:
 
 **Extract context from conversation:**
 ```bash
-/init-context-system --extract
+/context-update
 ```
 
 **Reference context in requests:**
@@ -1310,17 +1307,17 @@ Create `context/QUICK-REFERENCE.md`:
 
 **Validate context system:**
 ```bash
-/init-context-system --validate
+/context-update
 ```
 
 **Archive old content:**
 ```bash
-/init-context-system --archive
+/context-update
 ```
 
 **Full maintenance (validate + archive + cleanup):**
 ```bash
-/init-context-system --maintain
+/context-update
 ```
 
 ## Creating New Context
@@ -1407,9 +1404,9 @@ Your context system is now fully set up for long-term success:
 🔧 Maintenance commands configured
 
 **Long-term sustainability:**
-- After major work: `/init-context-system --extract` (capture learnings)
-- Monthly: `/init-context-system --validate` (ensure quality)
-- Quarterly: `/init-context-system --archive` (remove stale content)
+- After major work: `/context-update` (capture learnings)
+- Monthly: `/context-update` (ensure quality)
+- Quarterly: `/context-update` (remove stale content)
 
 **Your context system now:**
 - Remembers your preferences across conversations ✓
@@ -1428,7 +1425,7 @@ Your context system is now fully set up for long-term success:
 
 **Next steps**:
 1. Use the system naturally
-2. Run `/init-context-system --extract` after major work
+2. Run `/context-update` after major work
 3. Watch your context library grow over time
 
 Questions about using the system?
@@ -1438,7 +1435,7 @@ Questions about using the system?
 
 ## Maintenance Operations
 
-### Extract Context (`/init-context-system --extract`)
+### Extract Context (`/context-update`)
 
 **Purpose**: Extract context from recent conversation or work session
 
@@ -1469,7 +1466,7 @@ Questions about using the system?
 
 ---
 
-### Validate Context (`/init-context-system --validate`)
+### Validate Context (`/context-update`)
 
 **Purpose**: Run quality checks on context system
 
@@ -1523,14 +1520,14 @@ Recommendations:
 2. Add examples to style-preferences.md
 3. Review old decision - still valid or archive?
 
-Run `/init-context-system --archive` to archive old content.
+Run `/context-update` to archive old content.
 ```
 
 If errors found, offer to fix them.
 
 ---
 
-### Archive Content (`/init-context-system --archive`)
+### Archive Content (`/context-update`)
 
 **Purpose**: Move outdated decisions and retrospectives to archive folders
 
@@ -1583,7 +1580,7 @@ If errors found, offer to fix them.
 
 ---
 
-### Full Maintenance (`/init-context-system --maintain`)
+### Full Maintenance (`/context-update`)
 
 **Purpose**: Run full maintenance sweep (validate + archive + cleanup)
 
@@ -1657,8 +1654,8 @@ Resume at Phase 2: `/init-context-system --phase 2`
 Resume at Phase 3: `/init-context-system --phase 3`
 
 Or continue maintenance:
-- Extract context: `/init-context-system --extract`
-- Validate system: `/init-context-system --validate`
+- Extract context: `/context-update`
+- Validate system: `/context-update`
 
 Your progress so far:
 - [Summarize what was completed]
