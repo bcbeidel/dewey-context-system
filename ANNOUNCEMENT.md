@@ -24,7 +24,7 @@ Result: Claude aligns with your style from message one and improves over time th
 
 One command:
 ```bash
-claude plugin install bcbeidel/skill-context-system
+git clone https://github.com/bcbeidel/skill-context-system.git ~/.claude/plugins/skill-context-system
 ```
 
 Then run `/init-context-system` in any project.
@@ -72,7 +72,7 @@ This plugin makes Claude remember:
 ✅ Your workflows
 ✅ Your conventions
 
-One command: claude plugin install bcbeidel/skill-context-system
+One command: git clone https://github.com/bcbeidel/skill-context-system.git ~/.claude/plugins/skill-context-system
 
 https://github.com/bcbeidel/skill-context-system
 
@@ -143,7 +143,7 @@ The meta-problem solution is universal, implementation is markdown-optimized.
 🔄 Built-in maintenance workflows
 📖 Comprehensive guides
 
-Try it: claude plugin install bcbeidel/skill-context-system
+Try it: git clone https://github.com/bcbeidel/skill-context-system.git ~/.claude/plugins/skill-context-system
 
 https://github.com/bcbeidel/skill-context-system
 ```
@@ -179,7 +179,7 @@ I built a Claude Code plugin that creates a persistent context management system
 
 **How It Works**
 
-1. Install: `claude plugin install bcbeidel/skill-context-system`
+1. Install: `git clone https://github.com/bcbeidel/skill-context-system.git ~/.claude/plugins/skill-context-system`
 2. Setup: `/init-context-system` (3-phase guided process)
 3. Maintain: `/context-update` (extract learnings after major work)
 
@@ -225,7 +225,7 @@ Hey r/ClaudeAI! I built a plugin to solve a problem I kept running into: having 
 Plugin that makes Claude persistently remember your preferences, decisions, and workflows. One command install, works everywhere.
 
 ```bash
-claude plugin install bcbeidel/skill-context-system
+git clone https://github.com/bcbeidel/skill-context-system.git ~/.claude/plugins/skill-context-system
 ```
 
 **The Problem**
@@ -279,7 +279,7 @@ Optimized for markdown-based workflows (Obsidian, Logseq, plain text). Adaptable
 **Try It**
 
 ```bash
-claude plugin install bcbeidel/skill-context-system
+git clone https://github.com/bcbeidel/skill-context-system.git ~/.claude/plugins/skill-context-system
 /init-context-system
 ```
 
@@ -313,7 +313,7 @@ MIT licensed, production-ready, comprehensive docs.
 GitHub: https://github.com/bcbeidel/skill-context-system
 
 ```bash
-claude plugin install bcbeidel/skill-context-system
+git clone https://github.com/bcbeidel/skill-context-system.git ~/.claude/plugins/skill-context-system
 ```
 
 Would love feedback from the community!

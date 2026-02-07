@@ -1,6 +1,6 @@
 {
   "name": "context-system",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Make Claude persistently remember your preferences, decisions, and workflows across conversations",
   "author": "Brandon Beidel",
   "repository": "https://github.com/bcbeidel/skill-context-system",
