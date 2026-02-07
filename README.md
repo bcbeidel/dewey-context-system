@@ -239,8 +239,8 @@ Built with [Claude Code](https://github.com/anthropics/claude-code) using patter
 
 ## Questions?
 
-- **Issues**: [GitHub Issues](https://github.com/[your-username]/skill-context-system/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/[your-username]/skill-context-system/discussions)
+- **Issues**: [GitHub Issues](https://github.com/bcbeidel/skill-context-system/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/bcbeidel/skill-context-system/discussions)
 
 ---
 
