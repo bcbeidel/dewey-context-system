@@ -1,0 +1,251 @@
+# Context System - Claude Code Skill
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+> **Make Claude persistently remember your preferences, decisions, and workflows across conversations.**
+
+A comprehensive [Claude Code](https://github.com/anthropics/claude-code) skill that guides you through creating a context management system—solving the problem of Claude forgetting your preferences between sessions.
+
+---
+
+## The Problem
+
+Every conversation with Claude starts fresh. You repeatedly explain:
+- "I prefer review-first workflow"
+- "Use wikilinks, not markdown links"
+- "Always run tests before committing"
+
+**But Claude forgets between sessions.** You spend the first 10 minutes of every conversation re-establishing context.
+
+## The Solution
+
+This skill creates a **context management system** that makes Claude persistently remember:
+
+✅ Your preferences (how you like to work)
+✅ Your decisions (why you chose specific approaches)
+✅ Your workflows (how to execute common tasks)
+✅ Your conventions (project-specific standards)
+
+**Result**: Claude aligns with your style from message one and improves over time.
+
+---
+
+## Quick Start
+
+### Installation
+
+1. **Copy skill to your project**:
+   ```bash
+   # In your project directory
+   mkdir -p .claude/skills
+   cp -r path/to/skill-context-system .claude/skills/context-system
+   ```
+
+2. **Run the setup**:
+   ```bash
+   /context-system
+   ```
+
+3. **Follow the guided setup** (3 progressive phases, 1-2 hours total)
+
+That's it! Claude now remembers your preferences.
+
+---
+
+## What You Get
+
+### Phase 1: Quick Setup (15-30 min)
+- Basic folder structure (`context/communication`, `context/project`, `context/workflows`, `context/decisions`)
+- Extract 1-2 preferences from your conversation
+- Task-based context loading (context loads automatically)
+- **Immediate value**: Stop repeating yourself
+
+### Phase 2: Hands-On Learning (30-45 min)
+- Extract 5-10 context pieces from conversation history
+- Create your first decision log (ADR)
+- Set up task-based loading for git, code review, etc.
+- **Demonstrated value**: See context loading automatically for tasks
+
+### Phase 3: Evolution Framework (15-30 min)
+- Retrospective workflow (capture learnings over time)
+- Maintenance checklist (keep context fresh)
+- Validation process (ensure quality)
+- **Long-term value**: System evolves with you, compounds over time
+
+---
+
+## Key Features
+
+- **🎯 Progressive Setup**: Start small (Phase 1), expand as you see value
+- **📊 Evidence-Based**: Extract from actual work, not hypothetical scenarios
+- **🔄 Task-Based Loading**: Context automatically loads for git, code review, documentation, etc.
+- **🛠️ Maintenance Built-In**: Extract, validate, archive commands included
+- **📝 Templates & Examples**: Prevent reinventing structure
+- **🧩 Adaptable**: Universal principles + customizable implementation
+
+---
+
+## File Structure
+
+```
+your-project/
+├── .claude/
+│   ├── CLAUDE.md                    # References context system
+│   └── skills/
+│       └── context-system/          # This skill
+└── context/
+    ├── _index.md                    # Navigation hub
+    ├── _loading-map.md              # Task → context mappings
+    ├── communication/               # How to interact
+    ├── project/                     # Conventions & standards
+    ├── workflows/                   # How to do work
+    └── decisions/                   # Architectural decisions
+```
+
+---
+
+## Usage
+
+### First Time Setup
+```bash
+/context-system
+```
+Guided through all 3 phases interactively. Can pause after any phase.
+
+### Resume Later
+```bash
+/context-system --phase 2    # Resume at Phase 2
+/context-system --phase 3    # Skip to Phase 3
+```
+
+### Ongoing Maintenance
+```bash
+/context-system --extract    # Extract context from recent conversation
+/context-system --validate   # Run quality checks
+/context-system --archive    # Archive outdated decisions/retrospectives
+```
+
+---
+
+## Who This Is For
+
+✅ **You should use this if you**:
+- Use Claude Code regularly (multiple times per week)
+- Have established preferences for how you work
+- Find yourself repeating the same instructions to Claude
+- Want Claude to remember architectural decisions
+- Work with **markdown-based tools** (Obsidian, Logseq, plain text)
+
+❌ **Skip this if you**:
+- Just trying out Claude Code (too early for patterns)
+- Use Claude for one-off questions
+- Don't use markdown-based workflows
+
+> **Note**: This skill is optimized for **markdown editors** with wikilink support. See [TOOLING-NOTES.md](TOOLING-NOTES.md) for compatibility and adaptation guidance.
+
+---
+
+## Documentation
+
+- **[SKILL-README.md](SKILL-README.md)** - Detailed explanation of the problem, solution, and philosophy
+- **[SKILL.md](SKILL.md)** - Complete implementation guide (for Claude to execute)
+- **[TOOLING-NOTES.md](TOOLING-NOTES.md)** - Markdown/Obsidian bias explained + adaptation guidance
+- **[templates/](templates/)** - Reusable templates for context files
+- **[examples/](examples/)** - Real-world examples showing patterns
+
+---
+
+## Core Principles
+
+The system is built on **10 universal tenets**:
+
+1. **Semantic Organization** - Organize by purpose (communication/project/workflows/decisions)
+2. **Template-First** - Single source of truth prevents format drift
+3. **Review-First** - Propose before executing (customizable)
+4. **Progressive Disclosure** - Overview → details, split at ~300 lines
+5. **Evidence-Based** - Extract from real work, not hypothetical
+6. **Explicit Over Implicit** - Task mappings, frontmatter, cross-references
+7. **Maintenance Through Reflection** - Retrospectives capture learnings
+8. **Dual-Audience** - Human browsing + AI semantic search
+9. **Simplicity Over Perfection** - Start small, iterate
+10. **Context Governance** - Clear boundaries, quality standards
+
+---
+
+## Examples
+
+### Example 1: Communication Preferences
+See [examples/example-style-preferences.md](examples/example-style-preferences.md) for a complete example of documenting communication preferences (review-first workflow, explanations with reasoning, critique preferences).
+
+### Example 2: Git Workflow
+See [examples/example-git-workflow.md](examples/example-git-workflow.md) for a complete workflow example (commit conventions, branch naming, PR process, safety rules).
+
+### Example 3: Loading Map
+See [examples/example-loading-map.md](examples/example-loading-map.md) for task-based context loading (maps tasks like "git operations" to relevant context files).
+
+---
+
+## Maintenance
+
+After major work sessions (~monthly):
+```bash
+/context-system --extract     # Capture learnings
+```
+
+Quarterly:
+```bash
+/context-system --validate    # Run quality checks
+/context-system --archive     # Clean up old content
+```
+
+The system compounds over time—early investment pays long-term dividends.
+
+---
+
+## Contributing
+
+Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+**Ways to contribute**:
+- Report issues or suggest improvements
+- Share examples from your projects
+- Adapt skill for other tools (Notion, Confluence, etc.)
+- Improve documentation
+- Add features (validation checks, more templates, etc.)
+
+---
+
+## Adaptations
+
+This skill is optimized for markdown-based workflows (Obsidian, Logseq, plain text).
+
+**Want to adapt for other tools?**
+- See [TOOLING-NOTES.md](TOOLING-NOTES.md) for guidance on adapting to Notion, GitHub wikis, Confluence, etc.
+- The **meta-problem solution is universal**, but **implementation is markdown-specific**
+
+---
+
+## License
+
+MIT License - see [LICENSE](LICENSE) for details.
+
+---
+
+## Acknowledgments
+
+Built with [Claude Code](https://github.com/anthropics/claude-code) using patterns discovered across multiple projects. Special thanks to the Claude Code community for feedback and testing.
+
+---
+
+## Questions?
+
+- **Issues**: [GitHub Issues](https://github.com/[your-username]/skill-context-system/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/[your-username]/skill-context-system/discussions)
+
+---
+
+**Ready to make Claude remember?**
+
+```bash
+/context-system
+```
