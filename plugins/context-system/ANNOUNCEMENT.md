@@ -22,12 +22,12 @@ Result: Claude aligns with your style from message one and improves over time th
 
 ### Installation
 
-One command:
-```bash
-git clone https://github.com/bcbeidel/skill-context-system.git ~/.claude/plugins/skill-context-system
+Two simple commands:
+```
+/plugin marketplace add bcbeidel/skill-context-system
 ```
 
-Then run `/init-context-system` in any project.
+Then install from the Discover tab and run `/init-context-system` in any project.
 
 ### Two Skills Included
 

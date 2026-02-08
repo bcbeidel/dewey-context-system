@@ -32,15 +32,19 @@ This skill creates a **context management system** that makes Claude persistentl
 
 ## Quick Start
 
-**Install globally** (works in all projects):
-```bash
-# Clone to Claude plugins directory
-git clone https://github.com/bcbeidel/skill-context-system.git \
-  ~/.claude/plugins/skill-context-system
+**1. Add the marketplace** (in Claude Code):
+```
+/plugin marketplace add bcbeidel/skill-context-system
 ```
 
-**Run the setup** (in any project):
-```bash
+**2. Install the plugin:**
+```
+/plugin
+```
+Then navigate to the "Discover" tab and install "context-system"
+
+**3. Run the setup** (in any project):
+```
 /init-context-system
 ```
 
@@ -50,54 +54,44 @@ git clone https://github.com/bcbeidel/skill-context-system.git \
 
 ## Installation
 
-### Option 1: Global Installation (Recommended) ⭐
+### Recommended: Marketplace Installation ⭐
 
-**Install once, works everywhere:**
+**Step 1: Add the marketplace**
+
+In Claude Code, run:
+```
+/plugin marketplace add bcbeidel/skill-context-system
+```
+
+**Step 2: Install the plugin**
+
+Run `/plugin` and navigate to the **Discover** tab. You'll see the `context-system` plugin. Install it.
+
+**Step 3: Verify**
+
+In any project directory, run:
+```
+/init-context-system
+```
+
+You should see the setup wizard. The plugin is now available globally across all your projects!
+
+---
+
+### Alternative: Direct Git Installation
+
+<details>
+<summary>Click to expand direct installation method</summary>
+
+If you prefer to install directly without the marketplace:
+
 ```bash
 # Clone to Claude plugins directory
 git clone https://github.com/bcbeidel/skill-context-system.git \
   ~/.claude/plugins/skill-context-system
 ```
 
-The skills will now be available in all your projects.
-
-**Verify**:
-```bash
-# In any project directory
-/init-context-system
-```
-
----
-
-### Option 2: Per-Project Installation
-
-<details>
-<summary>Click to expand manual installation options</summary>
-
-**Method A: Clone directly into project**
-```bash
-cd /path/to/your-project
-git clone https://github.com/bcbeidel/skill-context-system.git .claude/skills/init-context-system
-/init-context-system
-```
-
-**Method B: Clone once, copy to multiple projects**
-```bash
-# Clone the repo
-git clone https://github.com/bcbeidel/skill-context-system.git
-
-# Copy to each project
-cd /path/to/your-project
-mkdir -p .claude/skills
-cp -r /path/to/skill-context-system .claude/skills/init-context-system
-/init-context-system
-```
-
-**Method C: Download ZIP**
-1. Download: https://github.com/bcbeidel/skill-context-system/archive/refs/heads/main.zip
-2. Extract and rename folder to `init-context-system`
-3. Move to `.claude/skills/init-context-system` in your project
-4. Run `/init-context-system`
+The skills will be available in all your projects immediately.
 
 **Verify**:
 ```bash
