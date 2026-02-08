@@ -1,28 +1,23 @@
 {
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "context-system-marketplace",
   "version": "1.0.0",
   "description": "Skills for persistent context management in Claude Code",
   "owner": {
     "name": "Brandon Beidel",
-    "url": "https://github.com/bcbeidel"
+    "email": "brandon@example.com"
   },
   "plugins": [
     {
       "name": "context-system",
-      "source": ".",
       "description": "Make Claude persistently remember your preferences, decisions, and workflows across conversations",
       "version": "1.0.3",
       "author": {
         "name": "Brandon Beidel",
-        "url": "https://github.com/bcbeidel"
+        "email": "brandon@example.com"
       },
-      "keywords": [
-        "context",
-        "memory",
-        "preferences",
-        "workflow",
-        "productivity"
-      ]
+      "source": ".",
+      "category": "productivity"
     }
   ]
 }
