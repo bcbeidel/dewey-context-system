@@ -1,14 +1,21 @@
 {
-  "name": "Context System Marketplace",
+  "name": "context-system-marketplace",
   "version": "1.0.0",
   "description": "Skills for persistent context management in Claude Code",
+  "owner": {
+    "name": "Brandon Beidel",
+    "url": "https://github.com/bcbeidel"
+  },
   "plugins": [
     {
       "name": "context-system",
-      "source": "bcbeidel/skill-context-system",
+      "source": ".",
       "description": "Make Claude persistently remember your preferences, decisions, and workflows across conversations",
       "version": "1.0.3",
-      "author": "Brandon Beidel",
+      "author": {
+        "name": "Brandon Beidel",
+        "url": "https://github.com/bcbeidel"
+      },
       "keywords": [
         "context",
         "memory",
