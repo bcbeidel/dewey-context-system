@@ -24,7 +24,7 @@ Result: Claude aligns with your style from message one and improves over time th
 
 Two simple commands:
 ```
-/plugin marketplace add bcbeidel/skill-context-system
+/plugin marketplace add bcbeidel/context-system
 ```
 
 Then install from the Discover tab and run `/init-context-system` in any project.
@@ -44,7 +44,7 @@ Then install from the Discover tab and run `/init-context-system` in any project
 
 ### Repository
 
-https://github.com/bcbeidel/skill-context-system
+https://github.com/bcbeidel/context-system
 
 MIT licensed, production-ready, comprehensive documentation.
 
@@ -72,9 +72,9 @@ This plugin makes Claude remember:
 ✅ Your workflows
 ✅ Your conventions
 
-One command: git clone https://github.com/bcbeidel/skill-context-system.git ~/.claude/plugins/skill-context-system
+One command: git clone https://github.com/bcbeidel/context-system.git ~/.claude/plugins/context-system
 
-https://github.com/bcbeidel/skill-context-system
+https://github.com/bcbeidel/context-system
 
 #ClaudeAI #AI #DeveloperTools
 ```
@@ -143,9 +143,9 @@ The meta-problem solution is universal, implementation is markdown-optimized.
 🔄 Built-in maintenance workflows
 📖 Comprehensive guides
 
-Try it: git clone https://github.com/bcbeidel/skill-context-system.git ~/.claude/plugins/skill-context-system
+Try it: git clone https://github.com/bcbeidel/context-system.git ~/.claude/plugins/context-system
 
-https://github.com/bcbeidel/skill-context-system
+https://github.com/bcbeidel/context-system
 ```
 
 ---
@@ -179,7 +179,7 @@ I built a Claude Code plugin that creates a persistent context management system
 
 **How It Works**
 
-1. Install: `git clone https://github.com/bcbeidel/skill-context-system.git ~/.claude/plugins/skill-context-system`
+1. Install: `git clone https://github.com/bcbeidel/context-system.git ~/.claude/plugins/context-system`
 2. Setup: `/init-context-system` (3-phase guided process)
 3. Maintain: `/context-update` (extract learnings after major work)
 
@@ -200,7 +200,7 @@ The architecture solves a meta-problem (persistent context across conversations)
 
 MIT licensed, 3,400+ lines of documentation, templates and examples included.
 
-GitHub: https://github.com/bcbeidel/skill-context-system
+GitHub: https://github.com/bcbeidel/context-system
 
 **Who Should Use This**
 
@@ -225,7 +225,7 @@ Hey r/ClaudeAI! I built a plugin to solve a problem I kept running into: having 
 Plugin that makes Claude persistently remember your preferences, decisions, and workflows. One command install, works everywhere.
 
 ```bash
-git clone https://github.com/bcbeidel/skill-context-system.git ~/.claude/plugins/skill-context-system
+git clone https://github.com/bcbeidel/context-system.git ~/.claude/plugins/context-system
 ```
 
 **The Problem**
@@ -274,12 +274,12 @@ It's not just storing preferences—it's a system for continuous alignment.
 
 Optimized for markdown-based workflows (Obsidian, Logseq, plain text). Adaptable to other tools.
 
-**GitHub**: https://github.com/bcbeidel/skill-context-system
+**GitHub**: https://github.com/bcbeidel/context-system
 
 **Try It**
 
 ```bash
-git clone https://github.com/bcbeidel/skill-context-system.git ~/.claude/plugins/skill-context-system
+git clone https://github.com/bcbeidel/context-system.git ~/.claude/plugins/context-system
 /init-context-system
 ```
 
@@ -310,10 +310,10 @@ Built on 10 universal principles (semantic organization, template-first architec
 
 MIT licensed, production-ready, comprehensive docs.
 
-GitHub: https://github.com/bcbeidel/skill-context-system
+GitHub: https://github.com/bcbeidel/context-system
 
 ```bash
-git clone https://github.com/bcbeidel/skill-context-system.git ~/.claude/plugins/skill-context-system
+git clone https://github.com/bcbeidel/context-system.git ~/.claude/plugins/context-system
 ```
 
 Would love feedback from the community!
@@ -330,7 +330,7 @@ Would love feedback from the community!
 
 ```markdown
 ### Context Management
-- [context-system](https://github.com/bcbeidel/skill-context-system) - Make Claude persistently remember your preferences, decisions, and workflows across sessions. Includes two skills: `/init-context-system` (3-phase setup) and `/context-update` (ongoing maintenance). Evidence-based extraction, task-based auto-loading, templates included.
+- [context-system](https://github.com/bcbeidel/context-system) - Make Claude persistently remember your preferences, decisions, and workflows across sessions. Includes two skills: `/init-context-system` (3-phase setup) and `/context-update` (ongoing maintenance). Evidence-based extraction, task-based auto-loading, templates included.
 ```
 
 ---

@@ -7,7 +7,7 @@ Thank you for considering contributing! This project aims to help Claude Code us
 ## Ways to Contribute
 
 ### 1. Report Issues
-- Found a bug? [Open an issue](https://github.com/bcbeidel/skill-context-system/issues)
+- Found a bug? [Open an issue](https://github.com/bcbeidel/context-system/issues)
 - Unclear documentation? Let us know
 - Feature request? Describe your use case
 
@@ -39,7 +39,7 @@ Thank you for considering contributing! This project aims to help Claude Code us
 
 ### File Structure
 ```
-skill-context-system/
+context-system/
 ├── README.md              # Repo overview
 ├── SKILL-README.md        # Detailed skill explanation
 ├── SKILL.md              # Implementation guide

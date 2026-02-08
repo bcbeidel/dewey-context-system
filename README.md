@@ -7,7 +7,7 @@ A Claude Code marketplace containing skills for persistent context management.
 Add this marketplace to Claude Code:
 
 ```
-/plugin marketplace add bcbeidel/skill-context-system
+/plugin marketplace add bcbeidel/context-system
 ```
 
 Then install the `context-system` plugin from the Discover tab.

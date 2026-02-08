@@ -34,7 +34,7 @@ This skill creates a **context management system** that makes Claude persistentl
 
 **1. Add the marketplace** (in Claude Code):
 ```
-/plugin marketplace add bcbeidel/skill-context-system
+/plugin marketplace add bcbeidel/context-system
 ```
 
 **2. Install the plugin:**
@@ -60,7 +60,7 @@ Then navigate to the "Discover" tab and install "context-system"
 
 In Claude Code, run:
 ```
-/plugin marketplace add bcbeidel/skill-context-system
+/plugin marketplace add bcbeidel/context-system
 ```
 
 **Step 2: Install the plugin**
@@ -87,8 +87,8 @@ If you prefer to install directly without the marketplace:
 
 ```bash
 # Clone to Claude plugins directory
-git clone https://github.com/bcbeidel/skill-context-system.git \
-  ~/.claude/plugins/skill-context-system
+git clone https://github.com/bcbeidel/context-system.git \
+  ~/.claude/plugins/context-system
 ```
 
 The skills will be available in all your projects immediately.
@@ -319,8 +319,8 @@ Built with [Claude Code](https://github.com/anthropics/claude-code) using patter
 
 ## Questions?
 
-- **Issues**: [GitHub Issues](https://github.com/bcbeidel/skill-context-system/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/bcbeidel/skill-context-system/discussions)
+- **Issues**: [GitHub Issues](https://github.com/bcbeidel/context-system/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/bcbeidel/context-system/discussions)
 
 ---
 
@@ -328,8 +328,8 @@ Built with [Claude Code](https://github.com/anthropics/claude-code) using patter
 
 ```bash
 # Install globally
-git clone https://github.com/bcbeidel/skill-context-system.git \
-  ~/.claude/plugins/skill-context-system
+git clone https://github.com/bcbeidel/context-system.git \
+  ~/.claude/plugins/context-system
 
 # Run in any project
 /init-context-system
