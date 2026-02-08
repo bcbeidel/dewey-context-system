@@ -95,7 +95,8 @@ The skills will be available in all your projects immediately.
 
 **Verify**:
 ```bash
-ls .claude/skills/init-context-system/SKILL.md
+# Check plugin is installed
+ls ~/.claude/plugins/context-system
 ```
 
 </details>
@@ -147,7 +148,7 @@ your-project/
 ├── .claude/
 │   ├── CLAUDE.md                    # References context system
 │   └── skills/
-│       └── init-context-system/     # This skill (if installed manually)
+│       └── [your-custom-skills]/    # Your project-specific skills
 └── context/
     ├── _index.md                    # Navigation hub
     ├── _loading-map.md              # Task → context mappings
@@ -225,7 +226,7 @@ Guided through all 3 phases interactively. Can pause after any phase.
 ## Documentation
 
 - **[SKILL-README.md](SKILL-README.md)** - Detailed explanation of the problem, solution, and philosophy
-- **[SKILL.md](SKILL.md)** - Complete implementation guide (for Claude to execute)
+- **[commands/](commands/)** - Skill implementation files (init-context-system.md, context-update.md)
 - **[TOOLING-NOTES.md](TOOLING-NOTES.md)** - Markdown/Obsidian bias explained + adaptation guidance
 - **[templates/](templates/)** - Reusable templates for context files
 - **[examples/](examples/)** - Real-world examples showing patterns
