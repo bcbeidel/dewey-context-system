@@ -17,3 +17,6 @@
 # Testing/Development
 test-output/
 scratch/
+
+# Claude Code local settings
+.claude/
