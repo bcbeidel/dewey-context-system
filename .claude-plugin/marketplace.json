@@ -5,7 +5,7 @@
   "description": "Skills for persistent context management in Claude Code",
   "owner": {
     "name": "Brandon Beidel",
-    "email": "brandon@example.com"
+    "email": "brandon@beidel.me"
   },
   "plugins": [
     {
@@ -14,7 +14,7 @@
       "version": "1.0.3",
       "author": {
         "name": "Brandon Beidel",
-        "email": "brandon@example.com"
+        "email": "brandon@beidel.me"
       },
       "source": ".",
       "category": "productivity"
