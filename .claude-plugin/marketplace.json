@@ -1,6 +1,6 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "context-system-marketplace",
+  "name": "context-system",
   "version": "1.0.0",
   "description": "Skills for persistent context management in Claude Code",
   "owner": {
