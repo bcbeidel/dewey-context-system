@@ -19,12 +19,20 @@ Every conversation with Claude starts fresh. You repeatedly explain:
 
 ## The Solution
 
-This skill creates a **context management system** that makes Claude persistently remember:
+This plugin provides **7 production-validated skills** for persistent context management:
 
-✅ Your preferences (how you like to work)
-✅ Your decisions (why you chose specific approaches)
-✅ Your workflows (how to execute common tasks)
-✅ Your conventions (project-specific standards)
+### Setup & Maintenance
+- ✅ `/init-context-system` - Guided 3-phase setup wizard
+- ✅ `/context-update` - Extract and organize learnings
+
+### Meta-Skills (Advanced Patterns)
+- ✅ `/audit` - ISO 19011 systematic audits
+- ✅ `/standards-sync` - Sync external best practices (OWASP, PRISMA, ISO)
+
+### Utilities
+- ✅ `/compare` - Weighted decision matrices
+- ✅ `/diagram` - Generate Mermaid diagrams
+- ✅ `/systematic-review` - PRISMA 2020 compliant research synthesis
 
 **Result**: Claude aligns with your style from message one and improves over time.
 
@@ -110,16 +118,16 @@ ls ~/.claude/plugins/context-system
 ## What You Get
 
 ### Phase 1: Quick Setup (15-30 min)
-- Basic folder structure (`context/communication`, `context/project`, `context/workflows`, `context/decisions`)
-- Extract 1-2 preferences from your conversation
-- Task-based context loading (context loads automatically)
+- Discovery questions identify YOUR relevant domains (python/, security/, research/, etc.)
+- Core context-system domain with organizing principles
+- At least one user-specific domain based on your work
 - **Immediate value**: Stop repeating yourself
 
 ### Phase 2: Hands-On Learning (30-45 min)
 - Extract 5-10 context pieces from conversation history
-- Create your first decision log (ADR)
-- Set up task-based loading for git, code review, etc.
-- **Demonstrated value**: See context loading automatically for tasks
+- Map context to appropriate domains by topic
+- Create decision logs (ADRs) for architectural choices
+- **Demonstrated value**: Context organized by concept, easy to find and maintain
 
 ### Phase 3: Evolution Framework (15-30 min)
 - Retrospective workflow (capture learnings over time)
@@ -131,11 +139,11 @@ ls ~/.claude/plugins/context-system
 
 ## Key Features
 
-- **🚀 Two Skills Included**: `/init-context-system` for setup, `/context-update` for maintenance
+- **🚀 7 Production Skills**: Setup, meta-skills (audit, standards-sync), utilities (compare, diagram, systematic-review)
 - **🎯 Progressive Setup**: Start small (Phase 1), expand as you see value
 - **📊 Evidence-Based**: Extract from actual work, not hypothetical scenarios
 - **🔄 Task-Based Loading**: Context automatically loads for git, code review, documentation, etc.
-- **🔄 Continuous Maintenance**: `/context-update` extracts learnings from conversations
+- **🏛️ Grounded in Standards**: ISO 19011, PRISMA 2020, OWASP best practices
 - **📝 Templates & Examples**: Prevent reinventing structure
 - **🧩 Adaptable**: Universal principles + customizable implementation
 
@@ -151,18 +159,154 @@ your-project/
 │       └── [your-custom-skills]/    # Your project-specific skills
 └── context/
     ├── _index.md                    # Navigation hub
-    ├── _loading-map.md              # Task → context mappings
-    ├── communication/               # How to interact
-    ├── project/                     # Conventions & standards
-    ├── workflows/                   # How to do work
-    └── decisions/                   # Architectural decisions
+    ├── context-system/              # Meta (organizing principles, loading map)
+    ├── communication/               # Core domain (always created)
+    ├── decisions/                   # Core domain (always created)
+    ├── python/                      # User domain (if applicable)
+    ├── security/                    # User domain (if applicable)
+    ├── research/                    # User domain (if applicable)
+    └── [your-other-domains]/        # Based on discovery questions
 ```
 
 ---
 
-## Usage
+## Included Skills
 
-This plugin includes **two skills**:
+This plugin includes **7 skills** organized in 3 categories:
+
+### Setup & Maintenance
+
+#### `/init-context-system` - Concept-Based Setup
+**Run once** to create your concept-based context system.
+
+**What it does**:
+- Discovery-driven: Asks questions to identify YOUR domains
+- Creates personalized structure (python, security, research, etc.)
+- Grounds domains in external authorities (PEP 8, OWASP, Anthropic)
+- Follows [Anthropic Best Practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)
+
+**Key difference**: Creates concept-based organization (by topic), not type-based (by document type)
+
+**Usage**:
+```bash
+/init-context-system              # Discovery-driven setup
+/init-context-system --phase 2    # Resume at specific phase
+```
+
+---
+
+#### `/context-update` - Domain-Agnostic Extraction
+**Run regularly** to extract learnings from conversations.
+
+**What it does**:
+- Discovers YOUR domains dynamically (reads context/_index.md)
+- Maps context to appropriate domain by topic
+- Works with ANY structure from init-context-system
+- Validates quality after extraction
+
+**Key difference**: Domain-agnostic (no hardcoded folders), works with your actual structure
+
+**Usage**:
+```bash
+/context-update                   # Extract from conversation
+```
+
+---
+
+### Meta-Skills (Advanced Patterns)
+
+#### `/audit` - ISO 19011 Systematic Audits
+**Orchestrate quality/compliance/security audits** across any artifact type.
+
+**What it does**:
+- Risk-based prioritization
+- Automated + manual checks
+- Evidence-based assessment
+- Trend tracking across audit cycles
+
+**Usage**:
+```bash
+/audit                    # Interactive setup
+```
+
+**Use when**: Quarterly audits, before releases, when quality degrades.
+
+---
+
+#### `/standards-sync` - Standards Synchronization
+**Sync external best practices** (OWASP, PRISMA, ISO) with internal standards.
+
+**What it does**:
+- Monitors external authorities
+- Evaluates relevance
+- Updates internal standards
+- Migrates implementations
+
+**Usage**:
+```bash
+/standards-sync
+```
+
+**Use when**: Quarterly sync cycles, after external updates.
+
+---
+
+### Utilities
+
+#### `/compare` - Decision Matrices
+**Create weighted decision matrices** for evaluating options.
+
+**What it does**:
+- Define criteria with weights
+- Score options systematically
+- Calculate weighted scores
+- Capture decision rationale
+
+**Usage**:
+```bash
+/compare
+```
+
+**Use when**: Technology choices, trade-off decisions, option evaluation.
+
+---
+
+#### `/diagram` - Mermaid Diagrams
+**Generate Mermaid diagrams** from natural language.
+
+**What it does**:
+- Converts descriptions to diagrams
+- Supports flowcharts, sequences, classes, etc.
+- Optimized for learning and documentation
+
+**Usage**:
+```bash
+/diagram
+```
+
+**Use when**: Explaining architecture, documenting processes, teaching.
+
+---
+
+#### `/systematic-review` - PRISMA 2020 Research
+**Conduct systematic literature reviews** with academic rigor.
+
+**What it does**:
+- PRISMA 2020 compliance
+- Protocol registration (PROSPERO)
+- Quality assessment (AMSTAR-2, ROBIS)
+- Research gap identification
+
+**Usage**:
+```bash
+/systematic-review
+```
+
+**Use when**: Literature reviews, thesis research, academic analysis.
+
+---
+
+## Detailed Usage
 
 ### 1. `/init-context-system` - Initial Setup
 
@@ -226,7 +370,7 @@ Guided through all 3 phases interactively. Can pause after any phase.
 ## Documentation
 
 - **[SKILL-README.md](SKILL-README.md)** - Detailed explanation of the problem, solution, and philosophy
-- **[commands/](commands/)** - Skill implementation files (init-context-system.md, context-update.md)
+- **[skills/](skills/)** - 7 production skills (see skills/README.md for details)
 - **[TOOLING-NOTES.md](TOOLING-NOTES.md)** - Markdown/Obsidian bias explained + adaptation guidance
 - **[templates/](templates/)** - Reusable templates for context files
 - **[examples/](examples/)** - Real-world examples showing patterns
@@ -237,16 +381,16 @@ Guided through all 3 phases interactively. Can pause after any phase.
 
 The system is built on **10 universal tenets**:
 
-1. **Semantic Organization** - Organize by purpose (communication/project/workflows/decisions)
+1. **Concept-Based Organization** - Organize by topic (python/, security/) not type (standards/, workflows/)
 2. **Template-First** - Single source of truth prevents format drift
 3. **Review-First** - Propose before executing (customizable)
-4. **Progressive Disclosure** - Overview → details, split at ~300 lines
+4. **Progressive Disclosure** - Overview → details, split at ~400 lines
 5. **Evidence-Based** - Extract from real work, not hypothetical
 6. **Explicit Over Implicit** - Task mappings, frontmatter, cross-references
 7. **Maintenance Through Reflection** - Retrospectives capture learnings
 8. **Dual-Audience** - Human browsing + AI semantic search
 9. **Simplicity Over Perfection** - Start small, iterate
-10. **Context Governance** - Clear boundaries, quality standards
+10. **Standards Grounding** - Link to external authorities (Anthropic, OWASP, ISO)
 
 ---
 

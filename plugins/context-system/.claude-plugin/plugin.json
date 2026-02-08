@@ -1,7 +1,7 @@
 {
   "name": "context-system",
-  "version": "1.0.3",
-  "description": "Make Claude persistently remember your preferences, decisions, and workflows across conversations",
+  "version": "2.1.0",
+  "description": "Production-validated context management with concept-based setup, domain-agnostic maintenance, meta-skills (audit, standards-sync), and utilities",
   "author": {
     "name": "Brandon Beidel",
     "email": "brandon@beidel.me"
