@@ -11,11 +11,6 @@
     {
       "name": "context-system",
       "description": "Make Claude persistently remember your preferences, decisions, and workflows across conversations",
-      "version": "1.0.3",
-      "author": {
-        "name": "Brandon Beidel",
-        "email": "brandon@beidel.me"
-      },
       "source": ".",
       "category": "productivity"
     }
