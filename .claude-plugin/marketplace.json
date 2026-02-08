@@ -11,7 +11,7 @@
     {
       "name": "context-system",
       "description": "Make Claude persistently remember your preferences, decisions, and workflows across conversations",
-      "source": ".",
+      "source": "./plugins/context-system",
       "category": "productivity"
     }
   ]
