@@ -26,7 +26,7 @@ This repository provides a **marketplace plugin** with 7 production-ready skills
 ### 🚀 **Context Management Plugin**
 Pre-built skills to bootstrap your context system:
 - `/init-context-system` - Discovery-driven setup wizard
-- `/context-update` - Domain-agnostic extraction and maintenance
+- `/context-curator` - Domain-agnostic extraction and maintenance
 - `/audit` - ISO 19011 systematic audits
 - `/standards-sync` - Sync with external best practices
 - `/compare` - Weighted decision matrices
@@ -51,7 +51,7 @@ Pre-built skills to bootstrap your context system:
 - ✅ **Optimal reference file counts** achieved (3-8 per skill)
 - ✅ **compare** extracted to 172 lines + 4 references (was 387 lines, 0 refs)
 - ✅ **standards-sync** extracted to 253 lines + 4 references (was 389 lines, 0 refs)
-- ✅ **context-update** slimmed to 231 lines + 8 references (was 474 lines, 5 refs)
+- ✅ **context-curator** slimmed to 231 lines + 8 references (was 474 lines, 5 refs)
 - ✅ **audit** streamlined to 316 lines + 7 references (was 430 lines, 2 refs)
 - ✅ All skills now 200-350 line SKILL.md target (Approach B - Moderate Progressive Disclosure)
 
@@ -133,7 +133,7 @@ context-system/
 │   └── context-system/
 │       ├── skills/                # 7 production skills
 │       │   ├── init-context-system/
-│       │   ├── context-update/
+│       │   ├── context-curator/
 │       │   ├── audit/
 │       │   ├── standards-sync/
 │       │   ├── compare/

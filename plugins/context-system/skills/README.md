@@ -23,8 +23,8 @@ Discovery-driven setup wizard that identifies YOUR key domains through guided qu
 
 ---
 
-### `/context-update`
-**Location**: `skills/context-update/`
+### `/context-curator`
+**Location**: `skills/context-curator/`
 
 Extract learnings from conversations and update your concept-based context system.
 
@@ -149,7 +149,7 @@ These skills are automatically available after installing the context-system plu
 
 ## Skill Categories
 
-**Setup**: init-context-system, context-update
+**Setup**: init-context-system, context-curator
 **Meta-Skills**: audit, standards-sync (operationalize patterns)
 **Utilities**: compare, diagram, systematic-review (generally useful tools)
 

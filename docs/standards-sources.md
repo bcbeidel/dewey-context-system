@@ -91,7 +91,7 @@ Every pattern in this system is **anchored to an external authority**:
 **Our implementation**:
 - Context files capture explicit preferences
 - Examples extracted from actual work
-- `/context-update` skill for iterative improvement
+- `/context-curator` skill for iterative improvement
 
 ---
 

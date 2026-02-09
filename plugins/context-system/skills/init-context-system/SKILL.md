@@ -123,7 +123,7 @@ This skill creates a **concept-based** context management system following Anthr
 
 **Process**:
 1. Review maintenance schedule (quarterly audits, standards sync)
-2. Explain context update workflow (`/context-update` skill)
+2. Explain context update workflow (`/context-curator` skill)
 3. Set up validation process (`/audit` skill)
 4. Document evolution practices in `context/context-system/maintenance.md`
 5. Show navigation workflow
@@ -223,7 +223,7 @@ All domains ground context in external authorities:
 5. **Progressive Disclosure** - Overview files + focused topic files
 6. **Evidence-Based** - Extract from real work, not hypothetical
 7. **Task-Based Loading** - Load only relevant domains per task
-8. **Maintenance-First** - Built-in evolution via `/context-update` and `/audit`
+8. **Maintenance-First** - Built-in evolution via `/context-curator` and `/audit`
 
 **Grounded in**: [Anthropic Skill Best Practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)
 
@@ -241,7 +241,7 @@ All domains ground context in external authorities:
 
 **Symptom**: Phase 2 takes too long (>30 minutes)
 - **Cause**: Creating all domain files from scratch
-- **Fix**: Create minimal _index.md files only in Phase 2, use `/context-update` to populate over time as you work
+- **Fix**: Create minimal _index.md files only in Phase 2, use `/context-curator` to populate over time as you work
 
 **Symptom**: Not sure which domains to create
 - **Cause**: Unfamiliar workflow or multi-disciplinary work
@@ -262,7 +262,7 @@ All domains ground context in external authorities:
 - **Dynamic domain discovery** - Cannot infer domains from existing codebase automatically (requires manual discovery in Phase 1)
 
 **Workarounds**:
-- **For migrations**: Manually map existing structure to concept-based domains, use `/context-update` to extract content incrementally
+- **For migrations**: Manually map existing structure to concept-based domains, use `/context-curator` to extract content incrementally
 - **For non-markdown**: Export content to markdown first, or adapt templates to your system's format
 - **For non-English**: Translate templates and primer content to your language
 - **For automatic discovery**: Review codebase manually before Phase 1, list key technologies/processes as input to discovery questions
@@ -273,7 +273,7 @@ All domains ground context in external authorities:
 
 After setup, use these skills to maintain and evolve your context:
 
-- **`/context-update`** - Extract learnings from conversations (run regularly)
+- **`/context-curator`** - Extract learnings from conversations (run regularly)
 - **`/audit`** - Validate context quality (run quarterly)
 - **`/standards-sync`** - Sync external best practices (quarterly)
 - **`/compare`** - Create decision matrices for trade-offs
@@ -293,7 +293,7 @@ After setup, use these skills to maintain and evolve your context:
 
 ---
 
-**Next**: After setup completes, run `/context-update` regularly to extract learnings and evolve your system.
+**Next**: After setup completes, run `/context-curator` regularly to extract learnings and evolve your system.
 
 **Authority**: [Anthropic Skill Best Practices - Progressive Disclosure](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)
 

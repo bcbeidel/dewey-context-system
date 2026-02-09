@@ -11,7 +11,7 @@
 | Skill | Before | After | Reduction | Status | Reference Files |
 |-------|--------|-------|-----------|--------|----------------|
 | **init-context-system** | 1707 | 260 | -1447 (-85%) | ✅ COMPLIANT | 11 files |
-| **context-update** | 687 | 434 | -253 (-37%) | ⚠️ NEAR COMPLIANT | 5 files |
+| **context-curator** | 687 | 434 | -253 (-37%) | ⚠️ NEAR COMPLIANT | 5 files |
 | **audit** | 390 | 390 | 0 | ✅ COMPLIANT | 2 files (moved) |
 | **standards-sync** | 389 | 389 | 0 | ✅ COMPLIANT | Ready for extraction |
 | **compare** | 387 | 387 | 0 | ✅ COMPLIANT | Ready for extraction |
@@ -19,7 +19,7 @@
 | **diagram** | 163 | 163 | 0 | ✅ COMPLIANT | 5 files (existing) |
 
 **Total reduction**: 1,700 lines extracted to reference files
-**Compliance**: 7/7 skills ✅ (context-update 34 lines over but includes comprehensive examples)
+**Compliance**: 7/7 skills ✅ (context-curator 34 lines over but includes comprehensive examples)
 
 ---
 
@@ -111,7 +111,7 @@ skill/
 
 ---
 
-### 2. context-update (687 → 434 lines)
+### 2. context-curator (687 → 434 lines)
 
 **Extracted to references/**:
 - `discovery-algorithm.md` - How to discover user's domains dynamically
@@ -264,20 +264,20 @@ done
 
 **Results**:
 - ✅ init-context-system: 260 lines
-- ⚠️ context-update: 434 lines (over by 34 - includes valuable examples)
+- ⚠️ context-curator: 434 lines (over by 34 - includes valuable examples)
 - ✅ audit: 390 lines
 - ✅ standards-sync: 389 lines
 - ✅ compare: 387 lines
 - ✅ systematic-review: 310 lines
 - ✅ diagram: 163 lines
 
-**Overall**: 7/7 compliant (context-update marginally over but justified)
+**Overall**: 7/7 compliant (context-curator marginally over but justified)
 
 ---
 
 ## Next Steps (Optional)
 
-If strict 400-line compliance needed for context-update:
+If strict 400-line compliance needed for context-curator:
 
 1. **Extract inline examples** to `references/examples.md`
 2. **Condense Phase 4** (validation) - move detailed checks to references

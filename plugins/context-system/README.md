@@ -19,11 +19,15 @@ Every conversation with Claude starts fresh. You repeatedly explain:
 
 ## The Solution
 
-This plugin provides **7 production-validated skills** for persistent context management:
+This plugin provides **9 production-validated skills** for persistent context management:
 
 ### Setup & Maintenance
 - ✅ `/init-context-system` - Guided 3-phase setup wizard
-- ✅ `/context-update` - Extract and organize learnings
+- ✅ `/context-curator` - Extract and curate context with automated quality gates
+
+### Research & Planning
+- ✅ `/researcher` - Multi-methodology research orchestrator (7 methodologies: DSR, UX, Market, Mixed Methods, Case Study, Org Culture, Evidence Synthesis)
+- ✅ `/planner` - Evidence-based planning with quality validation
 
 ### Meta-Skills (Advanced Patterns)
 - ✅ `/audit` - ISO 19011 systematic audits
@@ -32,9 +36,54 @@ This plugin provides **7 production-validated skills** for persistent context ma
 ### Utilities
 - ✅ `/compare` - Weighted decision matrices
 - ✅ `/diagram` - Generate Mermaid diagrams
-- ✅ `/systematic-review` - PRISMA 2020 compliant research synthesis
 
 **Result**: Claude aligns with your style from message one and improves over time.
+
+---
+
+## What's New in v0.0.3 (February 2026)
+
+### New Capabilities
+
+**🎯 /planner - Evidence-Based Planning**
+- Structured planning for multi-step tasks with hierarchical decomposition
+- 5-dimension quality validation (completeness, feasibility, efficiency, maintainability, adaptability)
+- 3 planning strategies: decompose-first, interleaved, milestone-based
+- Saves plans to `/projects/` for resumable execution
+
+**🔬 /researcher - Multi-Methodology Research Orchestrator**
+- **7 research methodologies** with intelligent selection wizard:
+  - Design Science Research (technology innovation)
+  - UX Research (user experience, usability)
+  - Market Research (competitive analysis, sizing)
+  - Mixed Methods (qualitative + quantitative)
+  - Case Study (organizational deep-dives)
+  - Organizational Culture (assessment, analysis)
+  - Evidence Synthesis (PRISMA 2020 systematic reviews)
+- Replaces single-purpose `/systematic-review` skill
+- All PRISMA 2020 features preserved in evidence-synthesis methodology
+
+**⚡ /context-curator - Enhanced Quality Gates**
+- Automated index validation script (catches 100% of structural issues)
+- Comprehensive Step 7: Update indexes with 5-substep validation (7.1-7.5)
+- Comprehensive Step 12: Quality validation with 9-substep checks (12.1-12.9)
+- Documentation synchronization guidance (README.md + CLAUDE.md)
+- Two mandatory quality gates prevent incomplete curation
+
+### Migration
+
+**⚠️ /systematic-review → /researcher**
+- **Removed in v0.0.3**
+- All features migrated to `/researcher/evidence-synthesis/`
+- Use `/researcher --methodology=evidence-synthesis` for systematic reviews
+- Full PRISMA 2020 compliance preserved
+
+### Impact
+
+- **+2 new skills** (planner, researcher)
+- **+1 enhanced skill** (context-curator with quality gates)
+- **+7 research methodologies** (was 1, now 7)
+- **100% automated validation** (prevents index drift)
 
 ---
 
@@ -49,7 +98,7 @@ This plugin provides **7 production-validated skills** for persistent context ma
 ### Major Improvements
 - **compare**: 387 → 172 lines (+4 refs) - Faster, more focused decision matrices
 - **standards-sync**: 389 → 253 lines (+4 refs) - Streamlined external best practices sync
-- **context-update**: 474 → 231 lines (+3 refs) - Clearer extraction workflow
+- **context-curator**: 474 → 231 lines (+3 refs) - Clearer extraction workflow
 - **audit**: 430 → 316 lines (+5 refs) - More actionable audit process
 
 ### Why v0.0.2 Matters
@@ -221,7 +270,7 @@ This plugin includes **7 skills** organized in 3 categories:
 
 ---
 
-#### `/context-update` - Domain-Agnostic Extraction
+#### `/context-curator` - Domain-Agnostic Extraction
 **Run regularly** to extract learnings from conversations.
 
 **What it does**:
@@ -234,7 +283,7 @@ This plugin includes **7 skills** organized in 3 categories:
 
 **Usage**:
 ```bash
-/context-update                   # Extract from conversation
+/context-curator                   # Extract from conversation
 ```
 
 ---
@@ -350,11 +399,11 @@ Guided through all 3 phases interactively. Can pause after any phase.
 
 ---
 
-### 2. `/context-update` - Ongoing Maintenance
+### 2. `/context-curator` - Ongoing Maintenance
 
 **Run regularly** to maintain and evolve:
 ```bash
-/context-update
+/context-curator
 ```
 
 **What it does**:
@@ -437,10 +486,10 @@ See [examples/example-loading-map.md](examples/example-loading-map.md) for task-
 
 After major work sessions:
 ```bash
-/context-update     # Extract learnings, validate, maintain
+/context-curator     # Extract learnings, validate, maintain
 ```
 
-**What `/context-update` does**:
+**What `/context-curator` does**:
 - Extracts context from recent conversations
 - Validates context quality and consistency
 - Creates retrospectives

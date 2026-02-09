@@ -868,7 +868,7 @@ Check for conflicts with existing context before adding new.
 
 Context that's outdated or no longer applies.
 
-**Fix**: Run `/context-update` validation monthly, archive old content
+**Fix**: Run `/context-curator` validation monthly, archive old content
 
 ### ❌ Hypothetical Context
 
@@ -925,7 +925,7 @@ Run these checks regularly (monthly):
 - [ ] No stale context (>6 months without update)
 - [ ] Archived old decisions/retrospectives
 
-**Use `/context-update` with validation option to automate checks**
+**Use `/context-curator` with validation option to automate checks**
 
 ## Related Context
 

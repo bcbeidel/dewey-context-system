@@ -180,6 +180,6 @@ Instead of one massive `python-standards.md`
 
 ## Related Skills
 
-- `/context-update` - Maintain and evolve context
+- `/context-curator` - Maintain and evolve context
 - `/audit` - Validate context quality
 - `/standards-sync` - Sync with external authorities

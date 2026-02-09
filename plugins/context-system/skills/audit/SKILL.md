@@ -181,7 +181,7 @@ Different artifact types have specialized quality criteria and audit processes.
 
 **Works with**:
 - `/standards-sync` - Sync updates audit criteria (quality, compliance, security)
-- `/context-update` - Audit findings feed into context updates
+- `/context-curator` - Audit findings feed into context updates
 - Domain-specific refactoring workflows - Fix violations
 - Security workflows - Security audits integrate with OWASP practices
 

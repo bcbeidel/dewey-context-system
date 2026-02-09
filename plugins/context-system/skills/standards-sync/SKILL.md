@@ -144,7 +144,7 @@ Monitor External Sources → Evaluate Relevance → Update Internal Standards �
 
 **Works with**:
 - `/audit` - Audit identifies gaps, sync addresses them
-- `/context-update` - Extract patterns, feed into sync
+- `/context-curator` - Extract patterns, feed into sync
 - Domain-specific skills - Implement updated standards
 
 **Complements**:

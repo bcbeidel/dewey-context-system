@@ -31,7 +31,7 @@ created: [YYYY-MM-DD]
 ## Maintenance Schedule
 
 **After major work**: Extract decisions and patterns
-  - Run `/context-update`
+  - Run `/context-curator`
 
 **Monthly**: Validate quality
   - Check wikilinks resolve
@@ -257,7 +257,7 @@ Evolution framework established:
 📄 Decision template available
 
 **Long-term sustainability**:
-- After major work: `/context-update`
+- After major work: `/context-curator`
 - Monthly: Validate quality
 - Quarterly: `/standards-sync` (sync with Anthropic, OWASP, PEP 8)
 
@@ -276,7 +276,7 @@ Evolution framework established:
 
 **Next steps**:
 1. Start using the system naturally
-2. Run `/context-update` after significant work to extract patterns
+2. Run `/context-curator` after significant work to extract patterns
 3. Your context will grow with your actual work
 
 Questions?

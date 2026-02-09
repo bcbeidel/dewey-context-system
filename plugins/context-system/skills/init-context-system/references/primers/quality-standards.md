@@ -147,7 +147,7 @@ Check for conflicts with existing context before adding new.
 
 Context that's outdated or no longer applies.
 
-**Fix**: Run `/context-update` validation monthly, archive old content
+**Fix**: Run `/context-curator` validation monthly, archive old content
 
 ### ❌ Hypothetical Context
 

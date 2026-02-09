@@ -15,7 +15,7 @@ Welcome! This guide helps you choose the right path for building your context ma
 
 **Setup & Maintenance**:
 - `/init-context-system` - Discovery-driven setup wizard
-- `/context-update` - Domain-agnostic extraction
+- `/context-curator` - Domain-agnostic extraction
 
 **Meta-Skills**:
 - `/audit` - ISO 19011 systematic audits
@@ -66,7 +66,7 @@ Once setup is complete, you have access to:
 
 **Maintenance**:
 ```bash
-/context-update    # Extract learnings from conversations
+/context-curator    # Extract learnings from conversations
 ```
 
 **Quality**:
@@ -86,7 +86,7 @@ Once setup is complete, you have access to:
 
 The context system **improves over time**:
 
-1. **Weekly**: Run `/context-update` after significant work
+1. **Weekly**: Run `/context-curator` after significant work
 2. **Monthly**: Quick audit check (spot check quality)
 3. **Quarterly**: Run `/audit` for comprehensive review
 4. **Quarterly**: Run `/standards-sync` to stay current
@@ -134,7 +134,7 @@ Follow the plugin installation above:
 2. Install plugin via Discover tab
 3. Run setup wizard: `/init-context-system`
 4. Follow the 3-phase guided setup
-5. Start using `/context-update` regularly
+5. Start using `/context-curator` regularly
 
 ---
 
@@ -188,7 +188,7 @@ Claude loads both, with project-specific overriding global.
 
 1. Install plugin: `/plugin marketplace add bcbeidel/context-system`
 2. Run setup: `/init-context-system`
-3. Start iterating with `/context-update`
+3. Start iterating with `/context-curator`
 4. Run `/audit` quarterly for quality validation
 5. Run `/standards-sync` quarterly to stay current
 
