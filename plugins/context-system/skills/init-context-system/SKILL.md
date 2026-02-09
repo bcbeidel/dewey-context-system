@@ -229,13 +229,53 @@ All domains ground context in external authorities:
 
 ---
 
+## Troubleshooting
+
+**Symptom**: `context/` directory already exists
+- **Cause**: Previous context system or manual creation
+- **Fix**: See [Troubleshooting Guide](./references/troubleshooting.md#existing-context-directory) for migration options or use `--force` flag to merge with existing structure
+
+**Symptom**: Discovery questions don't match my work
+- **Cause**: Skill assumes specific workflows (development, research, knowledge management)
+- **Fix**: Answer "Other" and describe your domain manually, or skip Phase 1 and manually create domains based on [organizing principles](./references/primers/organizing-principles.md)
+
+**Symptom**: Phase 2 takes too long (>30 minutes)
+- **Cause**: Creating all domain files from scratch
+- **Fix**: Create minimal _index.md files only in Phase 2, use `/context-update` to populate over time as you work
+
+**Symptom**: Not sure which domains to create
+- **Cause**: Unfamiliar workflow or multi-disciplinary work
+- **Fix**: Start with core 3 domains only (communication/, decisions/, context-system/), add user domains incrementally as patterns emerge
+
+**Symptom**: _index.md navigation unclear
+- **Cause**: "When to Use" guidance too vague
+- **Fix**: Review examples in [Phase 2 Guide](./references/phases/phase-2-populate.md), use task-based language ("When developing Python code", not "Python-related tasks")
+
+---
+
+## Known Limitations
+
+**Cannot handle**:
+- **Automatic migration** - Cannot automatically migrate existing context systems (Notion, Confluence, other structures) to concept-based format
+- **Non-markdown workflows** - Optimized for markdown-based systems (Obsidian, VS Code, plain text); no native support for Notion, Confluence, or database-driven context
+- **Non-English content** - Templates and guidance assume English language context
+- **Dynamic domain discovery** - Cannot infer domains from existing codebase automatically (requires manual discovery in Phase 1)
+
+**Workarounds**:
+- **For migrations**: Manually map existing structure to concept-based domains, use `/context-update` to extract content incrementally
+- **For non-markdown**: Export content to markdown first, or adapt templates to your system's format
+- **For non-English**: Translate templates and primer content to your language
+- **For automatic discovery**: Review codebase manually before Phase 1, list key technologies/processes as input to discovery questions
+
+---
+
 ## Related Skills
 
 After setup, use these skills to maintain and evolve your context:
 
 - **`/context-update`** - Extract learnings from conversations (run regularly)
 - **`/audit`** - Validate context quality (run quarterly)
-- **`/standards-sync`** - Sync external best practices (run quarterly)
+- **`/standards-sync`** - Sync external best practices (quarterly)
 - **`/compare`** - Create decision matrices for trade-offs
 - **`/diagram`** - Generate Mermaid diagrams for documentation
 

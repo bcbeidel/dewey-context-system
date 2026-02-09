@@ -16,11 +16,23 @@ allowed-tools: Read, Write, Edit, Glob, Grep, WebFetch, WebSearch, AskUserQuesti
 
 ## Quick Start
 
-Choose your entry point:
-- **Check which domains need sync** → See [[context-system/standards-sync-registry]] (centralized registry)
-- **Run quarterly sync** → See [Phase 2: Execute Sync](#phase-2-execute-sync)
-- **Set up new domain** → See [Phase 1: Setup](#phase-1-setup)
-- **Need examples** → See implementations: [[skills/sync-implementation]] | [[patterns/future-implementations]]
+**What do you need help with?**
+
+1. **Understand sync process** → Read overview below
+
+2. **Set up sync for new domain** (first-time configuration)
+   - See [[phase-1-setup.md]] for 7-step setup (2-4 hours)
+
+3. **Run quarterly sync** (existing domain)
+   - See [[phase-2-execute-sync.md]] for 9-step workflow (~5 hours)
+
+4. **Apply standards updates** (migration)
+   - See [[phase-3-migration.md]] for 3-step migration process
+
+5. **Domain-specific guidance** (skills, security, Python, context)
+   - See [[domain-workflows.md]] for configured domains
+
+6. **Check sync registry** → See [[context-system/standards-sync-registry]]
 
 ---
 
@@ -33,314 +45,98 @@ This skill follows the [[patterns/standards-sync-pattern|Standards Sync Pattern]
 Monitor External Sources → Evaluate Relevance → Update Internal Standards → Migrate Implementations → Measure Results
 ```
 
-**Configured domains** (see [[context-system/standards-sync-registry]] for complete list):
-- ✅ Skills development - [[skills/standards-sync]] (Q2 2026 sync: May 7)
-- ✅ Security standards - [[security/standards-sync]] (Q2 2026 sync: May 8)
-- ⏳ Python standards - Planned
-- ⏳ Research methods - Planned
-- ⏳ Quality auditing - Planned
-- Any domain with external authorities
+**Active domains** (see [[domain-workflows.md]] for complete list):
+- ✅ Skills development - [[skills/standards-sync]] (Q2 2026: May 7)
+- ✅ Security standards - [[security/standards-sync]] (Q2 2026: May 8)
+- ⏳ Python, Context, Research - Planned
+
+**Registry**: [[context-system/standards-sync-registry]]
 
 ---
 
 ## Phase 1: Setup (New Domain)
 
-**For setting up sync for a new domain:**
+**For setting up sync infrastructure for a new domain (first-time configuration).**
 
-### Step 1: Identify Domain
+### Process Overview
 
-Ask user what domain needs sync:
-- Skills, Security, Context, Documentation, or Custom
+**7-Step Setup**:
+1. Identify domain (skills, security, Python, context, custom)
+2. Identify external sources (URLs, authority, frequency)
+3. Map internal standards (files, versions, affected artifacts)
+4. Create sync process documentation (`context/workflows/processes/[domain]-sync.md`)
+5. Create sync log (`context/workflows/standards/[domain]-sync-log.md`)
+6. Register in sync registry
+7. Schedule first sync
 
-### Step 2: Identify External Sources
+**Time**: 2-4 hours
 
-**For user's chosen domain, define**:
-- Source name and URL
-- Authority level (official vs community)
-- Check frequency (quarterly, monthly, annually)
-- What to monitor (breaking changes, new patterns, deprecations)
+**Output**: Infrastructure ready for quarterly sync cycles
 
-**Read pattern for guidance**: [[context/workflows/patterns/standards-sync-pattern#component-1-external-sources-configuration]]
-
-### Step 3: Map Internal Standards
-
-**Identify internal documentation**:
-```bash
-# Find existing standards for domain
-grep -r "standard" context/project/*.md
-grep -r "best-practices" context/**/*.md
-
-# Find relevant process docs
-ls context/workflows/processes/*-[domain]-*.md
-```
-
-**Document**:
-- Standard name and path
-- Current version
-- Last updated date
-- What implementations/artifacts affected
-
-### Step 4: Create Sync Process Documentation
-
-**Create**: `context/workflows/processes/[domain]-standards-sync.md`
-
-**Structure**:
-```markdown
----
-title: [Domain] Standards Synchronization
-category: workflow
-type: process
----
-
-# [Domain] Standards Synchronization
-
-**Pattern**: [[patterns/standards-sync-pattern]]
-
-## External Sources
-[List with URLs, authority, frequency]
-
-## Internal Standards
-[List with paths, versions, affected artifacts]
-
-## Sync Cadence
-[Quarterly/Monthly/Annually]
-
-## Evaluation Criteria
-[Domain-specific decision framework]
-
-## Related
-- Pattern: [[patterns/standards-sync-pattern]]
-- Implementation: [[context/workflows/patterns/implementations/[domain]-sync-implementation]]
-```
-
-### Step 5: Create Sync Log
-
-**Create**: `context/workflows/standards/[domain]-standards-sync-log.md`
-
-**Use template** from [[skills/standards-sync-log]] as example.
-
-### Step 6: Schedule First Sync
-
-Add to calendar with appropriate cadence.
+**For detailed setup instructions**: See [[phase-1-setup.md]]
 
 ---
 
 ## Phase 2: Execute Sync (Quarterly/Recurring)
 
-**For running a sync cycle:**
+**For running a sync cycle on established domains.**
 
-### Step 1: Ask User Which Domain
+### Process Overview
 
-If not specified, ask which domain to sync:
-- Skills (implemented)
-- Security (planned)
-- Context (planned)
-- Documentation (planned)
-- Custom
+**9-Step Sync Workflow**:
+1. Ask user which domain
+2. Load domain configuration
+3. Monitor external sources (WebFetch + WebSearch)
+4. Review internal learnings (retrospectives)
+5. Evaluate candidate updates (evaluation matrix)
+6. Update standards (edit files, version increment)
+7. Plan migration (assess impact, prioritize)
+8. Document in sync log
+9. Present summary to user
 
-### Step 2: Load Domain Configuration
+**Time**: ~5 hours per quarter per domain
 
-**Read domain-specific documentation**:
-```bash
-# Load sync process
-Read: context/workflows/processes/[domain]-standards-sync.md
+**Outputs**:
+- Updated standards (with version increments)
+- Migration plan (if artifacts affected)
+- Sync log entry
 
-# Load sync log (track changes)
-Read: context/workflows/standards/[domain]-standards-sync-log.md
-
-# Load current standards (what we're syncing)
-Read: context/project/[domain]-*.md
-```
-
-### Step 3: Monitor External Sources
-
-**For each external source**:
-
-1. **Fetch latest documentation**:
-   ```bash
-   WebFetch: [source-url]
-   Prompt: "Summarize any changes since [last-check-date]. Focus on: [domain-focus-areas]"
-   ```
-
-2. **Check release notes** (if applicable):
-   ```bash
-   WebSearch: "[project-name] releases [current-year]"
-   ```
-
-3. **Document findings**:
-   - What changed?
-   - Effective date?
-   - Breaking change?
-   - Relevance to our domain?
-
-### Step 4: Review Internal Learnings
-
-**Read retrospectives since last sync**:
-```bash
-Glob: context/workflows/retrospectives/*.md
-Filter: created >= [last-sync-date]
-```
-
-**Extract patterns**:
-- What worked well → Codify
-- What went poorly → Fix standards
-- New patterns emerged → Candidate for standardization
-- Common violations → Standard unclear
-
-### Step 5: Evaluate Candidate Updates
-
-**For each potential update**:
-
-Use evaluation matrix from [[context/workflows/patterns/standards-sync-pattern#component-3-evaluation-criteria]]:
-
-| Criteria | High | Medium | Low | Reject |
-|----------|------|--------|-----|--------|
-| Relevance | ✓ | ✓ | | |
-| Compatibility | ✓ | | ✓ | |
-| Value | ✓ | ✓ | | |
-| Cost | ✓ | | ✓ | |
-| Timing | ✓ | | ✓ | |
-
-**Threshold**: 3+ High → Immediate action
-
-### Step 6: Update Standards
-
-**For approved updates**:
-
-1. **Edit relevant standard file**:
-   ```bash
-   Edit: context/project/[standard-name].md
-   - Add/update content
-   - Increment version (major.minor.patch)
-   - Document in version history
-   ```
-
-2. **Cross-reference**:
-   - Link related standards
-   - Update indexes (context/_index.md)
-   - Update CLAUDE.md if vault-level
-
-3. **Document rationale**:
-   - What changed and why
-   - External source or internal learning
-   - Impact on implementations
-
-### Step 7: Plan Migration
-
-**Assess impact**:
-```bash
-# Count affected artifacts
-find [artifact-location] -name "[pattern]" | wc -l
-
-# Identify violations (if audit exists)
-./scripts/[domain]-audit.sh
-```
-
-**Create migration plan**:
-- List affected artifacts
-- Prioritize (critical → nice-to-have)
-- Estimate effort
-- Set target completion
-- Assign ownership
-
-### Step 8: Document in Sync Log
-
-**Update sync log**:
-```markdown
-## Sync: YYYY-MM-DD (Q[N] [YEAR])
-
-### External Changes Reviewed
-- Source 1: [summary]
-- Source 2: [summary]
-
-### Internal Learnings Reviewed
-- Retrospectives: [count] ([date range])
-- Key patterns: [list]
-
-### Standards Updates Made
-- Updated: [standard-name] v[X.Y.Z]
-  - What: [description]
-  - Why: [rationale]
-  - Impact: [affected artifacts]
-  - Migration: [Yes/No - plan]
-
-### Action Items
-- [ ] Migrate [count] artifacts
-- [ ] Schedule follow-up
-
-### Next Sync
-Date: [3 months from now]
-```
-
-### Step 9: Present Summary to User
-
-**Report**:
-- External changes found
-- Internal patterns identified
-- Standards updated (with versions)
-- Migration plan (if needed)
-- Next sync date
+**For detailed step-by-step workflow**: See [[phase-2-execute-sync.md]]
 
 ---
 
 ## Phase 3: Execute Migration (As Needed)
 
-**If standards changes require artifact updates:**
+**For applying standards updates to affected artifacts.**
 
-### Step 1: Prioritize Migrations
+### Process Overview
 
-Use priority matrix:
-- Critical/urgent first
-- High-impact artifacts
-- Quick wins (low effort, clear benefit)
+**3-Step Migration**:
+1. Prioritize migrations (critical → high → medium)
+2. Execute updates (batch similar changes)
+3. Validate compliance (run audit if exists)
 
-### Step 2: Execute Updates
+**Patterns**:
+- **Immediate**: Security fixes, breaking changes
+- **Phased**: Large scope (week-by-week)
+- **Opportunistic**: Low priority (fix when touching file)
 
-**For each artifact**:
-1. Read current state
-2. Apply standard changes
-3. Test/validate
-4. Mark complete in migration plan
-
-### Step 3: Validate Compliance
-
-**Run audit** (if exists):
-```bash
-./scripts/[domain]-audit.sh
-```
-
-**Verify**:
-- Compliance improved?
-- No regressions?
-- Migration complete?
+**For detailed migration guidance**: See [[phase-3-migration.md]]
 
 ---
 
 ## Domain-Specific Workflows
 
-### For Claude Code Skills
+**Active**:
+- **Skills**: [[skills/standards-sync]] (quarterly, 3 sources, next: 2026-05-07)
 
-**Use**: [[skills/standards-sync]]
+**Planned**:
+- **Security**: Quarterly (OWASP, Python Security, OAuth 2.1, CVE)
+- **Python**: Quarterly (PEPs, best practices, type checking)
+- **Context**: Annually (PKM, note-taking research)
+- **Research**: Annually (PRISMA, systematic review methods)
 
-**External sources**: Anthropic docs, Claude Code GitHub, community
-**Cadence**: Quarterly
-**Implementation**: [[skills/sync-implementation]]
-
-### For Security Practices (Future)
-
-**External sources**: OWASP, NIST, Python Security, CVE databases
-**Cadence**: Quarterly (security evolves quickly)
-**Implementation**: [[patterns/future-implementations#2-security-best-practices-sync]]
-
-### For Context System (Future)
-
-**External sources**: Teresa Torres context patterns, PKM best practices
-**Cadence**: Annually (context principles stable)
-**Implementation**: [[patterns/future-implementations#1-context-quality-audit]]
-
-### For Custom Domain
-
-Follow Phase 1 (Setup) to define sources, standards, and process.
+**For domain details**: See [[domain-workflows.md]]
 
 ---
 
@@ -348,26 +144,11 @@ Follow Phase 1 (Setup) to define sources, standards, and process.
 
 **Works with**:
 - `/audit` - Audit identifies gaps, sync addresses them
-- `/context-update` - Extract patterns, feed into sync process
+- `/context-update` - Extract patterns, feed into sync
 - Domain-specific skills - Implement updated standards
 
 **Complements**:
 - [[patterns/audit-pattern]] - Audits validate sync effectiveness
-
----
-
-## Related Documentation
-
-**Pattern**:
-- [[patterns/standards-sync-pattern]] - Generic pattern this implements
-
-**Active Implementations**:
-- [[skills/sync-implementation]] - Skills example
-- [[patterns/future-implementations]] - Future domains
-
-**Domain-Specific Processes**:
-- [[skills/standards-sync]] - Skills sync process
-- [[skills/standards-sync-log]] - Skills sync log
 
 ---
 
@@ -385,5 +166,88 @@ Follow Phase 1 (Setup) to define sources, standards, and process.
 
 **Next sync dates**:
 - Skills: 2026-05-07 (Q2)
-- Security: TBD (set up first)
-- Context: TBD (set up first)
+- Security: TBD (setup first)
+
+---
+
+## Troubleshooting
+
+### Symptom: External source unavailable or changed URL
+
+**Cause**: Documentation moved, site redesign, or service down
+
+**Fix**:
+- Search for new URL (WebSearch: "[source name] documentation 2026")
+- Update sync process file with new URL
+- Document change in sync log
+
+### Symptom: Unsure if external update is relevant
+
+**Cause**: Update applies to different use case or context
+
+**Fix**:
+- Use evaluation matrix from [[phase-2-execute-sync.md#step-5-evaluate-candidate-updates]]
+- Focus on relevance and compatibility criteria
+- When in doubt, defer to next sync (quarterly check prevents stale)
+
+### Symptom: Migration plan too large to execute
+
+**Cause**: Many affected artifacts or high-effort changes
+
+**Fix**:
+- Break into phases (critical → high → medium)
+- Use opportunistic pattern (fix when touching file)
+- Consider if standard needs adjustment (too aggressive?)
+
+### Symptom: Internal standards and external sources diverging
+
+**Cause**: Not syncing regularly, or intentional local adaptation
+
+**Fix**:
+- If intentional: Document rationale in standard file
+- If missed syncs: Catch up with backlog review
+- If fundamental mismatch: Re-evaluate external source choice
+
+---
+
+## Known Limitations
+
+**Cannot sync**:
+- Sources requiring authentication (paywalls, private repos)
+- Sources without version history (can't detect changes)
+- Rapidly changing sources (daily/weekly updates - overhead too high)
+
+**Workarounds**:
+- **Paywalled sources**: Manual review by authorized user, summarize findings
+- **No version history**: Use announcement channels (mailing lists, blogs)
+- **Rapid changes**: Curated summaries (monthly digests vs daily tracking)
+
+**Process limitations**:
+- Manual evaluation required (can't fully automate adoption decisions)
+- Quarterly cadence may miss urgent changes (rely on ad-hoc triggers)
+- Migration effort can be significant (10-40 hours for large updates)
+
+**When sync may not be worth it**:
+- Very stable domain (no external updates for years)
+- No clear authoritative sources (fragmented best practices)
+- Few affected artifacts (<5 implementations)
+
+---
+
+## Related Documentation
+
+**Pattern**:
+- [[patterns/standards-sync-pattern]] - Generic pattern this implements
+
+**Reference Files (This Skill)**:
+- [[phase-1-setup.md]] - 7-step setup for new domains
+- [[phase-2-execute-sync.md]] - 9-step sync execution workflow
+- [[phase-3-migration.md]] - 3-step migration process
+- [[domain-workflows.md]] - Domain-specific configurations
+
+**Active Implementations**:
+- [[skills/sync-implementation]] - Skills sync example
+- [[patterns/future-implementations]] - Future domains (security, Python, context)
+
+**Registry**:
+- [[context-system/standards-sync-registry]] - Central tracking of all domains

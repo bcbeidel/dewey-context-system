@@ -37,6 +37,60 @@ Pre-built skills to bootstrap your context system:
 
 ---
 
+## What's New in v0.0.2
+
+**Release Date**: February 2026
+
+### Quality Enhancements ✨
+- ✅ **Troubleshooting sections** added to all 7 skills (100% coverage)
+- ✅ **Known limitations** documented for every skill (realistic expectations)
+- ✅ **Formatting standardization** (wikilinks without bold wrapping)
+- ✅ **Quick Start sections** for all complex workflows
+
+### Progressive Disclosure Refinement 📐
+- ✅ **Optimal reference file counts** achieved (3-8 per skill)
+- ✅ **compare** extracted to 172 lines + 4 references (was 387 lines, 0 refs)
+- ✅ **standards-sync** extracted to 253 lines + 4 references (was 389 lines, 0 refs)
+- ✅ **context-update** slimmed to 231 lines + 8 references (was 474 lines, 5 refs)
+- ✅ **audit** streamlined to 316 lines + 7 references (was 430 lines, 2 refs)
+- ✅ All skills now 200-350 line SKILL.md target (Approach B - Moderate Progressive Disclosure)
+
+### Best Practices Integration 🎯
+- ✅ Applied comprehensive Q1 2026 skills audit findings
+- ✅ Integrated [Anthropic](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices), [LangChain](https://www.langchain.com/state-of-agent-engineering), and production AI research
+- ✅ Followed weighted decision matrix (Approach B: Moderate Progressive Disclosure wins 8.6/10)
+- ✅ 100% compliance with external best practices
+
+---
+
+## Design Principles
+
+### Progressive Disclosure
+Skills load **overview first, details on-demand**. You see what you need when you need it - not everything at once.
+
+- Main SKILL.md: Quick Start + workflow summaries (200-350 lines)
+- Reference files: Detailed guides loaded only when relevant (3-8 per skill)
+- **Benefit**: Faster navigation, less cognitive load, efficient context usage
+
+### Production-Ready Quality
+Every skill includes:
+- **Troubleshooting sections** - What to do when things fail
+- **Known limitations** - What the skill can't do (and workarounds)
+- **Quick Start guides** - Get started without reading everything
+- **Real examples** - See patterns in action
+
+### Evidence-Based Standards
+Built on best practices from leading sources:
+- **[Anthropic Skill Best Practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)** - Progressive disclosure, context efficiency
+- **[LangChain State of AI Engineering 2026](https://www.langchain.com/state-of-agent-engineering)** - Production patterns, observability
+- **[Production AI Systems Research](https://medium.com/generative-ai-revolution-ai-native-transformation/the-first-production-ai-agents-study-reveals-why-agentic-engineering-becomes-mandatory-in-2026-ec5e00514e5e)** - 306 practitioners, 20 case studies
+- **[ISO 19011:2018](https://www.iso.org/standard/70017.html)** - Audit framework (systematic quality assessment)
+- **[PRISMA 2020](https://www.prisma-statement.org/)** - Research synthesis standards
+
+Not theoretical - these patterns work in production.
+
+---
+
 ## Key Patterns Demonstrated
 
 ### 1. **Concept-Based Organization**

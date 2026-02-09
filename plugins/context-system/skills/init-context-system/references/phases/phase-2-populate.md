@@ -1044,28 +1044,28 @@ Context organized by **concept (topic)**, following [Anthropic's best practices]
 ## All Domains
 
 ### Core (Everyone)
-- **[[context/communication/_index|Communication]]** - How Claude should interact
-- **[[context/decisions/_index|Decisions]]** - Architectural decisions with rationale
-- **[[context/context-system/_index|Context System]]** - Meta documentation
+- [[context/communication/_index|Communication]] - How Claude should interact
+- [[context/decisions/_index|Decisions]] - Architectural decisions with rationale
+- [[context/context-system/_index|Context System]] - Meta documentation
 
 [Add user's specific domains based on Phase 1]
 
 [If Python]:
 ### Development
-- **[[context/python/_index|Python]]** - PEP 8 conventions, type hints
+- [[context/python/_index|Python]] - PEP 8 conventions, type hints
 
 [If Security]:
-- **[[context/security/_index|Security]]** - OWASP Top 10, OAuth 2.1
+- [[context/security/_index|Security]] - OWASP Top 10, OAuth 2.1
 
 [If Skills]:
-- **[[context/skills/_index|Skills]]** - Claude Code skill development
+- [[context/skills/_index|Skills]] - Claude Code skill development
 
 [If Research]:
 ### Research & Learning
-- **[[context/research/_index|Research]]** - Research methods and synthesis
+- [[context/research/_index|Research]] - Research methods and synthesis
 
 [If Learning]:
-- **[[context/learning/_index|Learning]]** - Learning preferences and frameworks
+- [[context/learning/_index|Learning]] - Learning preferences and frameworks
 
 ---
 

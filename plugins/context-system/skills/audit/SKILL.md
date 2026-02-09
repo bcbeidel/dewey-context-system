@@ -18,18 +18,24 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash, AskUserQuestion
 
 ## Quick Start
 
-**What type of audit do you need?**
+**What do you need help with?**
 
-1. **Quality audit** → Assess usability, maintainability, clarity (ISO 25010 dimensions)
-2. **Compliance audit** → Check standards adherence, required fields, format validation
-3. **Security audit** → Vulnerability assessment, OWASP compliance, dependency scanning
-4. **Performance audit** → Size limits, efficiency, resource usage
-5. **Comprehensive audit** → All dimensions (recommended quarterly)
+1. **Understand audit types** (quality, compliance, security, performance, comprehensive)
+   - See [[audit-types.md]] for detailed comparison and selection guide
 
-**Then:**
-- **Run audit** → See [Phase 2: Execute Audit](#phase-2-execute-audit)
-- **Set up new artifact type** → See [Phase 1: Setup](#phase-1-setup)
-- **Need examples** → See [[#audit-types]] or implementations: [[context/workflows/patterns/implementations/skill-audit-implementation]]
+2. **Set up audits for new artifact type** (first-time setup)
+   - See [[audit-setup-guide.md]] for 8-step setup process (5-8 hours)
+
+3. **Run audit on existing artifact type** (quarterly/recurring)
+   - See [[phase-2-execute-audit.md]] for 8-step execution workflow (3-5 hours)
+
+4. **Fix violations from audit** (remediation)
+   - See [[phase-3-remediation.md]] for remediation process
+
+5. **Domain-specific guidance** (skills, context, docs, templates)
+   - See [[domain-workflows.md]] for artifact-specific workflows
+
+6. **Ready to audit** → Continue with overview below
 
 ---
 
@@ -50,43 +56,24 @@ Risk Assessment → Automate Checks → Manual Assessment → Document Findings 
 - **Comprehensive audits** - All dimensions combined
 
 **Supports multiple artifact types**:
-- Claude Code Skills (active - see [[context/workflows/patterns/implementations/skill-audit-implementation]])
+- Claude Code Skills (active - see [[domain-workflows.md#claude-code-skills]])
 - Context files (planned)
 - Documentation (planned)
 - Templates (planned)
 - Code/security (planned)
 - Any artifact that accumulates or evolves
 
----
-
-## Audit Types
-
-The audit skill supports five audit types based on ISO 19011:2018 and ISO 25010:2023:
-
-| Type | Purpose | Standards | When to Use |
-|------|---------|-----------|-------------|
-| **Quality** | Assess 8 ISO 25010 dimensions (usability, maintainability, etc.) | ISO 25010 | Quarterly, after refactoring |
-| **Compliance** | Verify standards adherence, format validation | Internal standards | Before releases, quarterly |
-| **Security** | Identify vulnerabilities, OWASP compliance | OWASP Top 10:2025 | After deps update, quarterly |
-| **Performance** | Assess efficiency, resource usage | Internal thresholds | When performance degrades |
-| **Comprehensive** | All dimensions combined | All above | Quarterly (recommended) |
-
-**For detailed audit type documentation**: See [[audit-types]]
-
-**Quick selection guide**:
-- Quality issues? → Quality Audit (ISO 25010 eight dimensions)
-- Standards not followed? → Compliance Audit
-- Security concerns? → Security Audit (OWASP, CVE scanning)
-- Performance degraded? → Performance Audit
-- Regular quarterly review? → Comprehensive Audit (all dimensions)
+**For detailed audit type comparison**: See [[audit-types.md]]
 
 ---
 
 ## Phase 1: Setup (New Artifact Type)
 
-**For setting up audit infrastructure for a new artifact type (first-time setup):**
+**For setting up audit infrastructure for a new artifact type (first-time setup).**
 
-**8-Step Setup Process**:
+### Process Overview
+
+**8-Step Setup**:
 1. Identify artifact type (skills, context, docs, templates, custom)
 2. Define artifact scope (location, exclusions, count)
 3. Define quality criteria (quantitative + qualitative)
@@ -97,245 +84,96 @@ The audit skill supports five audit types based on ISO 19011:2018 and ISO 25010:
 8. Schedule recurring audits (quarterly/monthly/as-needed)
 
 **Time investment**: 5-8 hours for first-time setup
-**Payoff**: Systematic quality tracking, trend analysis, automated enforcement
 
-**For detailed setup instructions**: See [[audit-setup-guide]]
+**Payoff**: Systematic quality tracking, trend analysis, automated enforcement
 
 **Already implemented**:
 - Skills audit (`.claude/scripts/skill-audit.sh` + checklist)
-- See [[context/workflows/patterns/implementations/skill-audit-implementation]]
+- See [[domain-workflows.md#claude-code-skills]]
+
+**For detailed setup instructions**: See [[audit-setup-guide.md]]
 
 ---
 
 ## Phase 2: Execute Audit (Quarterly/Recurring)
 
-**For running an audit cycle:**
+**For running an audit cycle on established artifact types.**
 
-### Step 1: Ask User Which Artifact Type
+### Process Overview
 
-If not specified, ask what to audit:
-- Skills (implemented)
-- Context (planned)
-- Documentation (planned)
-- Templates (planned)
-- Custom
+**8-Step Execution Workflow**:
 
-### Step 2: Run Automated Checks
+1. **Ask user which artifact type** (skills, context, docs, templates, custom)
+2. **Run automated checks** (execute `.claude/scripts/[type]-audit.sh`)
+3. **Manual assessment** (apply checklist to flagged artifacts)
+4. **Document findings** (update audit log with manual assessment)
+5. **Prioritize findings** (use priority matrix: Critical/High/Medium/Low)
+6. **Track trends** (compare to previous audits, analyze patterns)
+7. **Feed learnings to standards** (refine standards based on findings)
+8. **Present summary** (deliver actionable report to user)
 
-**Execute audit script**:
-```bash
-cd .claude/scripts
-./[artifact-type]-audit.sh --verbose
-```
+**Time estimate**: 3-5 hours per quarter per artifact type
 
-**Review output**:
-- Terminal report (immediate feedback)
-- Audit log: `.claude/audits/audit-log-YYYY-MM-DD.md`
-- Violations by priority
-- Compliance percentage
+**Outputs**:
+- Audit log (`.claude/audits/audit-log-YYYY-MM-DD.md`)
+- Compliance metrics (percentage, trend analysis)
+- Prioritized action plan (violations by priority)
+- Standards updates (if needed)
 
-**Time**: 5-15 minutes
-
-### Step 3: Manual Assessment
-
-**For flagged artifacts**:
-
-1. **Load checklist**:
-   ```bash
-   Read: context/workflows/standards/[artifact-type]-audit-checklist.md
-   ```
-
-2. **For each flagged artifact**:
-   - Apply manual checklist
-   - Document findings
-   - Rate quality dimensions (1-5)
-   - List specific issues
-   - Recommend actions
-
-3. **Identify patterns**:
-   - Same issue across multiple artifacts?
-   - Systemic problems vs one-offs?
-   - Root causes?
-
-**Time**: 15-30 minutes per artifact
-
-### Step 4: Document Comprehensive Findings
-
-**Update audit log with manual findings**:
-
-```markdown
-## Manual Assessment
-
-### Artifact: [name]
-
-**Automated**:
-- Size: [PASS/FAIL] ([count])
-- Structure: [PASS/FAIL]
-- Links: [PASS/FAIL] ([broken])
-
-**Manual** (1-5 rating):
-- Content quality: [rating]
-- Usability: [rating]
-- Maintainability: [rating]
-
-**Issues**:
-1. [Priority] [Description]
-
-**Recommendation**:
-- [Action] [Effort estimate]
-```
-
-**Identify systemic issues**:
-- Patterns observed across artifacts
-- Common violations
-- Standards gaps
-
-### Step 5: Prioritize Findings
-
-**Use priority matrix** from [[context/workflows/patterns/audit-pattern#component-6-prioritization-framework]]:
-
-| Severity | Quick Fix | Small | Medium | Large |
-|----------|-----------|-------|--------|-------|
-| Critical | DO NOW | DO NOW | DO NOW | DO NOW |
-| High | This cycle | This cycle | This cycle | Plan |
-| Medium | Nice win | Next cycle | Next cycle | Backlog |
-| Low | Opportunistic | Backlog | Backlog | Don't do |
-
-**Create action plan**:
-- List prioritized issues
-- Assign owners
-- Set target dates
-- Track completion
-
-### Step 6: Track Trends
-
-**Compare to previous audits**:
-
-| Date | Total | Compliant | % | Critical | High | Medium | Notes |
-|------|-------|-----------|---|----------|------|--------|-------|
-| [Previous] | X | Y | Z% | A | B | C | [notes] |
-| [Current] | X | Y | Z% | A | B | C | [notes] |
-
-**Analyze**:
-- Compliance improving/declining?
-- Same issues recurring?
-- New patterns emerging?
-- Standards working?
-
-### Step 7: Feed Learnings Back to Standards
-
-**If standards need updating**:
-
-**Many artifacts fail same check**:
-→ Standard may be unclear
-→ Refine wording, add examples
-→ Consider if threshold appropriate
-
-**New issue pattern emerges**:
-→ Missing quality criterion
-→ Add to checklist
-→ Update automation if possible
-
-**Compliance declining**:
-→ Process not followed
-→ Need better tooling
-→ Review governance
-
-**Update standards documentation** and note in audit log.
-
-### Step 8: Present Summary to User
-
-**Report**:
-- **Summary**: Total artifacts, compliance %, violations breakdown
-- **Key findings**: Top 3-5 issues
-- **Trends**: Comparison to previous audit
-- **Systemic issues**: Cross-artifact patterns
-- **Recommendations**: Prioritized action items
-- **Standards updates**: If refinements needed
-- **Next audit**: Scheduled date
+**For detailed step-by-step workflow**: See [[phase-2-execute-audit.md]]
 
 ---
 
 ## Phase 3: Execute Remediation (As Needed)
 
-**If violations need fixing:**
+**For fixing violations identified in audit.**
 
-### Step 1: Create Remediation Plan
+### Process Overview
 
-**From prioritized findings**:
-- List all violations
-- Group by type (efficiency)
-- Assign owners
-- Set deadlines
+**4-Step Remediation Workflow**:
 
-### Step 2: Execute Fixes
+1. **Create remediation plan** (group by type, assign owners, set deadlines)
+2. **Execute fixes** (apply appropriate fix workflow per violation type)
+3. **Validate changes** (re-run audit, verify compliance improved)
+4. **Document results** (update audit log, commit changes, mark complete)
 
-**For each violation**:
-1. Read artifact
-2. Apply fix (follow refactoring workflow if exists)
-3. Test/validate
-4. Mark complete
+**Common fix types**:
+- **Size violations**: Refactoring (extract reference files)
+- **Missing sections**: Add troubleshooting, limitations, examples
+- **Broken links**: Fix paths, update references
+- **Format violations**: Apply standards, fix formatting
 
-**For systematic fixes**:
-- Batch similar changes
-- Consider automation
-- Update documentation
+**Efficiency patterns**:
+- Batch similar fixes together
+- Reuse patterns across artifacts
+- Automate where possible
+- Test after each batch
 
-### Step 3: Validate Changes
-
-**Re-run audit**:
-```bash
-./[artifact-type]-audit.sh
-```
-
-**Verify**:
-- Violations resolved?
-- No regressions?
-- Compliance improved?
-
-### Step 4: Document Results
-
-**Update audit log**:
-- Remediation actions taken
-- Violations resolved
-- Compliance change
-- Time invested
+**For detailed remediation guidance**: See [[phase-3-remediation.md]]
 
 ---
 
 ## Domain-Specific Workflows
 
-### For Claude Code Skills
+Different artifact types have specialized quality criteria and audit processes.
 
-**Use**: [[skills/audit-checklist]]
+### Claude Code Skills
 
-**Automated**: `.claude/scripts/skill-audit.sh`
+**Status**: ✅ Fully implemented
+
+**Automation**: `.claude/scripts/skill-audit.sh`
+**Checklist**: [[skills/audit-checklist]]
 **Cadence**: Quarterly comprehensive, monthly light
-**Implementation**: [[context/workflows/patterns/implementations/skill-audit-implementation]]
-
 **Refactoring**: [[skills/refactoring-workflow]]
 
-### For Context Files (Future)
+### Other Artifact Types
 
-**Quality criteria**: Relevance, accuracy, currency, no redundancy
-**Cadence**: Semi-annually (context changes slower)
-**Implementation**: [[context/workflows/patterns/implementations/_future-implementations#1-context-quality-audit]]
+**Context Files**: 🚧 Planned (semi-annual audit)
+**Documentation**: 🚧 Planned (quarterly audit)
+**Templates**: 🚧 Planned (annual audit)
+**Code/Security**: 🚧 Planned (monthly/quarterly)
 
-### For Documentation (Future)
-
-**Quality criteria**: Completeness, accuracy, clarity, examples working
-**Cadence**: Quarterly
-**Implementation**: [[context/workflows/patterns/implementations/_future-implementations#3-documentation-quality-audit]]
-
-### For Templates (Future)
-
-**Quality criteria**: Matches standards, all fields documented, skills use correctly
-**Cadence**: Annually or when standards change
-**Implementation**: [[context/workflows/patterns/implementations/_future-implementations#5-template-audit]]
-
-### For Custom Artifact Type
-
-Follow Phase 1 (Setup) to define scope, criteria, and process.
+**For detailed domain guidance**: See [[domain-workflows.md]]
 
 ---
 
@@ -349,23 +187,6 @@ Follow Phase 1 (Setup) to define scope, criteria, and process.
 
 **Complements**:
 - [[patterns/standards-sync-pattern]] - Sync keeps audit criteria current
-
----
-
-## Related Documentation
-
-**Pattern**:
-- [[patterns/audit-pattern]] - Generic pattern this implements (ISO 19011-based)
-
-**Active Implementations**:
-- [[context/workflows/patterns/implementations/skill-audit-implementation]] - Skills example
-- [[context/workflows/patterns/implementations/_future-implementations]] - Future artifact types
-
-**Domain-Specific Checklists**:
-- [[skills/audit-checklist]] - Skills checklist
-
-**Automation**:
-- `.claude/scripts/skill-audit.sh` - Skills audit script
 
 ---
 
@@ -388,3 +209,108 @@ Follow Phase 1 (Setup) to define scope, criteria, and process.
 - Documentation: TBD (set up first)
 
 **Compliance target**: >80% for most artifact types
+
+---
+
+## Troubleshooting
+
+### Symptom: Automated script fails or returns errors
+
+**Cause**: Script not executable, dependencies missing, or path issues
+
+**Fix**:
+- Make script executable: `chmod +x .claude/scripts/[type]-audit.sh`
+- Run from correct directory: `cd .claude/scripts`
+- Check dependencies (e.g., `wc`, `grep`, `find` available)
+
+### Symptom: Compliance percentage seems wrong
+
+**Cause**: Threshold misconfigured or artifacts miscounted
+
+**Fix**:
+- Review script logic (check threshold values)
+- Verify artifact count (script may exclude/include unexpected files)
+- Compare manual count vs script count
+
+### Symptom: Manual assessment taking too long
+
+**Cause**: Assessing too many artifacts or too detailed
+
+**Fix**:
+- Focus on flagged artifacts only (automated checks filter)
+- Use checklist as guide, not exhaustive review
+- Time-box assessment (30 min per artifact max)
+- For initial audits, sample approach acceptable
+
+### Symptom: Same violations recurring across audits
+
+**Cause**: Standards unclear, fixes not applied, or process not followed
+
+**Fix**:
+- Review standards for clarity (add examples)
+- Check if remediation completed (were fixes actually applied?)
+- Improve automation (catch violations earlier)
+- Review governance (why are standards not followed?)
+
+### Symptom: Unsure how to prioritize findings
+
+**Cause**: Multiple violations with unclear impact
+
+**Fix**:
+- Use priority matrix from [[phase-2-execute-audit.md#step-5-prioritize-findings]]
+- Focus on severity first (Critical > High > Medium > Low)
+- Then consider effort (Quick wins vs large projects)
+- Ask: "What breaks user experience most?"
+
+---
+
+## Known Limitations
+
+**Cannot audit**:
+- Artifacts with no quantifiable criteria (purely subjective)
+- One-off artifacts (need 5+ to justify setup)
+- Rapidly changing artifacts (audit overhead exceeds value)
+
+**Automation limitations**:
+- Qualitative assessment always requires human judgment
+- Context-dependent criteria hard to automate
+- Some quality dimensions resist quantification (clarity, usability)
+
+**Workarounds**:
+- **Few artifacts**: Manual periodic review instead of full audit
+- **Subjective criteria**: Peer review or user feedback instead of audit
+- **Rapid change**: Lightweight checks (linting) instead of comprehensive audit
+
+**Process limitations**:
+- Initial setup time-intensive (5-8 hours)
+- Quarterly audits require 3-5 hours time commitment
+- Remediation can be significant effort (10-40 hours)
+
+**When audit skill may not be worth it**:
+- <5 artifacts in category
+- Artifacts very stable (rarely change)
+- Low impact artifacts (internal tools, temporary)
+- No automation possible (100% manual assessment)
+
+---
+
+## Related Documentation
+
+**Pattern**:
+- [[patterns/audit-pattern]] - Generic pattern this implements (ISO 19011-based)
+
+**Reference Files (This Skill)**:
+- [[audit-types.md]] - Five audit types (quality, compliance, security, performance, comprehensive)
+- [[audit-setup-guide.md]] - 8-step setup for new artifact types
+- [[phase-2-execute-audit.md]] - 8-step execution workflow (quarterly audits)
+- [[phase-3-remediation.md]] - 4-step remediation process (fixing violations)
+- [[domain-workflows.md]] - Domain-specific guidance (skills, context, docs, templates)
+
+**Active Implementations**:
+- [[context/workflows/patterns/implementations/skill-audit-implementation]] - Skills example
+- [[context/workflows/patterns/implementations/_future-implementations]] - Future artifact types
+
+**Domain-Specific Resources**:
+- [[skills/audit-checklist]] - Skills quality checklist
+- `.claude/scripts/skill-audit.sh` - Skills automation script
+- [[skills/refactoring-workflow]] - Refactoring process for size violations

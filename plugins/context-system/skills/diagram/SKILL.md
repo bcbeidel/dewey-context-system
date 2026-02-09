@@ -130,6 +130,41 @@ Create diagrams in 4 phases:
 
 ---
 
+## Troubleshooting
+
+**Symptom**: Diagram doesn't render in Obsidian preview
+- **Cause**: Mermaid syntax error (missing semicolons, wrong keywords, unclosed quotes)
+- **Fix**: Check syntax against [diagram-types.md](diagram-types.md) examples, validate at [Mermaid Live Editor](https://mermaid.live)
+
+**Symptom**: Diagram renders but looks cluttered or unreadable
+- **Cause**: Too many nodes (>15), unclear labels, or inappropriate diagram type
+- **Fix**: Simplify to 7-12 key nodes, use subgraphs for grouping, or switch diagram type (e.g., mindmap → flowchart)
+
+**Symptom**: Relationships difficult to follow
+- **Cause**: Missing edge labels, wrong diagram type (flowchart used for network relationships)
+- **Fix**: Add labels to edges in concept maps, consider using `graph LR` instead of `flowchart TD` for non-linear relationships
+
+**Symptom**: Diagram doesn't match content structure
+- **Cause**: Wrong diagram type selected (e.g., flowchart for hierarchical content)
+- **Fix**: Review [Quick Start](#quick-start) decision tree, match diagram type to content structure
+
+---
+
+## Known Limitations
+
+**Cannot handle**:
+- **Interactive diagrams** - Mermaid generates static SVG images (no zoom, pan, collapse)
+- **Non-Mermaid syntaxes** - Limited to Mermaid (no PlantUML, D2, Graphviz support)
+- **Very complex diagrams** - Mermaid rendering may fail or become unreadable with >25-30 nodes
+- **Real-time data** - Diagrams are static snapshots, not live visualizations
+
+**Workarounds**:
+- **For interactivity**: Export to external tools (draw.io, Excalidraw) if needed
+- **For complex systems**: Create multiple focused diagrams instead of one comprehensive diagram
+- **For alternative syntaxes**: Manually create diagrams in preferred tool, embed images in notes
+
+---
+
 ## Related Documentation
 
 - [diagram-types.md](diagram-types.md) - All diagram types with syntax examples

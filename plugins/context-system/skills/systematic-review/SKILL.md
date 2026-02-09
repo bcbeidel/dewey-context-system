@@ -243,24 +243,24 @@ Literature reviews follow a six-phase systematic process (PRISMA 2020):
 For detailed information on specific topics, see the reference documentation:
 
 ### Core Documentation
-- **[[best-practices]]** - Paper selection, critical reading, citation practices, synthesis quality
-- **[[quality-checklist]]** - PRISMA 2020 compliance checklist, quality assessment requirements
-- **[[integration-patterns]]** - Integration with other skills, customization options, depth guidelines
-- **[[strengths-limitations]]** - What works well, optimal conditions, challenges, workarounds
+- [[best-practices]] - Paper selection, critical reading, citation practices, synthesis quality
+- [[quality-checklist]] - PRISMA 2020 compliance checklist, quality assessment requirements
+- [[integration-patterns]] - Integration with other skills, customization options, depth guidelines
+- [[strengths-limitations]] - What works well, optimal conditions, challenges, workarounds
 
 ### Workflow Guides
-- **[[protocol-phase]]** - PRISMA-P protocol creation, PROSPERO registration
-- **[[paper-processing]]** - Extract systematic data from papers
-- **[[methodology-comparison]]** - Compare methods and synthesize findings
-- **[[citation-mapping]]** - Map citation networks and theoretical lineage
-- **[[gap-analysis]]** - Identify research gaps and generate final output
+- [[protocol-phase]] - PRISMA-P protocol creation, PROSPERO registration
+- [[paper-processing]] - Extract systematic data from papers
+- [[methodology-comparison]] - Compare methods and synthesize findings
+- [[citation-mapping]] - Map citation networks and theoretical lineage
+- [[gap-analysis]] - Identify research gaps and generate final output
 
 ### PRISMA & Quality
-- **[[prisma-compliance]]** - PRISMA 2020 27-item checklist, flow diagram, abstract checklist
-- **[[quality-assessment]]** - AMSTAR-2, ROBIS, robustness checks
+- [[prisma-compliance]] - PRISMA 2020 27-item checklist, flow diagram, abstract checklist
+- [[quality-assessment]] - AMSTAR-2, ROBIS, robustness checks
 
 ### Examples & Integration
-- **[[examples]]** - Usage examples, customization options, integration patterns
+- [[examples]] - Usage examples, customization options, integration patterns
 
 ---
 
@@ -283,6 +283,46 @@ For detailed information on specific topics, see the reference documentation:
 - [Cochrane Handbook](https://training.cochrane.org/handbook) - Evidence synthesis methods
 - [Google Scholar](https://scholar.google.com/) - Paper discovery
 - [Connected Papers](https://www.connectedpapers.com/) - Citation network visualization
+
+---
+
+## Troubleshooting
+
+**Symptom**: PROSPERO registration fails or is delayed
+- **Cause**: Protocol incomplete, research question unclear, or registration backlog
+- **Fix**: Review PRISMA-P checklist in [[protocol-phase]], ensure all required fields complete, consider pre-registering before full protocol ready
+
+**Symptom**: Paper processing takes too long (>30 min per paper)
+- **Cause**: Complex methodology, insufficient structure in extraction template
+- **Fix**: Use [[paper-processing]] structured template, focus on key sections first (abstract, methods, findings), batch similar papers
+
+**Symptom**: Citation mapping reveals too many papers (>100)
+- **Cause**: Broad search query, insufficient exclusion criteria
+- **Fix**: Refine search to last 5 years, add specific methodology filter, focus on highly-cited papers (>50 citations), use PRISMA flow to document exclusions
+
+**Symptom**: Gap analysis finds no clear gaps
+- **Cause**: Mature research area, insufficient depth in analysis
+- **Fix**: Look for methodological gaps (not just topic gaps), examine geographic/population underrepresentation, check for conflicting results needing resolution
+
+**Symptom**: Quality assessment reveals most papers are low quality
+- **Cause**: Broad inclusion criteria, insufficient screening in Phase 1
+- **Fix**: Add quality threshold to inclusion criteria, focus on peer-reviewed journals, exclude grey literature unless explicitly needed
+
+---
+
+## Known Limitations
+
+**Cannot handle**:
+- **Non-English papers** - Review process assumes English-language papers (translation requires manual work)
+- **Paywall access** - Cannot automatically access papers behind paywalls (institutional access required)
+- **Grey literature search** - Limited to Google Scholar; cannot systematically search conference proceedings, dissertations, reports
+- **Meta-analysis** - Does not perform statistical synthesis (quantitative meta-analysis requires specialized tools like RevMan, Stata)
+
+**Workarounds**:
+- **For non-English**: Use Google Translate for initial screening, hire translator for included papers, document language restriction in protocol
+- **For paywalls**: Request papers via institutional library, use author contact (ResearchGate, email requests), document access limitations
+- **For grey literature**: Manual search of conference websites, ProQuest for dissertations, government databases for reports
+- **For meta-analysis**: Export data to RevMan/Stata, use narrative synthesis for qualitative findings, consult statistician for complex analyses
 
 ---
 

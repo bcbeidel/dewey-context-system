@@ -38,6 +38,32 @@ This plugin provides **7 production-validated skills** for persistent context ma
 
 ---
 
+## What's New in v0.0.2 (February 2026)
+
+### Production-Ready Enhancements
+- ✅ **Troubleshooting & Known Limitations** in every skill
+- ✅ **Optimal skill sizes** (200-350 lines) with progressive disclosure
+- ✅ **Reference file optimization** (3-8 refs per skill)
+- ✅ **100% compliance** with Anthropic best practices
+
+### Major Improvements
+- **compare**: 387 → 172 lines (+4 refs) - Faster, more focused decision matrices
+- **standards-sync**: 389 → 253 lines (+4 refs) - Streamlined external best practices sync
+- **context-update**: 474 → 231 lines (+3 refs) - Clearer extraction workflow
+- **audit**: 430 → 316 lines (+5 refs) - More actionable audit process
+
+### Why v0.0.2 Matters
+
+**Every skill now has**:
+- **Troubleshooting** - Debug failures quickly
+- **Known limitations** - Realistic expectations
+- **Quick Starts** - Find what you need fast
+- **Optimal size** - Easy to navigate, not overwhelming
+
+**Result**: Professional-grade skills that are easier to use and understand.
+
+---
+
 ## Quick Start
 
 **1. Add the marketplace** (in Claude Code):
