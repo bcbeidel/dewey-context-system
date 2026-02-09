@@ -325,7 +325,7 @@ Every plan is validated across **5 dimensions** (evidence-based from systematic 
 
 ### Before Planning
 - **`/systematic-review`**: Research best practices for your domain
-- **`/auditor`**: Review existing code to inform plan
+- **`/auditoror`**: Review existing code to inform plan
 - **`/context-curator`**: Load relevant context before planning
 
 ### During Planning
@@ -333,7 +333,7 @@ Every plan is validated across **5 dimensions** (evidence-based from systematic 
 - **`/diagram`**: Visualize plan structure or dependencies
 
 ### After Planning
-- **`/auditor`**: Validate plan quality against standards
+- **`/auditoror`**: Validate plan quality against standards
 - **`/context-curator`**: Extract learnings from planning process
 
 ### During Execution

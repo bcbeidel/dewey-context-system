@@ -27,7 +27,7 @@ This repository provides a **marketplace plugin** with 7 production-ready skills
 Pre-built skills to bootstrap your context system:
 - `/init-context-system` - Discovery-driven setup wizard
 - `/context-curator` - Domain-agnostic extraction and maintenance
-- `/audit` - ISO 19011 systematic audits
+- `/auditor` - ISO 19011 systematic audits
 - `/standards-sync` - Sync with external best practices
 - `/compare` - Weighted decision matrices
 - `/diagram` - Mermaid diagram generation
@@ -118,7 +118,7 @@ Continuous cycle: Monitor external standards → Evaluate → Update internal �
 
 ### 4. **Meta-Skills**
 Skills that orchestrate other skills:
-- `/audit` - Audits other skills (inception!)
+- `/auditor` - Audits other skills (inception!)
 - `/standards-sync` - Syncs external standards automatically
 
 **Why it works**: Patterns become executable, not just documentation.
@@ -191,7 +191,7 @@ Start small. Add context when you notice repeated corrections. No need to docume
 All patterns anchored to external authorities with verification URLs. When standards evolve, we adapt via `/standards-sync`.
 
 ### 5. **Evidence-Based Approach**
-Use systematic audits (`/audit`) to validate context quality and track improvements over time.
+Use systematic audits (`/auditor`) to validate context quality and track improvements over time.
 
 ---
 

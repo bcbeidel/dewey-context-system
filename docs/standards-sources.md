@@ -112,7 +112,7 @@ Every pattern in this system is **anchored to an external authority**:
 6. **Evidence-based approach** - Verifiable information
 7. **Risk-based approach** - Focus on significant risks
 
-**Our implementation**: `/audit` skill (see plugins/context-system/skills/audit/)
+**Our implementation**: `/auditor` skill (see plugins/context-system/skills/auditoror/)
 
 #### Risk-Based Prioritization
 > "Audit approach should consider risks and opportunities"
@@ -261,7 +261,7 @@ Anyone can verify our standards by checking the verification URLs in the [Quick 
 
 - **[Plugin README](../plugins/context-system/README.md)** - Overview of all 7 skills
 - **[init-context-system Skill](../plugins/context-system/skills/init-context-system/SKILL.md)** - Concept-based setup
-- **[audit Skill](../plugins/context-system/skills/audit/SKILL.md)** - ISO 19011 implementation
+- **[audit Skill](../plugins/context-system/skills/auditoror/SKILL.md)** - ISO 19011 implementation
 - **[standards-sync Skill](../plugins/context-system/skills/standards-sync/SKILL.md)** - How to stay current
 
 ---

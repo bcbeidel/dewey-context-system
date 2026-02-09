@@ -192,7 +192,7 @@ done
 
 #### 12.6.3 Quality Markers Present
 
-**Manual check** (from [[skills/audit-checklist]]):
+**Manual check** (from [[skills/auditoror-checklist]]):
 - [ ] Quick Start section present (if multi-phase)
 - [ ] Troubleshooting section exists
 - [ ] Known Limitations documented

@@ -43,6 +43,31 @@ Choose your entry point:
 
 ---
 
+## First Run: Bootstrap Context System
+
+**If this is your first time running context-curator and you don't have a `context/` folder**, the skill will offer to bootstrap your context system with best practices for using the distributed skills.
+
+**Bootstrap includes**:
+- **Core domains** for skill support (skills/, research/, auditing/, communication/, decisions/, processes/)
+- **Best practices** for:
+  - `/auditor` - ISO 19011 audit standards, quality checklists
+  - `/researcher` - Research methodologies, PRISMA 2020 compliance
+  - `/planner` - Planning best practices, decomposition strategies
+  - `/context-curator` - Context organization principles
+  - **Agent development** - Skill development standards
+- **Index files** (`_index.md`, `_loading-map.md`) for navigation
+- **Basic structure** ready for immediate use
+
+**What happens**:
+1. Skill detects missing `context/` folder
+2. Asks: "Would you like me to create the context system with best practices for using these skills?"
+3. If yes: Creates domains, populates with relevant standards, sets up indexes
+4. Then proceeds with normal curation workflow
+
+**Note**: Bootstrap is optional. You can decline and create your own structure, or run `/context-curator` again later to bootstrap.
+
+---
+
 ## Workflow Overview
 
 ### Phase 1: Review & Extract
@@ -310,7 +335,7 @@ If unclear whether context is sensitive: Err on side of caution (make private), 
 - ✅ Self-critique checklist (Step 12.7)
 - ✅ Honest framing (ready for review, not "complete")
 
-**From** [[skills/audit-checklist]]:
+**From** [[skills/auditoror-checklist]]:
 - ✅ Structure & format compliance (SKILL.md size, frontmatter)
 - ✅ Progressive disclosure compliance (3-6 reference files)
 - ✅ Quality markers (Quick Start, Troubleshooting, Limitations)

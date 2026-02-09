@@ -311,7 +311,7 @@ See detailed comparison: [[methodology-taxonomy]]
 - **`/planner`**: Structure multi-phase research projects with milestones
 - **`/compare`**: Compare methodology options or research approaches
 - **`/context-curator`**: Extract research insights into persistent context
-- **`/auditor`**: Quality assessment of research process and outputs
+- **`/auditoror`**: Quality assessment of research process and outputs
 - **`/diagram`**: Visualize research findings, frameworks, citation networks
 
 ---

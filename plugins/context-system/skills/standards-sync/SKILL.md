@@ -143,12 +143,12 @@ Monitor External Sources → Evaluate Relevance → Update Internal Standards �
 ## Integration
 
 **Works with**:
-- `/audit` - Audit identifies gaps, sync addresses them
+- `/auditor` - Audit identifies gaps, sync addresses them
 - `/context-curator` - Extract patterns, feed into sync
 - Domain-specific skills - Implement updated standards
 
 **Complements**:
-- [[patterns/audit-pattern]] - Audits validate sync effectiveness
+- [[patterns/auditor-pattern]] - Audits validate sync effectiveness
 
 ---
 

@@ -4,46 +4,66 @@ These skills are included with the context-system plugin. Once installed, they'r
 
 ---
 
-## Setup & Maintenance Skills
-
-### `/init-context-system`
-**Location**: `skills/init-context-system/`
-
-Discovery-driven setup wizard that identifies YOUR key domains through guided questions.
-
-**Pattern**: Concept-based organization grounded in [Anthropic Best Practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)
-
-**Use when**: First-time setup, or setting up a new project.
-
-**Key features**:
-- Asks discovery questions (work type, languages, security needs)
-- Maps to relevant domains (python, security, research, skills)
-- Grounds domains in external authorities (PEP 8, OWASP, Anthropic)
-- Creates personalized structure (not generic categories)
-
----
+## Context Management
 
 ### `/context-curator`
 **Location**: `skills/context-curator/`
 
-Extract learnings from conversations and update your concept-based context system.
+Bootstrap context system on first run, then extract learnings from conversations to maintain and evolve it.
 
-**Pattern**: Domain-agnostic extraction (discovers YOUR domains dynamically)
+**Pattern**: Automated bootstrap → domain-agnostic extraction → quality validation
 
-**Use when**: After significant work sessions, when you notice patterns worth capturing.
+**Use when**: First run (bootstrap), after significant work sessions, when you notice patterns worth capturing.
 
 **Key features**:
-- Discovers your domains from context/_index.md
-- Works with ANY structure from init-context-system
+- **Bootstrap**: Creates context system with best practices for distributed skills (first run)
+- Discovers your domains dynamically from context/_index.md
 - Maps context to appropriate domain by topic
-- Validates quality after extraction
+- Automated quality gates (Steps 7.5, 12.9)
+- Index validation script
+
+---
+
+## Research & Planning Skills
+
+### `/researcher`
+**Location**: `skills/researcher/`
+
+Multi-methodology research orchestrator with intelligent methodology selection for technology, marketing, and software contexts.
+
+**Pattern**: Guided methodology selection → structured execution → evidence-based synthesis
+
+**Use when**: Academic research, market analysis, user research, organizational studies, evidence synthesis
+
+**Key features**:
+- 7 research methodologies (Design Science, UX Research, Market Research, Mixed Methods, Case Study, Organizational Culture, Evidence Synthesis)
+- Intelligent methodology selection wizard
+- PRISMA 2020 compliance (evidence synthesis)
+- Quality assessment and validation
+
+---
+
+### `/planner`
+**Location**: `skills/planner/`
+
+Create structured, evidence-based plans for multi-step tasks with hierarchical decomposition and quality validation.
+
+**Pattern**: Requirements gathering → structured planning → quality validation → human approval
+
+**Use when**: Multi-step tasks (3+ steps), complex problems requiring decomposition, long-horizon work (hours to days)
+
+**Key features**:
+- 3 planning strategies (decompose-first, interleaved, milestone-based)
+- 5-dimension quality validation (completeness, feasibility, efficiency, maintainability, adaptability)
+- Saves plans to /projects/ for resumable execution
+- Markdown + YAML frontmatter format
 
 ---
 
 ## Meta-Skills (Advanced Patterns)
 
-### `/audit`
-**Location**: `skills/audit/`
+### `/auditor`
+**Location**: `skills/auditor/`
 
 Orchestrate systematic audits (quality, compliance, security, performance) across any artifact type using ISO 19011:2018 principles.
 
@@ -76,60 +96,6 @@ Orchestrate synchronization between external best practices (OWASP, PRISMA, ISO,
 
 ---
 
-## Utility Skills
-
-### `/compare`
-**Location**: `skills/compare/`
-
-Create weighted decision matrices for evaluating multiple options against defined criteria.
-
-**Pattern**: Structured decision-making with explicit criteria and weighting.
-
-**Use when**: Comparing technology choices, evaluating options, making trade-off decisions.
-
-**Key features**:
-- Define criteria with weights
-- Score options systematically
-- Automatic weighted score calculation
-- Decision rationale capture
-
----
-
-### `/diagram`
-**Location**: `skills/diagram/`
-
-Generate Mermaid diagrams from mental models, processes, and relationships for visual learning.
-
-**Pattern**: Visual representation of complex concepts.
-
-**Use when**: Explaining architecture, documenting processes, teaching concepts, visualizing workflows.
-
-**Key features**:
-- Supports flowcharts, sequence diagrams, class diagrams, etc.
-- Natural language → Mermaid syntax
-- Optimized for learning and documentation
-- Integration with Obsidian and markdown
-
----
-
-### `/systematic-review`
-**Location**: `skills/systematic-review/`
-
-Conduct PRISMA 2020 compliant systematic reviews with protocol registration, quality assessment, and publication-ready reporting.
-
-**Pattern**: Academic rigor for research synthesis.
-
-**Use when**: Literature reviews, thesis research, understanding research landscape, academic analysis.
-
-**Key features**:
-- PRISMA 2020 compliance
-- Protocol registration guidance (PROSPERO)
-- Quality assessment (AMSTAR-2, ROBIS)
-- Methodology comparison
-- Research gap identification
-
----
-
 ## Installation
 
 These skills are automatically available after installing the context-system plugin:
@@ -142,16 +108,16 @@ These skills are automatically available after installing the context-system plu
 /plugin
 
 # Verify installation
-/audit --help
+/auditor --help
 ```
 
 ---
 
 ## Skill Categories
 
-**Setup**: init-context-system, context-curator
-**Meta-Skills**: audit, standards-sync (operationalize patterns)
-**Utilities**: compare, diagram, systematic-review (generally useful tools)
+**Context Management**: context-curator
+**Research & Planning**: researcher, planner
+**Meta-Skills**: auditor, standards-sync (operationalize patterns)
 
 ---
 

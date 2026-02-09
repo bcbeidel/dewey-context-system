@@ -19,23 +19,18 @@ Every conversation with Claude starts fresh. You repeatedly explain:
 
 ## The Solution
 
-This plugin provides **9 production-validated skills** for persistent context management:
+This plugin provides **6 production-validated skills** for persistent context management:
 
-### Setup & Maintenance
-- ✅ `/init-context-system` - Guided 3-phase setup wizard
-- ✅ `/context-curator` - Extract and curate context with automated quality gates
+### Context Management
+- ✅ `/context-curator` - Bootstrap and maintain context with automated quality gates
 
 ### Research & Planning
 - ✅ `/researcher` - Multi-methodology research orchestrator (7 methodologies: DSR, UX, Market, Mixed Methods, Case Study, Org Culture, Evidence Synthesis)
 - ✅ `/planner` - Evidence-based planning with quality validation
 
 ### Meta-Skills (Advanced Patterns)
-- ✅ `/audit` - ISO 19011 systematic audits
+- ✅ `/auditor` - ISO 19011 systematic audits
 - ✅ `/standards-sync` - Sync external best practices (OWASP, PRISMA, ISO)
-
-### Utilities
-- ✅ `/compare` - Weighted decision matrices
-- ✅ `/diagram` - Generate Mermaid diagrams
 
 **Result**: Claude aligns with your style from message one and improves over time.
 
@@ -96,10 +91,9 @@ This plugin provides **9 production-validated skills** for persistent context ma
 - ✅ **100% compliance** with Anthropic best practices
 
 ### Major Improvements
-- **compare**: 387 → 172 lines (+4 refs) - Faster, more focused decision matrices
 - **standards-sync**: 389 → 253 lines (+4 refs) - Streamlined external best practices sync
 - **context-curator**: 474 → 231 lines (+3 refs) - Clearer extraction workflow
-- **audit**: 430 → 316 lines (+5 refs) - More actionable audit process
+- **auditor**: 430 → 316 lines (+5 refs) - More actionable audit process
 
 ### Why v0.0.2 Matters
 
@@ -126,12 +120,12 @@ This plugin provides **9 production-validated skills** for persistent context ma
 ```
 Then navigate to the "Discover" tab and install "context-system"
 
-**3. Run the setup** (in any project):
+**3. Start using it** (in any project):
 ```
-/init-context-system
+/context-curator
 ```
 
-**Done!** Follow the 3-phase guided setup. Claude will remember your preferences across all projects.
+**Done!** On first run, context-curator will offer to bootstrap the context system with best practices for using the distributed skills. Then just run `/context-curator` after work sessions to extract learnings.
 
 ---
 
@@ -154,10 +148,10 @@ Run `/plugin` and navigate to the **Discover** tab. You'll see the `context-syst
 
 In any project directory, run:
 ```
-/init-context-system
+/context-curator
 ```
 
-You should see the setup wizard. The plugin is now available globally across all your projects!
+On first run, you'll see the bootstrap offer. The plugin is now available globally across all your projects!
 
 ---
 
@@ -186,36 +180,34 @@ ls ~/.claude/plugins/context-system
 
 ---
 
-**That's it!** Follow the guided setup (3 phases, 1-2 hours total). Claude will now remember your preferences.
+**That's it!** Start with `/context-curator` to bootstrap (5 min) or begin curating immediately. Claude will remember your preferences.
 
 ---
 
 ## What You Get
 
-### Phase 1: Quick Setup (15-30 min)
-- Discovery questions identify YOUR relevant domains (python/, security/, research/, etc.)
-- Core context-system domain with organizing principles
-- At least one user-specific domain based on your work
-- **Immediate value**: Stop repeating yourself
+### First Run: Automated Bootstrap (5 min)
+- **Core domains** for skill support (skills/, research/, auditing/, communication/, decisions/, processes/)
+- **Best practices** pre-populated for distributed skills (auditor, researcher, planner, agent development)
+- **Ready to use** immediately after bootstrap
 
-### Phase 2: Hands-On Learning (30-45 min)
-- Extract 5-10 context pieces from conversation history
-- Map context to appropriate domains by topic
-- Create decision logs (ADRs) for architectural choices
-- **Demonstrated value**: Context organized by concept, easy to find and maintain
+### Ongoing: Progressive Enhancement
+- **Extract learnings** from work sessions (`/context-curator` after major work)
+- **Capture decisions** (ADRs) as you make architectural choices
+- **Build preferences** over time (communication style, workflow patterns)
+- **Evolves with you** - system gets smarter as you use it
 
-### Phase 3: Evolution Framework (15-30 min)
-- Retrospective workflow (capture learnings over time)
-- Maintenance checklist (keep context fresh)
-- Validation process (ensure quality)
-- **Long-term value**: System evolves with you, compounds over time
+### Result
+- **Stop repeating yourself** - preferences persist across sessions
+- **Consistent quality** - standards enforced automatically
+- **Compound value** - early investment pays long-term dividends
 
 ---
 
 ## Key Features
 
-- **🚀 7 Production Skills**: Setup, meta-skills (audit, standards-sync), utilities (compare, diagram, systematic-review)
-- **🎯 Progressive Setup**: Start small (Phase 1), expand as you see value
+- **🚀 5 Production Skills**: Research & planning, meta-skills, context management
+- **🎯 Automated Bootstrap**: First-run setup in 5 minutes with best practices included
 - **📊 Evidence-Based**: Extract from actual work, not hypothetical scenarios
 - **🔄 Task-Based Loading**: Context automatically loads for git, code review, documentation, etc.
 - **🏛️ Grounded in Standards**: ISO 19011, PRISMA 2020, OWASP best practices
@@ -247,50 +239,74 @@ your-project/
 
 ## Included Skills
 
-This plugin includes **7 skills** organized in 3 categories:
+This plugin includes **5 skills** organized in 3 categories:
 
-### Setup & Maintenance
+### Context Management
 
-#### `/init-context-system` - Concept-Based Setup
-**Run once** to create your concept-based context system.
+#### `/context-curator` - Context Extraction & Maintenance
+**Bootstrap on first run, then curate regularly** to extract learnings from conversations.
 
 **What it does**:
-- Discovery-driven: Asks questions to identify YOUR domains
-- Creates personalized structure (python, security, research, etc.)
-- Grounds domains in external authorities (PEP 8, OWASP, Anthropic)
-- Follows [Anthropic Best Practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)
+- **First run**: Offers to bootstrap context system with best practices for distributed skills
+- **Ongoing**: Extracts preferences, patterns, and decisions from work sessions
+- Discovers YOUR domains dynamically (reads context/_index.md)
+- Maps context to appropriate domain by topic
+- Validates quality with automated checks
 
-**Key difference**: Creates concept-based organization (by topic), not type-based (by document type)
+**Key features**:
+- Automated bootstrap (5 min setup)
+- Quality gates at Steps 7.5 and 12.9
+- Index validation script (catches structural issues)
+- Documentation sync guidance
 
 **Usage**:
 ```bash
-/init-context-system              # Discovery-driven setup
-/init-context-system --phase 2    # Resume at specific phase
+/context-curator                   # First run: bootstrap offer, then curate
 ```
 
 ---
 
-#### `/context-curator` - Domain-Agnostic Extraction
-**Run regularly** to extract learnings from conversations.
+### Research & Planning
+
+#### `/researcher` - Multi-Methodology Research
+**Conduct research** using 7 methodologies with intelligent selection.
 
 **What it does**:
-- Discovers YOUR domains dynamically (reads context/_index.md)
-- Maps context to appropriate domain by topic
-- Works with ANY structure from init-context-system
-- Validates quality after extraction
-
-**Key difference**: Domain-agnostic (no hardcoded folders), works with your actual structure
+- Guides methodology selection (Design Science, UX, Market, Mixed Methods, Case Study, Org Culture, Evidence Synthesis)
+- Structured execution for each methodology
+- PRISMA 2020 compliance (evidence synthesis)
+- Quality assessment and validation
 
 **Usage**:
 ```bash
-/context-curator                   # Extract from conversation
+/researcher                        # Interactive methodology selection
 ```
+
+**Use when**: Academic research, market analysis, user research, organizational studies.
+
+---
+
+#### `/planner` - Evidence-Based Planning
+**Create structured plans** for multi-step tasks with quality validation.
+
+**What it does**:
+- 3 planning strategies (decompose-first, interleaved, milestone-based)
+- 5-dimension quality validation
+- Saves plans to /projects/ (resumable)
+- Markdown + YAML format
+
+**Usage**:
+```bash
+/planner                           # Interactive planning
+```
+
+**Use when**: Multi-step tasks (3+ steps), complex problems, long-horizon work.
 
 ---
 
 ### Meta-Skills (Advanced Patterns)
 
-#### `/audit` - ISO 19011 Systematic Audits
+#### `/auditor` - ISO 19011 Systematic Audits
 **Orchestrate quality/compliance/security audits** across any artifact type.
 
 **What it does**:
@@ -301,7 +317,7 @@ This plugin includes **7 skills** organized in 3 categories:
 
 **Usage**:
 ```bash
-/audit                    # Interactive setup
+/auditor                    # Interactive setup
 ```
 
 **Use when**: Quarterly audits, before releases, when quality degrades.
@@ -326,82 +342,11 @@ This plugin includes **7 skills** organized in 3 categories:
 
 ---
 
-### Utilities
-
-#### `/compare` - Decision Matrices
-**Create weighted decision matrices** for evaluating options.
-
-**What it does**:
-- Define criteria with weights
-- Score options systematically
-- Calculate weighted scores
-- Capture decision rationale
-
-**Usage**:
-```bash
-/compare
-```
-
-**Use when**: Technology choices, trade-off decisions, option evaluation.
-
----
-
-#### `/diagram` - Mermaid Diagrams
-**Generate Mermaid diagrams** from natural language.
-
-**What it does**:
-- Converts descriptions to diagrams
-- Supports flowcharts, sequences, classes, etc.
-- Optimized for learning and documentation
-
-**Usage**:
-```bash
-/diagram
-```
-
-**Use when**: Explaining architecture, documenting processes, teaching.
-
----
-
-#### `/systematic-review` - PRISMA 2020 Research
-**Conduct systematic literature reviews** with academic rigor.
-
-**What it does**:
-- PRISMA 2020 compliance
-- Protocol registration (PROSPERO)
-- Quality assessment (AMSTAR-2, ROBIS)
-- Research gap identification
-
-**Usage**:
-```bash
-/systematic-review
-```
-
-**Use when**: Literature reviews, thesis research, academic analysis.
-
----
-
 ## Detailed Usage
 
-### 1. `/init-context-system` - Initial Setup
+### `/context-curator` - Bootstrap & Maintain
 
-**Run once** to set up the structure:
-```bash
-/init-context-system
-```
-Guided through all 3 phases interactively. Can pause after any phase.
-
-**Resume at specific phase**:
-```bash
-/init-context-system --phase 2    # Resume at Phase 2
-/init-context-system --phase 3    # Skip to Phase 3
-```
-
----
-
-### 2. `/context-curator` - Ongoing Maintenance
-
-**Run regularly** to maintain and evolve:
+**First run** bootstraps the context system, **then run regularly** to maintain and evolve:
 ```bash
 /context-curator
 ```
@@ -551,6 +496,6 @@ Built with [Claude Code](https://github.com/anthropics/claude-code) using patter
 git clone https://github.com/bcbeidel/context-system.git \
   ~/.claude/plugins/context-system
 
-# Run in any project
-/init-context-system
+# Start using in any project
+/context-curator
 ```

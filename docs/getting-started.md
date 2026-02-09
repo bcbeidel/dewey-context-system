@@ -13,20 +13,18 @@ Welcome! This guide helps you choose the right path for building your context ma
 ### 🚀 **Context Management Plugin**
 **Production-ready skills** for persistent context:
 
-**Setup & Maintenance**:
-- `/init-context-system` - Discovery-driven setup wizard
-- `/context-curator` - Domain-agnostic extraction
+**Context Management**:
+- `/context-curator` - Bootstrap + ongoing curation with automated quality gates
+
+**Research & Planning**:
+- `/researcher` - Multi-methodology research orchestrator (7 methodologies)
+- `/planner` - Evidence-based planning with quality validation
 
 **Meta-Skills**:
-- `/audit` - ISO 19011 systematic audits
+- `/auditor` - ISO 19011 systematic audits
 - `/standards-sync` - Sync external best practices
 
-**Utilities**:
-- `/compare` - Weighted decision matrices
-- `/diagram` - Mermaid diagrams
-- `/systematic-review` - PRISMA 2020 research
-
-**Time investment**: 1-2 hours for initial setup
+**Time investment**: 5 min bootstrap, then extract learnings as you work
 
 ---
 
@@ -46,17 +44,17 @@ Then install via the Discover tab:
 
 Navigate to **Discover** → Install "context-system"
 
-### Step 2: Run the Setup Wizard
+### Step 2: Bootstrap Your Context
 
 ```bash
-/init-context-system
+/context-curator
 ```
 
-Follow the guided 3-phase setup:
-
-**Phase 1 (15-30 min)** - Basic structure + 1-2 preferences
-**Phase 2 (30-45 min)** - Extract 5-10 context pieces
-**Phase 3 (15-30 min)** - Evolution framework
+On first run, you'll be offered bootstrap:
+- Creates core domains (skills/, research/, auditing/, communication/, decisions/, processes/)
+- Populates with best practices for using the distributed skills
+- Sets up indexes for navigation
+- **Takes ~5 minutes**
 
 You can pause after any phase and resume later.
 
@@ -71,7 +69,7 @@ Once setup is complete, you have access to:
 
 **Quality**:
 ```bash
-/audit             # Run systematic audits
+/auditor             # Run systematic audits
 /standards-sync    # Sync external best practices
 ```
 
@@ -88,7 +86,7 @@ The context system **improves over time**:
 
 1. **Weekly**: Run `/context-curator` after significant work
 2. **Monthly**: Quick audit check (spot check quality)
-3. **Quarterly**: Run `/audit` for comprehensive review
+3. **Quarterly**: Run `/auditor` for comprehensive review
 4. **Quarterly**: Run `/standards-sync` to stay current
 
 ---
@@ -119,7 +117,7 @@ Setup asks questions to identify YOUR relevant domains, then creates personalize
 **Why**: Works for Python developers, researchers, or knowledge workers—adapts to you
 
 **4. Evidence-Based Maintenance**
-Use `/audit` to systematically validate context quality and track improvements.
+Use `/auditor` to systematically validate context quality and track improvements.
 
 **Why**: Reproducible quality improvement with trend tracking
 
@@ -132,9 +130,8 @@ Use `/audit` to systematically validate context quality and track improvements.
 Follow the plugin installation above:
 1. Add marketplace: `/plugin marketplace add bcbeidel/context-system`
 2. Install plugin via Discover tab
-3. Run setup wizard: `/init-context-system`
-4. Follow the 3-phase guided setup
-5. Start using `/context-curator` regularly
+3. Run `/context-curator` (bootstrap on first run)
+4. Extract learnings regularly with `/context-curator`
 
 ---
 
@@ -180,16 +177,16 @@ Claude loads both, with project-specific overriding global.
 - Context feels outdated
 - Claude doesn't reference context
 
-**Run `/audit` quarterly** to validate quality objectively.
+**Run `/auditor` quarterly** to validate quality objectively.
 
 ---
 
 ## Next Steps
 
 1. Install plugin: `/plugin marketplace add bcbeidel/context-system`
-2. Run setup: `/init-context-system`
-3. Start iterating with `/context-curator`
-4. Run `/audit` quarterly for quality validation
+2. Bootstrap: `/context-curator` (first run)
+3. Extract learnings regularly: `/context-curator` (after work sessions)
+4. Run `/auditor` quarterly for quality validation
 5. Run `/standards-sync` quarterly to stay current
 
 ---
@@ -198,7 +195,7 @@ Claude loads both, with project-specific overriding global.
 
 - **[Plugin Documentation](../plugins/context-system/README.md)** - Detailed skill documentation
 - **[Standards & Sources](./standards-sources.md)** - External authority mapping
-- **[Skill Reference](../plugins/context-system/skills/README.md)** - All 7 skills explained
+- **[Skill Reference](../plugins/context-system/skills/README.md)** - All 5 skills explained
 
 ---
 

@@ -1,5 +1,82 @@
 # Phase 1: Review & Extract
 
+## Step 0: Bootstrap Check (First Run Only)
+
+**Before starting curation, check if context system exists.**
+
+### Check for Context Directory
+
+```bash
+# Check if context folder exists
+ls context/ 2>/dev/null
+```
+
+### If Missing: Offer Bootstrap
+
+**If `context/` doesn't exist**, ask user:
+
+> **Context system not found.** Would you like me to bootstrap it with best practices for using the distributed skills (auditor, researcher, planner, context-curator, agent development)?
+>
+> This will create:
+> - Core domains (skills/, research/, auditing/, communication/, decisions/, processes/)
+> - Best practice standards for each skill
+> - Index files for navigation
+> - Ready-to-use structure
+>
+> Create context system? (y/n)
+
+### If Yes: Bootstrap Context System
+
+**Create core domains**:
+```bash
+mkdir -p context/skills
+mkdir -p context/research
+mkdir -p context/auditing
+mkdir -p context/communication
+mkdir -p context/decisions
+mkdir -p context/processes
+mkdir -p context/context-system
+```
+
+**Copy best practices from bootstrap templates**:
+
+```bash
+# Find this skill's bootstrap directory
+SKILL_DIR="$(dirname "${BASH_SOURCE[0]}")"
+BOOTSTRAP_DIR="$SKILL_DIR/bootstrap"
+
+# Copy all template files to user's context directory
+cp -r "$BOOTSTRAP_DIR"/* context/
+
+# Result: 27 files (19 content + 8 indexes) across 7 domains
+```
+
+**What gets copied** (27 files total):
+- **Main index** (1): Context system overview with all domains
+- **skills/** (4 + index): Progressive disclosure, execution standards, audit checklist, planning practices
+- **research/** (7 + index): All 7 methodology standards (DSR, UX, Market, Mixed Methods, Case Study, Org Culture, Evidence Synthesis)
+- **auditing/** (2 + index): ISO 19011 audit pattern, security validation
+- **processes/** (1 + index): Planning best practices
+- **communication/** (1 + index): Style preferences template
+- **decisions/** (1 + index): ADR index and template
+- **context-system/** (2 + index): System overview, loading map
+
+**Create main index** (`context/_index.md`):
+```bash
+# Copy main index template if exists, or create from scratch
+# List all 7 domains with descriptions
+# Add quick start task mappings
+# Include navigation guidance
+```
+
+**Output**: Context system ready for use
+
+### If No: Skip Bootstrap
+
+User can create their own structure or run `/context-curator` again later to bootstrap.
+
+---
+
 ## Step 1: Understand Scope
 Ask the user what to review:
 - Recent conversation(s)
@@ -9,23 +86,6 @@ Ask the user what to review:
 - **Session retrospective** (after significant work)
 
 ## Step 2: Identify Guidance Locations
-
-**CRITICAL**: Verify directory structure exists before proceeding.
-
-**Check infrastructure**:
-```bash
-# Verify context directory structure exists
-ls -la context/
-
-# If missing, scaffold core directories:
-mkdir -p context/communication
-mkdir -p context/project
-mkdir -p context/workflows/processes
-mkdir -p context/workflows/standards
-mkdir -p context/workflows/retrospectives
-mkdir -p context/decisions
-mkdir -p context/private
-```
 
 **Read current state of all guidance locations**:
 
@@ -45,8 +105,6 @@ Glob: .claude/skills/*/SKILL.md
 # Templates
 Glob: extras/templates/*.md
 ```
-
-**If context/_index.md missing**: Create basic index pointing to governance docs.
 
 ## Step 3: Extract Context
 Review the specified scope and extract:
