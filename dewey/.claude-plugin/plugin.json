@@ -5,10 +5,10 @@
   "author": {
     "name": "Dewey Contributors"
   },
-  "homepage": "https://github.com/yourusername/dewey",
+  "homepage": "https://github.com/bcbeidel/dewey",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/dewey.git"
+    "url": "https://github.com/bcbeidel/dewey.git"
   },
   "keywords": [
     "context",
