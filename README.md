@@ -30,8 +30,14 @@ That's it! No additional setup needed.
 
 Once installed, you can use dewey commands in your Claude Code sessions:
 
-```
-/dewey:analyze .
+```bash
+# Analyze your context directory (defaults to ./context/)
+/dewey:analyze
+
+# Analyze a specific directory
+/dewey:analyze path/to/directory
+
+# Split a large file using LLM semantic analysis
 /dewey:split large-file.md
 ```
 
@@ -72,14 +78,29 @@ dewey/
 └── README.md                      # Plugin documentation
 ```
 
-## Development Status
+## Features
 
-**Version**: 0.0.2 (Refactored - Stdlib Only)
+**Version**: 0.0.5
 
-- ✅ Phase 0: Foundation complete
-- ✅ Refactored to use only built-in Python libraries
+### `/dewey:analyze` - Context Analysis
+- Analyzes your context directory (defaults to `./context/`)
+- Identifies token usage, large files, and optimization opportunities
+- Provides prioritized recommendations with token impact estimates
+- Suggests specific actions like splitting files or removing duplicates
+
+### `/dewey:split` - Intelligent File Splitting
+- Uses LLM semantic analysis (not mechanical splitting)
+- Maintains semantic coherence across split boundaries
+- Creates scannable main file + topical reference files
+- Follows Anthropic's context organization best practices
+- Backs up original files automatically
+
+## Status
+
+- ✅ Zero dependencies - Uses only Python built-in libraries
 - ✅ Skills-based structure following Claude Code best practices
-- ✅ Core commands: `/dewey:analyze` and `/dewey:split` implemented
+- ✅ LLM-driven semantic analysis for intelligent optimization
+- ✅ Context-aware defaults (analyzes `./context/` by default)
 - 📋 Additional optimization features planned
 
 See [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) for details.
