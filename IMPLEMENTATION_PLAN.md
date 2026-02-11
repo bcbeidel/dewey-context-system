@@ -42,16 +42,16 @@ cd dewey
 git init
 ```
 
-### Task 0.2: Core Dependencies Setup
+### Task 0.2: Core Dependencies Setup ✅ COMPLETE
 **Spec**: spec-0-quick-start.md
 **Dependencies**: Task 0.1
 **Estimate**: S
 
 **Acceptance Criteria**:
-- [ ] Create `pyproject.toml` with dependencies: pandas, pyyaml, click, pytest, ruff, mypy
-- [ ] Set up virtual environment
-- [ ] Install development dependencies
-- [ ] Configure ruff and mypy
+- [x] Create `pyproject.toml` with dependencies: pandas, pyyaml, click, pytest, ruff, mypy
+- [x] Set up virtual environment
+- [x] Install development dependencies
+- [x] Configure ruff and mypy
 
 **Implementation**:
 ```bash
