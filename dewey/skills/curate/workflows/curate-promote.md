@@ -99,7 +99,15 @@ If the area is already listed, no changes needed -- do not add individual topics
 
 If `.dewey/curation-plan.md` exists, check for an item matching the promoted topic name (case-insensitive match on the name portion before ` -- `). If found, mark it as done by changing `- [ ]` to `- [x]`. Update `last_updated` in the frontmatter to today's date.
 
-## Step 8: Report what was done
+## Step 8: Rebuild index.md
+
+Regenerate the table of contents so the promoted topic appears:
+
+```bash
+python3 ${CLAUDE_PLUGIN_ROOT}/skills/init/scripts/scaffold.py --target <kb_root> --rebuild-index
+```
+
+## Step 9: Report what was done
 
 Summarize all changes:
 - Promoted file location

@@ -103,7 +103,7 @@ All references in `references/`:
 Located in `scripts/`:
 
 **check_kb.py** -- Health check runner
-- Discovers all .md files under the knowledge base directory (excluding _proposals/)
+- Discovers all .md files under the knowledge base directory (excluding _proposals/ and index.md)
 - Runs all Tier 1 deterministic validators on each file
 - Returns structured JSON report with issues and summary
 - Summary includes total_files, fail_count, warn_count, pass_count
@@ -121,6 +121,7 @@ python3 ${CLAUDE_PLUGIN_ROOT}/skills/health/scripts/check_kb.py --kb-root <kb_ro
 - `check_source_urls` -- Source URLs are well-formed (http/https)
 - `check_freshness` -- last_validated within threshold (default 90 days)
 - `check_coverage` -- Every area has overview.md; every topic has .ref.md companion
+- `check_index_sync` -- index.md references all topic files on disk; warns on stale index
 
 Every validator returns a list of issue dicts: `{"file": str, "message": str, "severity": "fail" | "warn"}`
 

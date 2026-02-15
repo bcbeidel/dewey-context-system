@@ -109,7 +109,15 @@ CLAUDE.md's Domain Areas table lists areas, not individual topics. After adding 
 
 If the area is already listed, no changes needed — do not add individual topics to CLAUDE.md.
 
-## Step 6: Update curation plan
+## Step 6: Rebuild index.md
+
+Regenerate the table of contents so the new topic appears:
+
+```bash
+python3 ${CLAUDE_PLUGIN_ROOT}/skills/init/scripts/scaffold.py --target <kb_root> --rebuild-index
+```
+
+## Step 7: Update curation plan
 
 If `.dewey/curation-plan.md` exists, check for an item matching the topic name just added (case-insensitive match on the name portion before ` -- `). If found, mark it as done by changing `- [ ]` to `- [x]`. Update `last_updated` in the frontmatter to today's date.
 </process>
