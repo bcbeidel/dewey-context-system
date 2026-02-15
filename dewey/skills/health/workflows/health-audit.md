@@ -36,9 +36,9 @@ Extract the `sources` URLs from frontmatter. For each URL, use the **WebFetch** 
 WebFetch(url=<source_url>, prompt="Summarize the key claims and recommendations in this document")
 ```
 
-Compare the fetched content against the claims in the KB entry. Flag if:
-- The KB entry makes claims not supported by the sources
-- The sources have been updated with information not reflected in the KB entry
+Compare the fetched content against the claims in the knowledge base entry. Flag if:
+- The knowledge base entry makes claims not supported by the sources
+- The sources have been updated with information not reflected in the knowledge base entry
 - Sources are no longer accessible (WebFetch returns an error)
 
 If a source URL cannot be fetched (timeout, 404, paywall), note: "Source drift check skipped for `<url>` -- not accessible." and continue with the remaining sources.

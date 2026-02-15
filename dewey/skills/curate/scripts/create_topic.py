@@ -13,6 +13,7 @@ _init_scripts = str(Path(__file__).resolve().parent.parent.parent / "init" / "sc
 if _init_scripts not in sys.path:
     sys.path.insert(0, _init_scripts)
 
+from config import read_knowledge_dir
 from templates import (
     _slugify,
     render_topic_md,
@@ -44,7 +45,7 @@ def create_topic(kb_root: Path, area: str, topic_name: str, relevance: str) -> s
     FileNotFoundError
         If the domain area directory does not exist.
     """
-    area_dir = kb_root / "docs" / area
+    area_dir = kb_root / read_knowledge_dir(kb_root) / area
     if not area_dir.is_dir():
         raise FileNotFoundError(f"Domain area directory does not exist: {area_dir}")
 

@@ -1,4 +1,4 @@
-"""End-to-end test for KB lifecycle."""
+"""End-to-end test for knowledge base lifecycle."""
 import unittest
 import tempfile
 import shutil
@@ -20,7 +20,7 @@ class TestKBLifecycle(unittest.TestCase):
         shutil.rmtree(self.tmpdir)
 
     def test_full_lifecycle(self):
-        # 1. Init KB
+        # 1. Init knowledge base
         result = scaffold_kb(self.tmpdir, "Test Analyst", ["Domain A"])
         self.assertIn("created", result.lower())
         self.assertTrue((self.tmpdir / "AGENTS.md").exists())
@@ -58,7 +58,7 @@ class TestKBLifecycle(unittest.TestCase):
         self.assertGreater(report["summary"]["total_files"], 0)
 
     def test_health_check_on_fresh_kb(self):
-        """A freshly scaffolded KB with one complete topic should be reasonably healthy."""
+        """A freshly scaffolded knowledge base with one complete topic should be reasonably healthy."""
         scaffold_kb(self.tmpdir, "Test Analyst", ["Domain A"])
         create_topic(self.tmpdir, "domain-a", "First Topic", "Testing")
 
@@ -74,10 +74,10 @@ class TestKBLifecycle(unittest.TestCase):
 
 
 class TestSandboxKB(unittest.TestCase):
-    """Test creating a KB in the sandbox directory for live exploration."""
+    """Test creating a knowledge base in the sandbox directory for live exploration."""
 
     def test_scaffold_sandbox_kb(self):
-        """Create a sample KB in sandbox/ for manual testing."""
+        """Create a sample knowledge base in sandbox/ for manual testing."""
         sandbox = Path(__file__).parent.parent.parent / "sandbox"
         sandbox.mkdir(exist_ok=True)
 

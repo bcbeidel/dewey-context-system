@@ -62,7 +62,7 @@ def _frontmatter(fields: dict) -> str:
 # Public render functions
 # ---------------------------------------------------------------------------
 
-def render_agents_md_section(role_name: str, domain_areas: list[dict]) -> str:
+def render_agents_md_section(role_name: str, domain_areas: list[dict], *, knowledge_dir: str = "docs") -> str:
     """Render the dewey-managed section of AGENTS.md (no markers).
 
     Contains the "What You Have Access To" manifest and
@@ -80,7 +80,7 @@ def render_agents_md_section(role_name: str, domain_areas: list[dict]) -> str:
             sections.append("| Topic | Description |")
             sections.append("|-------|-------------|")
             for topic in topics:
-                sections.append(f"| [{topic['name']}](docs/{_slugify(area['name'])}/{_slugify(topic['name'])}.md) | {topic['description']} |")
+                sections.append(f"| [{topic['name']}]({knowledge_dir}/{_slugify(area['name'])}/{_slugify(topic['name'])}.md) | {topic['description']} |")
         sections.append("")
 
     # Remove trailing blank if domain_areas was non-empty
@@ -89,16 +89,17 @@ def render_agents_md_section(role_name: str, domain_areas: list[dict]) -> str:
 
     sections.append("")
     sections.append("## How To Use This Knowledge")
-    sections.append("- Load topic files from `docs/` when the task relates to that domain area.")
+    sections.append(f"- Load topic files from `{knowledge_dir}/` when the task relates to that domain area.")
     sections.append("- Use `.ref.md` files for quick lookups; use full topic files for deep context.")
     sections.append("- Cite primary sources from the `sources` frontmatter when making recommendations.")
     sections.append("- Defer to primary sources for detailed reference.")
     sections.append("- Check `.dewey/curation-plan.md` for planned topics and curation priorities.")
+    sections.append("- When a conversation touches knowledge areas not covered by existing topics or the plan, suggest adding them.")
 
     return "\n".join(sections)
 
 
-def render_agents_md(role_name: str, domain_areas: list[dict]) -> str:
+def render_agents_md(role_name: str, domain_areas: list[dict], *, knowledge_dir: str = "docs") -> str:
     """Render AGENTS.md (persona + manifest).
 
     The role heading and "Who You Are" section are user-owned (outside markers).
@@ -110,6 +111,8 @@ def render_agents_md(role_name: str, domain_areas: list[dict]) -> str:
         The role name shown in the heading (e.g. "Senior Python Developer").
     domain_areas:
         List of ``{"name": "Area Name", "topics": [{"name": ..., "description": ...}]}``.
+    knowledge_dir:
+        Name of the knowledge directory (default: "docs").
     """
     lines: list[str] = []
 
@@ -122,7 +125,7 @@ def render_agents_md(role_name: str, domain_areas: list[dict]) -> str:
 
     # Dewey-managed section (inside markers)
     lines.append(MARKER_BEGIN)
-    lines.append(render_agents_md_section(role_name, domain_areas))
+    lines.append(render_agents_md_section(role_name, domain_areas, knowledge_dir=knowledge_dir))
     lines.append(MARKER_END)
 
     return "\n".join(lines) + "\n"
@@ -269,10 +272,10 @@ def render_topic_ref_md(topic_name: str, relevance: str) -> str:
     return fm + "\n\n" + "\n".join(body_lines) + "\n"
 
 
-def render_claude_md_section(role_name: str, domain_areas: list[dict]) -> str:
+def render_claude_md_section(role_name: str, domain_areas: list[dict], *, knowledge_dir: str = "docs") -> str:
     """Render the dewey-managed section of CLAUDE.md (no markers).
 
-    Contains the KB heading, usage guide, directory structure,
+    Contains the knowledge base heading, usage guide, directory structure,
     frontmatter reference, and domain areas table.
 
     Parameters
@@ -281,26 +284,28 @@ def render_claude_md_section(role_name: str, domain_areas: list[dict]) -> str:
         Human-readable role name.
     domain_areas:
         List of ``{"name": "Area Name", "dirname": "area-name"}``.
+    knowledge_dir:
+        Name of the knowledge directory (default: "docs").
     """
     lines: list[str] = []
 
-    lines.append(f"## {role_name} Knowledge Base")
+    lines.append("## Knowledge Base")
     lines.append("")
     lines.append("This project contains a curated knowledge base with progressive disclosure:")
     lines.append("overviews for orientation, working-knowledge files for daily use, and")
     lines.append("`.ref.md` reference companions for quick lookups.")
     lines.append("")
 
-    # How to Use This KB
-    lines.append("### How to Use This KB")
+    # How to Use This Knowledge Base
+    lines.append("### How to Use This Knowledge Base")
     lines.append("")
     lines.append("1. Read `AGENTS.md` for the full role definition and topic manifest")
-    lines.append("2. Load topic files from `docs/` when the task relates to a domain area")
+    lines.append(f"2. Load topic files from `{knowledge_dir}/` when the task relates to a domain area")
     lines.append("3. Cite primary sources from the `sources` frontmatter when making recommendations")
     lines.append("4. Use `.ref.md` files for quick lookups without loading full topic context")
-    lines.append("5. Check `.dewey/curation-plan.md` for the KB roadmap -- planned topics not yet written")
-    lines.append("6. When a conversation touches knowledge areas not covered by the plan or existing topics,")
-    lines.append("   mention this to the user and ask if it should be added to the curation plan")
+    lines.append("5. Check `.dewey/curation-plan.md` for planned topics and curation priorities")
+    lines.append("6. When a conversation touches knowledge areas not covered by existing topics or the plan,")
+    lines.append("   mention this to the user and suggest adding them to the curation plan")
     lines.append("")
 
     # Directory Structure
@@ -308,7 +313,7 @@ def render_claude_md_section(role_name: str, domain_areas: list[dict]) -> str:
     lines.append("")
     lines.append("```")
     lines.append("AGENTS.md              # Role persona and topic manifest")
-    lines.append("docs/")
+    lines.append(f"{knowledge_dir}/")
     lines.append("  index.md             # Table of contents")
     for area in domain_areas:
         lines.append(f"  {area['dirname']}/")
@@ -339,17 +344,17 @@ def render_claude_md_section(role_name: str, domain_areas: list[dict]) -> str:
         for area in domain_areas:
             lines.append(
                 f"| {area['name']} "
-                f"| `docs/{area['dirname']}/` "
-                f"| [overview.md](docs/{area['dirname']}/overview.md) |"
+                f"| `{knowledge_dir}/{area['dirname']}/` "
+                f"| [overview.md]({knowledge_dir}/{area['dirname']}/overview.md) |"
             )
 
     return "\n".join(lines)
 
 
-def render_claude_md(role_name: str, domain_areas: list[dict]) -> str:
+def render_claude_md(role_name: str, domain_areas: list[dict], *, knowledge_dir: str = "docs") -> str:
     """Render CLAUDE.md for Claude Code discovery.
 
-    The entire KB section is wrapped in managed-section markers so it can
+    The entire knowledge base section is wrapped in managed-section markers so it can
     be safely merged into an existing CLAUDE.md.
 
     Parameters
@@ -358,11 +363,13 @@ def render_claude_md(role_name: str, domain_areas: list[dict]) -> str:
         Human-readable role name.
     domain_areas:
         List of ``{"name": "Area Name", "dirname": "area-name"}``.
+    knowledge_dir:
+        Name of the knowledge directory (default: "docs").
     """
     lines: list[str] = []
 
     lines.append(MARKER_BEGIN)
-    lines.append(render_claude_md_section(role_name, domain_areas))
+    lines.append(render_claude_md_section(role_name, domain_areas, knowledge_dir=knowledge_dir))
     lines.append(MARKER_END)
 
     return "\n".join(lines) + "\n"

@@ -13,6 +13,12 @@ import json
 import sys
 from pathlib import Path
 
+# config.py lives in init/scripts/ — add it to sys.path for cross-skill import.
+_init_scripts = str(Path(__file__).resolve().parent.parent.parent / "init" / "scripts")
+if _init_scripts not in sys.path:
+    sys.path.insert(0, _init_scripts)
+
+from config import read_knowledge_dir
 from validators import (
     check_coverage,
     check_cross_references,
@@ -24,9 +30,9 @@ from validators import (
 )
 
 
-def _discover_md_files(kb_root: Path) -> list[Path]:
-    """Return all .md files under docs/, excluding _proposals/."""
-    knowledge_dir = kb_root / "docs"
+def _discover_md_files(kb_root: Path, knowledge_dir_name: str = "docs") -> list[Path]:
+    """Return all .md files under the knowledge directory, excluding _proposals/."""
+    knowledge_dir = kb_root / knowledge_dir_name
     if not knowledge_dir.is_dir():
         return []
 
@@ -54,8 +60,9 @@ def run_health_check(kb_root: Path) -> dict:
     dict
         ``{"issues": [...], "summary": {...}}``
     """
+    knowledge_dir_name = read_knowledge_dir(kb_root)
     all_issues: list[dict] = []
-    md_files = _discover_md_files(kb_root)
+    md_files = _discover_md_files(kb_root, knowledge_dir_name)
 
     # Per-file validators
     for md_file in md_files:
@@ -67,7 +74,7 @@ def run_health_check(kb_root: Path) -> dict:
         all_issues.extend(check_freshness(md_file))
 
     # Structural validators (run once)
-    all_issues.extend(check_coverage(kb_root))
+    all_issues.extend(check_coverage(kb_root, knowledge_dir_name=knowledge_dir_name))
 
     # Build summary
     files_with_fails = set()
@@ -99,7 +106,7 @@ def run_health_check(kb_root: Path) -> dict:
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(description="Run KB health checks.")
+    parser = argparse.ArgumentParser(description="Run knowledge base health checks.")
     parser.add_argument(
         "--kb-root",
         required=True,

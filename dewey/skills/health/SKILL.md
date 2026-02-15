@@ -12,13 +12,13 @@ Validates knowledge base quality across three tiers and three quality dimensions
 
 1. **Tier 1 -- Deterministic (Python)** -- Fast, automated checks run by `check_kb.py`. Validates frontmatter, section ordering, cross-references, size bounds, source URLs, freshness dates, and structural coverage. No LLM required. CI-friendly.
 2. **Tier 2 -- LLM-Assisted (Claude)** -- Claude evaluates items flagged by Tier 1 or entries with stale `last_validated` dates. Assesses source drift, depth label accuracy, "Why This Matters" quality, and "In Practice" concreteness.
-3. **Tier 3 -- Human Judgment** -- Surfaces decisions that require human input: relevance questions, scope decisions, pending proposals, and conflict resolution between KB claims and updated sources.
+3. **Tier 3 -- Human Judgment** -- Surfaces decisions that require human input: relevance questions, scope decisions, pending proposals, and conflict resolution between knowledge base claims and updated sources.
 
 ## Three Quality Dimensions
 
 1. **Relevance** -- Is this content needed by the role? Does the relevance statement accurately describe who benefits and when?
 2. **Accuracy / Freshness** -- Are claims current and traceable to sources? Has the content been validated recently?
-3. **Structural Fitness** -- Does the content follow the KB spec? Correct depth, proper sections, valid frontmatter, companion files present?
+3. **Structural Fitness** -- Does the content follow the knowledge base spec? Correct depth, proper sections, valid frontmatter, companion files present?
 
 ## Design Philosophy
 
@@ -35,6 +35,18 @@ Validates knowledge base quality across three tiers and three quality dimensions
 
 <intake>
 Validating knowledge base quality.
+
+**Before routing, check if a curation plan exists:**
+
+1. **No knowledge base initialized** (no AGENTS.md or knowledge base directory) -- Suggest `/dewey:init` first. Do not proceed.
+2. **Knowledge base exists but no `.dewey/curation-plan.md`** -- Pause and build a plan:
+   - Read AGENTS.md to understand the role and domain areas
+   - Read the knowledge base directory structure to see what topics already exist
+   - Propose 2-4 starter topics per domain area based on context
+   - Ask the user to confirm or adjust
+   - Write `.dewey/curation-plan.md` with the confirmed topics (use the format from the curate-plan workflow)
+   - Then resume the original command
+3. **Plan exists** -- Proceed to routing normally
 
 **Default behavior:** Run Tier 1 deterministic checks only (fast, CI-friendly).
 
@@ -70,7 +82,7 @@ All workflows in `workflows/`:
 | health-check.md | Tier 1 deterministic validation -- fast, CI-friendly |
 | health-audit.md | Tier 1 + Tier 2 LLM-assisted quality assessment |
 | health-review.md | Full assessment + Tier 3 human decision queue |
-| health-coverage.md | Gap analysis comparing AGENTS.md responsibilities to KB contents |
+| health-coverage.md | Gap analysis comparing AGENTS.md responsibilities to knowledge base contents |
 | health-freshness.md | Staleness report grouped by urgency |
 </workflows_index>
 
@@ -91,7 +103,7 @@ All references in `references/`:
 Located in `scripts/`:
 
 **check_kb.py** -- Health check runner
-- Discovers all .md files under docs/ (excluding _proposals/)
+- Discovers all .md files under the knowledge base directory (excluding _proposals/)
 - Runs all Tier 1 deterministic validators on each file
 - Returns structured JSON report with issues and summary
 - Summary includes total_files, fail_count, warn_count, pass_count

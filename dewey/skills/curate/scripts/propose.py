@@ -13,6 +13,7 @@ _init_scripts = str(Path(__file__).resolve().parent.parent.parent / "init" / "sc
 if _init_scripts not in sys.path:
     sys.path.insert(0, _init_scripts)
 
+from config import read_knowledge_dir
 from templates import (
     _slugify,
     render_proposal_md,
@@ -51,7 +52,8 @@ def create_proposal(
     FileNotFoundError
         If the _proposals/ directory does not exist.
     """
-    proposals_dir = kb_root / "docs" / "_proposals"
+    knowledge_dir = read_knowledge_dir(kb_root)
+    proposals_dir = kb_root / knowledge_dir / "_proposals"
     if not proposals_dir.is_dir():
         raise FileNotFoundError(
             f"Proposals directory does not exist: {proposals_dir}"
@@ -64,7 +66,7 @@ def create_proposal(
         proposal_path.write_text(
             render_proposal_md(topic_name, relevance, proposed_by, rationale)
         )
-        return f"Proposal created: docs/_proposals/{slug}.md"
+        return f"Proposal created: {knowledge_dir}/_proposals/{slug}.md"
 
     return f"Proposal '{topic_name}' already exists — nothing created."
 

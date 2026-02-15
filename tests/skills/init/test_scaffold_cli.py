@@ -130,6 +130,27 @@ class TestScaffoldCli(unittest.TestCase):
         )
         self.assertNotEqual(result.returncode, 0)
 
+    def test_cli_with_knowledge_dir(self):
+        """CLI with --knowledge-dir creates the named directory."""
+        result = subprocess.run(
+            [
+                sys.executable,
+                str(SCRIPT_PATH),
+                "--target",
+                str(self.tmpdir),
+                "--role",
+                "Test Role",
+                "--knowledge-dir",
+                "knowledge",
+            ],
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(result.returncode, 0, msg=result.stderr)
+        self.assertTrue((self.tmpdir / "knowledge").is_dir())
+        self.assertTrue((self.tmpdir / "knowledge" / "index.md").exists())
+        self.assertFalse((self.tmpdir / "docs").exists())
+
 
 if __name__ == "__main__":
     unittest.main()

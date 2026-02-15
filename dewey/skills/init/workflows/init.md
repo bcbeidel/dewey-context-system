@@ -3,7 +3,7 @@ Understand the user's goals, evaluate the repo, and scaffold a knowledge base or
 </objective>
 
 <required_reading>
-Load `references/kb-spec-summary.md` for context on the KB specification.
+Load `references/kb-spec-summary.md` for context on the knowledge base specification.
 </required_reading>
 
 <process>
@@ -31,7 +31,7 @@ Listen for:
 
 Based on the repo context and the user's answer, propose:
 
-1. **A short persona** -- a 1-sentence description of who the KB serves (this becomes the role name in AGENTS.md)
+1. **A short persona** -- a 1-sentence description of who the knowledge base serves (this becomes the role name in AGENTS.md)
 2. **3-5 domain areas** -- organized around how the user thinks about the work, not technical categories
 
 Present it conversationally:
@@ -49,35 +49,50 @@ These should map to how you actually think about the work. Want to adjust anythi
 
 **Key principle:** Domain-Shaped Organization. Mirror the practitioner's mental model, not textbook categories.
 
-## Step 4: Scaffold
+## Step 4: Ask about knowledge directory location
+
+Ask the user: **"Where would you like to store the knowledge base files? (default: `docs/`)"**
+
+If the user doesn't provide a specific answer, use `docs/` as the default.
+
+## Step 5: Scaffold
 
 After the user confirms or adjusts:
 
 ```bash
-python3 ${CLAUDE_PLUGIN_ROOT}/skills/init/scripts/scaffold.py --target <directory> --role "<persona>" --areas "<area1>,<area2>,<area3>"
+python3 ${CLAUDE_PLUGIN_ROOT}/skills/init/scripts/scaffold.py --target <directory> --role "<persona>" --areas "<area1>,<area2>,<area3>" --knowledge-dir "<user's answer or docs/>"
 ```
 
-## Step 5: Report and suggest next steps
+## Step 6: Report, build the curation plan, and suggest next steps
 
-Show what was created. Then:
+Show what was created. Then build the curation plan:
 
-1. For each domain area, suggest 2-3 starter topics based on the user's stated goals
-2. Present as a numbered sequence of `/dewey:curate add <topic> in <area>` commands
-3. Ask: "Want to start with the first one?"
-4. Also suggest editing the "Who You Are" section in AGENTS.md to refine the persona
+1. For each domain area, propose 2-3 starter topics based on the user's stated goals
+2. Present them conversationally grouped by area and ask the user to confirm or adjust
+3. After confirmation, write `.dewey/curation-plan.md` directly with this format:
 
-Example:
+```markdown
+---
+last_updated: <today's date YYYY-MM-DD>
+---
 
-"Here's a plan to populate the knowledge base:
+# Curation Plan
 
-### Campaign Management
-1. `/dewey:curate add Bid Strategies in campaign-management`
-2. `/dewey:curate add Budget Allocation in campaign-management`
+## <area-slug>
+- [ ] Topic Name -- core -- brief rationale
+- [ ] Topic Name -- core -- brief rationale
 
-### Measurement
-3. `/dewey:curate add Attribution Models in measurement`
+## <area-slug>
+- [ ] Topic Name -- core -- brief rationale
+```
 
-Want to start with the first one? You can also edit the 'Who You Are' section in AGENTS.md to refine the persona."
+4. Present the plan as the living roadmap:
+
+"Here's your curation plan -- use `/dewey:curate plan` to track progress:
+
+<show the plan content>
+
+Start with the first unchecked item using `/dewey:curate add <first-topic> in <first-area>`. You can also edit the 'Who You Are' section in AGENTS.md to refine the persona."
 </process>
 
 <success_criteria>

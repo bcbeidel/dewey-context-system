@@ -1,5 +1,5 @@
 <objective>
-Ingest an external URL into the knowledge base by fetching the content, evaluating it against existing KB material, and either proposing new content or recommending updates to existing topics.
+Ingest an external URL into the knowledge base by fetching the content, evaluating it against existing knowledge base material, and either proposing new content or recommending updates to existing topics.
 </objective>
 
 <process>
@@ -25,11 +25,11 @@ Read AGENTS.md to understand the role context, then fetch the URL:
 2. **Identify key information** relevant to the role: concepts, guidance, examples, caveats, and authoritative claims.
 3. If the URL is inaccessible (404, paywall, authentication required), inform the user and offer to record the URL for manual distillation later.
 
-## Step 3: Evaluate against existing KB content
+## Step 3: Evaluate against existing knowledge base content
 
 Before proposing new material, check for overlap with what's already in the knowledge base:
 
-1. **Scan existing topics** -- Read AGENTS.md manifest and browse `docs/` area directories to identify existing topics and their descriptions.
+1. **Scan existing topics** -- Read AGENTS.md manifest and browse knowledge base area directories to identify existing topics and their descriptions.
 2. **Read overlapping topics** -- For any topic that covers related ground, read the working-knowledge file to understand what's already documented.
 3. **Classify the source material** into one of three outcomes:
 
@@ -41,7 +41,7 @@ Before proposing new material, check for overlap with what's already in the know
 
 Present the evaluation to the user:
 
-"After reviewing the source against the existing KB, here's what I found:
+"After reviewing the source against the existing knowledge base, here's what I found:
 
 - **Overlapping topics:** [list any existing topics that cover similar ground, with a brief note on what overlaps]
 - **New material:** [describe what the source contributes that isn't already covered]
@@ -116,13 +116,13 @@ The human brings domain judgment. Accept their edits and corrections. If they ap
 Write the final approved content. Then report what was done:
 
 **If a new proposal was created:**
-"The proposal has been created at `docs/_proposals/<slug>.md` with content distilled from the source. Next steps:
+"The proposal has been created at `<knowledge-dir>/_proposals/<slug>.md` with content distilled from the source. Next steps:
 1. **Validate** -- Use `/dewey:health check` to run quality validators
 2. **Promote** -- Use `/dewey:curate promote <slug> --target-area <area>` to move it into a domain area"
 
 **If existing topics were updated:**
 "The following topics were updated with new material from `<url>`:
-- `docs/<area>/<topic>.md` -- [brief description of changes]
+- `<knowledge-dir>/<area>/<topic>.md` -- [brief description of changes]
 The source has been added to each topic's frontmatter."
 
 ## Step 9: Update curation plan
@@ -132,7 +132,7 @@ If `.dewey/curation-plan.md` exists, check for an item matching the topic name j
 
 <success_criteria>
 - Source URL fetched and content analyzed
-- Existing KB scanned for overlap -- evaluation presented to user before drafting
+- Existing knowledge base scanned for overlap -- evaluation presented to user before drafting
 - User confirmed whether to create new content, update existing, or both
 - For new proposals: content filled in (not template placeholders), source URL in frontmatter
 - For existing topic updates: changes applied with new source added to frontmatter

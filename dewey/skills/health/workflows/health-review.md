@@ -9,7 +9,7 @@ Execute the audit workflow (health-audit.md) to produce the combined Tier 1 + Ti
 
 ## Step 2: Build the Tier 3 decision queue
 
-Scan the KB for items that require human judgment. These are decisions that cannot be resolved by deterministic checks or LLM assessment alone.
+Scan the knowledge base for items that require human judgment. These are decisions that cannot be resolved by deterministic checks or LLM assessment alone.
 
 ### 2a. Relevance questions
 
@@ -29,15 +29,22 @@ Regardless of utilization data, check for structural scope issues:
 
 ### 2c. Proposal decisions
 
-Scan `docs/_proposals/` for pending proposals:
+Scan `<knowledge-dir>/_proposals/` for pending proposals:
+- "Pending proposal: `<slug>` -- <title>. Accept, reject, or revise?"
+
+If no proposals exist, skip this section.
+
+### 2c. Proposal decisions
+
+Scan `<knowledge-dir>/_proposals/` for pending proposals:
 - "Pending proposal: `<slug>` -- <title>. Accept, reject, or revise?"
 
 If no proposals exist, skip this section.
 
 ### 2d. Conflict resolution
 
-For entries where Tier 2 detected source drift (KB claims differ from source material):
-- "KB says `<claim>` but source now says `<updated claim>`. Update KB, keep current, or investigate?"
+For entries where Tier 2 detected source drift (knowledge base claims differ from source material):
+- "Knowledge base says `<claim>` but source now says `<updated claim>`. Update knowledge base, keep current, or investigate?"
 
 ## Step 3: Present the decision queue
 
@@ -69,9 +76,9 @@ Format as an interactive decision list:
 ### Conflicts (<N> items)
 
 4. **<topic>** -- Source drift detected
-   - KB claim: "<current claim>"
+   - Knowledge base claim: "<current claim>"
    - Source says: "<updated claim>"
-   - Options: Update KB / Keep current / Investigate further
+   - Options: Update knowledge base / Keep current / Investigate further
 ```
 
 ## Step 4: Process decisions
@@ -80,10 +87,10 @@ For each item, ask the user for their decision. Based on the response:
 
 - **Keep** -> No action; optionally update `last_validated` to today
 - **Update relevance** -> Edit the frontmatter relevance field
-- **Remove / Prune** -> Note for manual deletion (never auto-delete KB content)
+- **Remove / Prune** -> Note for manual deletion (never auto-delete knowledge base content)
 - **Accept proposal** -> Run `/dewey:curate promote` for the proposal
 - **Reject proposal** -> Note for manual deletion of the proposal file
-- **Update KB** -> Edit the content to reflect updated source information, update `last_validated`
+- **Update knowledge base** -> Edit the content to reflect updated source information, update `last_validated`
 - **Investigate further** -> Add to a follow-up list for deeper research
 
 ## Step 5: Summary

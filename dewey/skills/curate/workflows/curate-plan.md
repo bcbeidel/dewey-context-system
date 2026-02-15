@@ -1,5 +1,5 @@
 <objective>
-View, add to, or remove items from the curation plan -- the persistent record of topics this KB intends to cover.
+View, add to, or remove items from the curation plan -- the persistent record of topics this knowledge base intends to cover.
 </objective>
 
 <process>
@@ -19,7 +19,7 @@ Parse `$ARGUMENTS` after `plan`. Valid invocations:
 
 ## Step 2: Locate or create the plan file
 
-Look for `.dewey/curation-plan.md` in the KB root.
+Look for `.dewey/curation-plan.md` in the knowledge base root.
 
 **If the file does not exist** and the action is **view**:
 - Inform the user: "No curation plan found. Use `/dewey:curate plan add <topic> in <area>` to start one, or run `/dewey:init` to generate one from starter topics."

@@ -1,6 +1,6 @@
-"""Create the on-disk directory structure and template files for a Dewey KB.
+"""Create the on-disk directory structure and template files for a Dewey knowledge base.
 
-Only stdlib is used.  Supports merging KB sections into existing files
+Only stdlib is used.  Supports merging knowledge base sections into existing files
 using marker-based managed sections.
 """
 
@@ -10,6 +10,7 @@ import json
 import sys
 from pathlib import Path
 
+from config import write_config
 from templates import (
     MARKER_BEGIN,
     MARKER_END,
@@ -71,13 +72,14 @@ def scaffold_kb(
     role_name: str,
     domain_areas: list[str] | None = None,
     starter_topics: dict[str, list[str]] | None = None,
+    knowledge_dir: str = "docs",
 ) -> str:
     """Scaffold a knowledge-base directory tree under *target_dir*.
 
     Parameters
     ----------
     target_dir:
-        Root directory for the KB.
+        Root directory for the knowledge base.
     role_name:
         Human-readable role name (e.g. "Paid Media Analyst").
     domain_areas:
@@ -86,6 +88,8 @@ def scaffold_kb(
     starter_topics:
         Optional mapping of area name to list of starter topic names.
         Used to generate a curate plan in the summary.
+    knowledge_dir:
+        Name of the knowledge directory (default: "docs").
 
     Returns
     -------
@@ -100,15 +104,15 @@ def scaffold_kb(
     # ------------------------------------------------------------------
     # 1. Core directories
     # ------------------------------------------------------------------
-    knowledge_dir = target_dir / "docs"
-    proposals_dir = knowledge_dir / "_proposals"
+    knowledge_path = target_dir / knowledge_dir
+    proposals_dir = knowledge_path / "_proposals"
     dewey_dirs = [
         target_dir / ".dewey" / "health",
         target_dir / ".dewey" / "history",
         target_dir / ".dewey" / "utilization",
     ]
 
-    for d in [knowledge_dir, proposals_dir, *dewey_dirs]:
+    for d in [knowledge_path, proposals_dir, *dewey_dirs]:
         d.mkdir(parents=True, exist_ok=True)
         created.append(str(d.relative_to(target_dir)) + "/")
 
@@ -117,6 +121,10 @@ def scaffold_kb(
         gitkeep = d / ".gitkeep"
         if not gitkeep.exists():
             gitkeep.touch()
+
+    # Write config
+    write_config(target_dir, knowledge_dir)
+    created.append(".dewey/config.json")
 
     # ------------------------------------------------------------------
     # 2. Build domain-area metadata used by templates
@@ -135,8 +143,8 @@ def scaffold_kb(
     # ------------------------------------------------------------------
     agents_path = target_dir / "AGENTS.md"
     existing_agents = agents_path.read_text() if agents_path.exists() else None
-    agents_section = render_agents_md_section(role_name, agents_areas)
-    agents_full = render_agents_md(role_name, agents_areas)
+    agents_section = render_agents_md_section(role_name, agents_areas, knowledge_dir=knowledge_dir)
+    agents_full = render_agents_md(role_name, agents_areas, knowledge_dir=knowledge_dir)
     agents_new = merge_managed_section(existing_agents, agents_section, agents_full)
     agents_path.write_text(agents_new)
     if existing_agents is None:
@@ -149,8 +157,8 @@ def scaffold_kb(
     # ------------------------------------------------------------------
     claude_path = target_dir / "CLAUDE.md"
     existing_claude = claude_path.read_text() if claude_path.exists() else None
-    claude_section = render_claude_md_section(role_name, area_slugs)
-    claude_full = render_claude_md(role_name, area_slugs)
+    claude_section = render_claude_md_section(role_name, area_slugs, knowledge_dir=knowledge_dir)
+    claude_full = render_claude_md(role_name, area_slugs, knowledge_dir=knowledge_dir)
     claude_new = merge_managed_section(existing_claude, claude_section, claude_full)
     claude_path.write_text(claude_new)
     if existing_claude is None:
@@ -159,19 +167,19 @@ def scaffold_kb(
         created.append("CLAUDE.md (merged)")
 
     # ------------------------------------------------------------------
-    # 5. docs/index.md
+    # 5. index.md inside the knowledge directory
     # ------------------------------------------------------------------
-    index_path = knowledge_dir / "index.md"
+    index_path = knowledge_path / "index.md"
     if not index_path.exists():
         index_path.write_text(render_index_md(role_name, area_slugs))
-        created.append("docs/index.md")
+        created.append(f"{knowledge_dir}/index.md")
 
     # ------------------------------------------------------------------
     # 6. Domain area directories + overview.md
     # ------------------------------------------------------------------
     for name in domain_areas:
         slug = _slugify(name)
-        area_dir = knowledge_dir / slug
+        area_dir = knowledge_path / slug
         area_dir.mkdir(parents=True, exist_ok=True)
 
         overview_path = area_dir / "overview.md"
@@ -179,7 +187,7 @@ def scaffold_kb(
             overview_path.write_text(
                 render_overview_md(name, relevance="core", topics=[])
             )
-            created.append(f"docs/{slug}/overview.md")
+            created.append(f"{knowledge_dir}/{slug}/overview.md")
 
     # ------------------------------------------------------------------
     # 7. Curation plan (.dewey/curation-plan.md)
@@ -241,6 +249,11 @@ if __name__ == "__main__":
         default="",
         help='JSON mapping of area name to starter topics, e.g. \'{"Area": ["Topic1"]}\'',
     )
+    parser.add_argument(
+        "--knowledge-dir",
+        default="docs",
+        help="Name of the knowledge directory (default: docs)",
+    )
     args = parser.parse_args()
 
     areas = (
@@ -249,5 +262,5 @@ if __name__ == "__main__":
         else []
     )
     topics = json.loads(args.starter_topics) if args.starter_topics else None
-    result = scaffold_kb(Path(args.target), args.role, areas, topics)
+    result = scaffold_kb(Path(args.target), args.role, areas, topics, knowledge_dir=args.knowledge_dir)
     print(result)

@@ -1,4 +1,4 @@
-"""Tests for skills.init.scripts.scaffold — KB directory scaffolding."""
+"""Tests for skills.init.scripts.scaffold — knowledge-base directory scaffolding."""
 
 import os
 import shutil
@@ -41,7 +41,7 @@ class TestScaffoldKB(unittest.TestCase):
         self.assertIn("AGENTS.md", content)
 
     def test_merges_into_existing_claude_md(self):
-        """Existing CLAUDE.md is preserved with KB section appended."""
+        """Existing CLAUDE.md is preserved with knowledge base section appended."""
         claude_path = self.tmpdir / "CLAUDE.md"
         claude_path.write_text("# Custom content\n")
         scaffold_kb(self.tmpdir, "Paid Media Analyst")
@@ -51,7 +51,7 @@ class TestScaffoldKB(unittest.TestCase):
         self.assertIn(MARKER_END, content)
 
     def test_merges_into_existing_agents_md(self):
-        """Existing AGENTS.md is preserved with KB section appended."""
+        """Existing AGENTS.md is preserved with knowledge base section appended."""
         agents_path = self.tmpdir / "AGENTS.md"
         agents_path.write_text("# My Custom Role\n\nCustom persona text.\n")
         scaffold_kb(self.tmpdir, "Paid Media Analyst")
@@ -213,6 +213,49 @@ class TestScaffoldKB(unittest.TestCase):
             starter_topics={"Testing": ["Unit Testing"]},
         )
         self.assertIn(".dewey/curation-plan.md", result)
+
+    def test_creates_config_json(self):
+        """scaffold creates .dewey/config.json with default knowledge_dir."""
+        scaffold_kb(self.tmpdir, "Analyst")
+        config_path = self.tmpdir / ".dewey" / "config.json"
+        self.assertTrue(config_path.is_file())
+        import json
+        data = json.loads(config_path.read_text())
+        self.assertEqual(data["knowledge_dir"], "docs")
+
+    def test_custom_knowledge_dir(self):
+        """scaffold with custom knowledge_dir creates the named directory."""
+        scaffold_kb(self.tmpdir, "Analyst", knowledge_dir="knowledge")
+        self.assertTrue((self.tmpdir / "knowledge").is_dir())
+        self.assertTrue((self.tmpdir / "knowledge" / "_proposals").is_dir())
+        self.assertTrue((self.tmpdir / "knowledge" / "index.md").is_file())
+        self.assertFalse((self.tmpdir / "docs").exists())
+        import json
+        data = json.loads((self.tmpdir / ".dewey" / "config.json").read_text())
+        self.assertEqual(data["knowledge_dir"], "knowledge")
+
+    def test_custom_knowledge_dir_in_summary(self):
+        """Summary uses the actual knowledge dir name, not hardcoded 'docs'."""
+        result = scaffold_kb(
+            self.tmpdir,
+            "Analyst",
+            domain_areas=["Testing"],
+            knowledge_dir="knowledge",
+        )
+        self.assertIn("knowledge/", result)
+        self.assertNotIn("docs/", result)
+
+    def test_custom_knowledge_dir_in_claude_md(self):
+        """CLAUDE.md references the custom knowledge directory."""
+        scaffold_kb(self.tmpdir, "Analyst", knowledge_dir="kb")
+        content = (self.tmpdir / "CLAUDE.md").read_text()
+        self.assertIn("kb/", content)
+
+    def test_custom_knowledge_dir_in_agents_md(self):
+        """AGENTS.md references the custom knowledge directory."""
+        scaffold_kb(self.tmpdir, "Analyst", knowledge_dir="kb")
+        content = (self.tmpdir / "AGENTS.md").read_text()
+        self.assertIn("`kb/`", content)
 
 
 class TestMergeManagedSection(unittest.TestCase):

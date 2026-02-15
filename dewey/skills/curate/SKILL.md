@@ -1,6 +1,6 @@
 ---
 name: curate
-description: Add, propose, promote, and ingest content in a knowledge base following the KB specification
+description: Add, propose, promote, and ingest content in a knowledge base following the knowledge base specification
 ---
 
 <essential_principles>
@@ -11,7 +11,7 @@ Manages the content lifecycle for a knowledge base. Handles adding topics from t
 ## Core Workflow
 
 1. **Add topics** -- Create working-knowledge and reference files from templates in a domain area
-2. **Propose additions** -- Submit topics for review before committing them to the KB
+2. **Propose additions** -- Submit topics for review before committing them to the knowledge base
 3. **Promote proposals** -- Move validated proposals from _proposals/ into their target domain area
 4. **Ingest from URL** -- Create a proposal pre-filled with an external source for manual distillation
 
@@ -31,11 +31,23 @@ Manages the content lifecycle for a knowledge base. Handles adding topics from t
 <intake>
 Managing content in a knowledge base.
 
+**Before routing, check if a curation plan exists:**
+
+1. **No knowledge base initialized** (no AGENTS.md or knowledge base directory) -- Suggest `/dewey:init` first. Do not proceed.
+2. **Knowledge base exists but no `.dewey/curation-plan.md`** -- Pause and build a plan:
+   - Read AGENTS.md to understand the role and domain areas
+   - Read the knowledge base directory structure to see what topics already exist
+   - Propose 2-4 starter topics per domain area based on context
+   - Ask the user to confirm or adjust
+   - Write `.dewey/curation-plan.md` with the confirmed topics (use the format from the curate-plan workflow)
+   - Then resume the original command
+3. **Plan exists** -- Proceed to routing normally
+
 **Available actions:**
 - `add` -- Create a new topic in a domain area from the template
 - `propose` -- Submit a topic proposal for review
 - `promote` -- Move a validated proposal into a domain area
-- `ingest` -- Ingest an external URL, evaluate against existing KB, then propose or update
+- `ingest` -- Ingest an external URL, evaluate against existing knowledge base, then propose or update
 - `plan` -- View, add to, or remove items from the curation plan
 
 Parse the action from `$ARGUMENTS`. If no arguments provided, present the options and ask the user which action to take.
@@ -84,7 +96,7 @@ python3 ${CLAUDE_PLUGIN_ROOT}/skills/curate/scripts/create_topic.py --kb-root <r
 ```
 
 **propose.py** -- Create a proposal file
-- Creates a proposal in docs/_proposals/
+- Creates a proposal in <knowledge-dir>/_proposals/ (configured in `.dewey/config.json`, defaults to `docs/`)
 - Includes frontmatter with status, proposed_by, rationale
 - Safe: never overwrites existing proposals
 
@@ -111,7 +123,7 @@ Curation is successful when:
 - Sources are referenced in frontmatter
 - Frontmatter is complete with title, relevance, and date
 - Template sections are filled in (Why This Matters, In Practice, Key Guidance, Watch Out For, Go Deeper)
-- AGENTS.md has linked table rows (`[Topic](docs/<area>/<slug>.md)`) for each topic — not bullets
+- AGENTS.md has linked table rows (`[Topic](<knowledge-dir>/<area>/<slug>.md)`) for each topic — not bullets
 - overview.md "How It's Organized" has linked table rows for each topic in the area
 - overview.md "Key Sources" is populated with actual sources — not placeholders
 - CLAUDE.md Domain Areas table lists the area

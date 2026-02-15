@@ -6,7 +6,7 @@ description: Bootstrap a new knowledge base — evaluates the repo, asks what yo
 <essential_principles>
 ## What This Skill Does
 
-Creates a new knowledge base conforming to the KB specification. Evaluates the existing repo, asks the user what they're trying to accomplish, proposes domain areas that match their mental model, and scaffolds the directory structure with AGENTS.md, CLAUDE.md, index.md, and domain area overviews.
+Creates a new knowledge base conforming to the knowledge base specification. Evaluates the existing repo, asks the user what they're trying to accomplish, proposes domain areas that match their mental model, and scaffolds the directory structure with AGENTS.md, CLAUDE.md, index.md, and domain area overviews.
 
 ## Core Workflow
 
@@ -19,8 +19,8 @@ Creates a new knowledge base conforming to the KB specification. Evaluates the e
 ## Design Philosophy
 
 - **Goal-driven** -- Start from what the user wants to accomplish, not a role label
-- **Safe by default** -- Merges KB sections into existing files using markers; never destroys user content
-- **Minimal viable KB** -- Scaffolds the structure, not the content
+- **Safe by default** -- Merges knowledge base sections into existing files using markers; never destroys user content
+- **Minimal viable knowledge base** -- Scaffolds the structure, not the content
 - **Templates guide quality** -- Every generated file follows the content format spec
 
 ## Key Variables
@@ -42,7 +42,7 @@ All workflows in `workflows/`:
 
 | Workflow | Purpose |
 |----------|---------|
-| init.md | Evaluate repo, understand goals, propose domains, scaffold KB |
+| init.md | Evaluate repo, understand goals, propose domains, scaffold knowledge base |
 </workflows_index>
 
 <references_index>
@@ -52,7 +52,7 @@ All references in `references/`:
 
 | Reference | Content |
 |-----------|---------|
-| kb-spec-summary.md | Summary of the KB specification principles and structure |
+| kb-spec-summary.md | Summary of the knowledge base specification principles and structure |
 </references_index>
 
 <scripts_integration>
@@ -61,14 +61,14 @@ All references in `references/`:
 Located in `scripts/`:
 
 **scaffold.py** -- Main scaffolding script
-- Creates directory structure (docs/, _proposals/, .dewey/)
+- Creates directory structure (knowledge base directory, _proposals/, .dewey/)
 - Generates AGENTS.md, CLAUDE.md, index.md, overview.md from templates
-- `merge_managed_section` -- safely merges KB content into existing files using markers
+- `merge_managed_section` -- safely merges knowledge base content into existing files using markers
 - Safe: merges into existing files without destroying user content
 - Returns summary of what was created (includes curate plan with `--starter-topics`)
 
 **templates.py** -- Content template rendering
-- Renders all KB file types (AGENTS.md, CLAUDE.md, index.md, overview.md, topic.md, topic.ref.md, proposal.md)
+- Renders all knowledge base file types (AGENTS.md, CLAUDE.md, index.md, overview.md, topic.md, topic.ref.md, proposal.md)
 - `render_claude_md_section` / `render_agents_md_section` -- managed content without markers
 - `render_curate_plan` -- actionable starter topic commands for post-scaffold guidance
 - Uses `MARKER_BEGIN` / `MARKER_END` constants for managed-section boundaries
@@ -86,12 +86,12 @@ Init is successful when:
 
 - User's goals understood before scaffolding
 - Domain areas proposed and confirmed by user
-- Directory structure matches the KB spec
+- Directory structure matches the knowledge base spec
 - AGENTS.md exists with persona and manifest structure
-- CLAUDE.md exists with KB discovery pointers (for Claude Code)
-- docs/index.md exists with TOC structure
-- docs/_proposals/ directory exists
+- CLAUDE.md exists with knowledge base discovery pointers (for Claude Code)
+- <knowledge-dir>/index.md exists with TOC structure (configured in `.dewey/config.json`, defaults to `docs/`)
+- <knowledge-dir>/_proposals/ directory exists
 - .dewey/ directories exist (health, history, utilization)
-- Existing CLAUDE.md and AGENTS.md have KB content merged (not overwritten)
+- Existing CLAUDE.md and AGENTS.md have knowledge base content merged (not overwritten)
 - All generated files have valid frontmatter
 </success_criteria>

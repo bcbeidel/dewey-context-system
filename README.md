@@ -34,7 +34,7 @@ Manages the content lifecycle:
 - **add** -- Research a topic, draft working-knowledge and reference files, update all indexes
 - **propose** -- Submit a topic proposal for review before committing
 - **promote** -- Move a validated proposal into a domain area
-- **ingest** -- Ingest an external URL, evaluate against existing KB, then propose new content or update existing topics
+- **ingest** -- Ingest an external URL, evaluate against existing knowledge base, then propose new content or update existing topics
 
 ```
 /dewey:curate add Project Structure in python-foundations
@@ -96,10 +96,10 @@ Twelve principles grounded in agent context research (Anthropic, OpenAI) and cog
 2. **Dual Audience** -- Every entry serves the agent (structured, token-efficient context) and the human (readable, navigable content). When these conflict, favor human readability -- agents are more adaptable readers.
 3. **Three-Dimensional Quality** -- Content quality measured across relevance, accuracy/freshness, and structural fitness simultaneously.
 4. **Collaborative Curation** -- Either the human or an agent can propose additions, but all content passes through validation. The human brings domain judgment. The agent brings systematic coverage. Neither is sufficient alone.
-5. **Provenance & Traceability** -- Every piece of knowledge carries metadata about where it came from, when it was last validated, and why it's in the KB.
+5. **Provenance & Traceability** -- Every piece of knowledge carries metadata about where it came from, when it was last validated, and why it's in the knowledge base.
 6. **Domain-Shaped Organization** -- Organized around the domain's natural structure, not file types or technical categories. The taxonomy should feel intuitive to a practitioner.
 7. **Right-Sized Scope** -- Contains what's needed to be effective in the role, and no more. The curation act is as much about what you exclude as what you include.
-8. **Empirical Feedback** -- Observable signals about KB health: coverage gaps, stale entries, unused content. Proxy metrics inform curation decisions.
+8. **Empirical Feedback** -- Observable signals about knowledge base health: coverage gaps, stale entries, unused content. Proxy metrics inform curation decisions.
 9. **Progressive Disclosure** -- Layered access so agents can discover what's available without loading everything. Metadata -> summaries -> full content -> deep references.
 
 ### From Cognitive Science Research
@@ -135,7 +135,7 @@ python3 -m pytest tests/ -v
 dewey/
   .claude-plugin/plugin.json         # Plugin manifest
   skills/
-    init/                             # KB bootstrapping
+    init/                             # Knowledge base bootstrapping
       SKILL.md
       scripts/scaffold.py, templates.py
       workflows/init.md
@@ -162,7 +162,7 @@ tests/                                # Test suite (185 tests)
 
 | Feature | Status |
 |---------|--------|
-| KB scaffolding (`/dewey:init`) | Complete |
+| Knowledge base scaffolding (`/dewey:init`) | Complete |
 | Content lifecycle (`/dewey:curate add/propose/promote`) | Complete |
 | URL ingestion (`/dewey:curate ingest`) | Complete |
 | Tier 1 deterministic health checks | Complete (7 validators) |

@@ -75,5 +75,5 @@ depth: working  # overview | working | reference
 - Domain areas named for how a practitioner thinks (not technical categories)
 - Every .md file includes frontmatter with sources, last_validated, relevance, depth
 - `_proposals/` is the staging area for collaborative curation
-- `.dewey/` holds tooling metadata invisible to KB consumers
+- `.dewey/` holds tooling metadata invisible to knowledge base consumers
 - Never overwrite existing files during scaffolding

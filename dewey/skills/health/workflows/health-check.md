@@ -5,17 +5,17 @@ Run Tier 1 deterministic health checks on the knowledge base and format the resu
 <process>
 ## Step 1: Locate the knowledge base root
 
-Determine the KB root directory using this resolution order:
+Determine the knowledge base root directory using this resolution order:
 
 1. If a path is provided in `$ARGUMENTS` (e.g., `check /path/to/kb`), use that path
-2. Otherwise, check the current working directory for a `docs/` directory
-3. If no `docs/` in CWD, walk up parent directories (up to 3 levels) looking for a directory that contains both `docs/` and `AGENTS.md`
+2. Otherwise, check the current working directory for the knowledge base directory (configured in `.dewey/config.json`, defaults to `docs/`)
+3. If not found in CWD, walk up parent directories (up to 3 levels) looking for a directory that contains both the knowledge base directory and `AGENTS.md`
 
-Verify the resolved KB root:
-- `docs/` directory must exist
-- `AGENTS.md` should exist (warn if missing but continue -- health checks can still run on docs/)
+Verify the resolved knowledge base root:
+- The knowledge base directory must exist
+- `AGENTS.md` should exist (warn if missing but continue -- health checks can still run on the knowledge base directory)
 
-If no KB root can be found, report: "No knowledge base found. Looked for a `docs/` directory in the current directory and up to 3 parent directories. Use `/dewey:init` to create one."
+If no knowledge base root can be found, report: "No knowledge base found. Looked for the knowledge base directory (configured in `.dewey/config.json`, defaults to `docs/`) in the current directory and up to 3 parent directories. Use `/dewey:init` to create one."
 
 ## Step 2: Run Tier 1 validators
 

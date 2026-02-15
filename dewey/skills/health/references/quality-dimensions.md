@@ -29,18 +29,18 @@ The three quality dimensions used to assess knowledge base health. Every health 
 | Tier | Method | Checks |
 |------|--------|--------|
 | Tier 1 | Deterministic | `last_validated` within 90 days; `sources` present and well-formed; date format valid |
-| Tier 2 | LLM-assisted | Source drift detection (KB claims vs. source content); factual accuracy of key claims |
-| Tier 3 | Human judgment | Conflict resolution when KB and sources disagree; deciding which source is authoritative |
+| Tier 2 | LLM-assisted | Source drift detection (knowledge base claims vs. source content); factual accuracy of key claims |
+| Tier 3 | Human judgment | Conflict resolution when knowledge base and sources disagree; deciding which source is authoritative |
 
 **Signals of poor accuracy/freshness:**
 - `last_validated` is stale (> 90 days)
 - Sources are inaccessible or return errors
-- KB claims contradict updated source material
+- Knowledge base claims contradict updated source material
 - Industry practices have evolved since last validation
 
 ## 3. Structural Fitness
 
-**What it means:** The content follows the KB specification. Files have the right format, required metadata, correct depth labels, expected sections, and proper companion files.
+**What it means:** The content follows the knowledge base specification. Files have the right format, required metadata, correct depth labels, expected sections, and proper companion files.
 
 **How it's measured:**
 
@@ -68,7 +68,7 @@ The three quality dimensions used to assess knowledge base health. Every health 
 | `check_source_urls` | | Source URL format | |
 | `check_freshness` | | last_validated age | |
 | `check_coverage` | | | overview.md, .ref.md presence |
-| Tier 2: Source drift | | KB claims vs. sources | |
+| Tier 2: Source drift | | Knowledge base claims vs. sources | |
 | Tier 2: Depth accuracy | | | Content matches depth label |
 | Tier 2: Why quality | Explains motivation | | |
 | Tier 2: In Practice quality | | | Concrete, actionable |

@@ -211,10 +211,10 @@ def check_size_bounds(file_path: Path) -> list[dict]:
     return issues
 
 
-def check_coverage(kb_root: Path) -> list[dict]:
+def check_coverage(kb_root: Path, *, knowledge_dir_name: str = "docs") -> list[dict]:
     """Check structural coverage: overview.md per area, .ref.md per topic."""
     issues: list[dict] = []
-    knowledge_dir = kb_root / "docs"
+    knowledge_dir = kb_root / knowledge_dir_name
 
     if not knowledge_dir.is_dir():
         return issues

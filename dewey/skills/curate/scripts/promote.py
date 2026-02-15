@@ -7,7 +7,15 @@ before writing to the target area.  Only stdlib is used.
 from __future__ import annotations
 
 import re
+import sys
 from pathlib import Path
+
+# config.py lives in init/scripts/ — add it to sys.path for cross-skill import.
+_init_scripts = str(Path(__file__).resolve().parent.parent.parent / "init" / "scripts")
+if _init_scripts not in sys.path:
+    sys.path.insert(0, _init_scripts)
+
+from config import read_knowledge_dir
 
 
 def _strip_proposal_fields(content: str) -> str:
@@ -62,11 +70,12 @@ def promote_proposal(kb_root: Path, proposal_name: str, target_area: str) -> str
     FileNotFoundError
         If the proposal file or target area directory does not exist.
     """
-    proposal_path = kb_root / "docs" / "_proposals" / f"{proposal_name}.md"
+    knowledge_dir = read_knowledge_dir(kb_root)
+    proposal_path = kb_root / knowledge_dir / "_proposals" / f"{proposal_name}.md"
     if not proposal_path.is_file():
         raise FileNotFoundError(f"Proposal not found: {proposal_path}")
 
-    target_dir = kb_root / "docs" / target_area
+    target_dir = kb_root / knowledge_dir / target_area
     if not target_dir.is_dir():
         raise FileNotFoundError(
             f"Target area directory does not exist: {target_dir}"
@@ -83,7 +92,7 @@ def promote_proposal(kb_root: Path, proposal_name: str, target_area: str) -> str
 
     return (
         f"Promoted '{proposal_name}' from _proposals/ to {target_area}/: "
-        f"docs/{target_area}/{proposal_name}.md"
+        f"{knowledge_dir}/{target_area}/{proposal_name}.md"
     )
 
 

@@ -1,4 +1,4 @@
-"""Tests for skills.init.scripts.templates — KB content template rendering."""
+"""Tests for skills.init.scripts.templates — knowledge-base content template rendering."""
 
 import datetime
 import unittest
@@ -159,6 +159,12 @@ class TestRenderAgentsMd(unittest.TestCase):
         mock_date.today.return_value = FIXED_DATE
         result = render_agents_md("Senior Python Developer", self._domain_areas())
         self.assertIn(".ref.md", result)
+
+    def test_custom_knowledge_dir(self, mock_date):
+        mock_date.today.return_value = FIXED_DATE
+        result = render_agents_md("Dev", self._domain_areas(), knowledge_dir="knowledge")
+        self.assertIn("`knowledge/`", result)
+        self.assertNotIn("`docs/`", result)
 
 
 @patch("templates.date")
@@ -543,10 +549,10 @@ class TestRenderClaudeMd(unittest.TestCase):
             {"name": "Testing", "dirname": "testing"},
         ]
 
-    def test_contains_role_name(self, mock_date):
+    def test_contains_kb_heading(self, mock_date):
         mock_date.today.return_value = FIXED_DATE
         result = render_claude_md("Senior Python Developer", self._domain_areas())
-        self.assertIn("Senior Python Developer", result)
+        self.assertIn("## Knowledge Base", result)
 
     def test_references_agents_md(self, mock_date):
         mock_date.today.return_value = FIXED_DATE
@@ -568,7 +574,7 @@ class TestRenderClaudeMd(unittest.TestCase):
     def test_empty_domain_areas(self, mock_date):
         mock_date.today.return_value = FIXED_DATE
         result = render_claude_md("Generalist", [])
-        self.assertIn("Generalist", result)
+        self.assertIn("## Knowledge Base", result)
         self.assertNotIn("| Area |", result)
 
     def test_contains_markers(self, mock_date):
@@ -580,7 +586,7 @@ class TestRenderClaudeMd(unittest.TestCase):
     def test_contains_how_to_use_section(self, mock_date):
         mock_date.today.return_value = FIXED_DATE
         result = render_claude_md("Senior Python Developer", self._domain_areas())
-        self.assertIn("### How to Use This KB", result)
+        self.assertIn("### How to Use This Knowledge Base", result)
 
     def test_contains_directory_structure(self, mock_date):
         mock_date.today.return_value = FIXED_DATE
@@ -602,6 +608,12 @@ class TestRenderClaudeMd(unittest.TestCase):
         mock_date.today.return_value = FIXED_DATE
         result = render_claude_md("Senior Python Developer", self._domain_areas())
         self.assertIn(".ref.md", result)
+
+    def test_custom_knowledge_dir(self, mock_date):
+        mock_date.today.return_value = FIXED_DATE
+        result = render_claude_md("Dev", self._domain_areas(), knowledge_dir="kb")
+        self.assertIn("kb/", result)
+        self.assertIn("`kb/backend-development/`", result)
 
 
 @patch("templates.date")
@@ -639,7 +651,7 @@ class TestRenderClaudeMdSection(unittest.TestCase):
     def test_contains_how_to_use(self, mock_date):
         mock_date.today.return_value = FIXED_DATE
         result = render_claude_md_section("Dev", self._domain_areas())
-        self.assertIn("### How to Use This KB", result)
+        self.assertIn("### How to Use This Knowledge Base", result)
 
     def test_contains_overview_links(self, mock_date):
         mock_date.today.return_value = FIXED_DATE

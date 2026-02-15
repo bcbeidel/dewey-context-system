@@ -14,7 +14,7 @@ Helps users who don't yet know what role or domains to build a knowledge base fo
 2. **Ask WHY** -- Surface the underlying knowledge gap, not just the symptom
 3. **Identify recurring tasks** -- Where would an expert guide help most?
 4. **Map to knowledge domains** -- Group related problems and tasks into 3-5 coherent areas
-5. **Propose a role framing** -- Give the KB a clear identity
+5. **Propose a role framing** -- Give the knowledge base a clear identity
 6. **Hand off to /dewey:init** -- Create the structure with the agreed domains
 
 ## Design Philosophy
@@ -32,6 +32,12 @@ Helps users who don't yet know what role or domains to build a knowledge base fo
 
 <intake>
 Discovering what knowledge domains to capture.
+
+**Before starting, check the knowledge base state:**
+
+1. **Knowledge base exists and `.dewey/curation-plan.md` exists** -- The user already has a plan. Suggest using `/dewey:curate plan` to review it or `/dewey:curate add` to work on the next topic. Only proceed with exploration if the user explicitly wants to expand into new domains.
+2. **Knowledge base exists but no `.dewey/curation-plan.md`** -- Nudge the user toward building a curation plan: "You have a knowledge base but no curation plan yet. Want to build one before exploring new areas? I can propose starter topics based on your existing structure." If they agree, read AGENTS.md and the knowledge base directory structure, propose 2-4 starter topics per domain area, and write `.dewey/curation-plan.md`. If they decline, proceed with exploration.
+3. **No knowledge base initialized** (no AGENTS.md or knowledge base directory) -- Proceed normally with the exploration conversation.
 
 **No arguments needed.** This is an interactive conversation.
 
