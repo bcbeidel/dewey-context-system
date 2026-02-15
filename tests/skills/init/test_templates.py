@@ -13,6 +13,7 @@ from templates import (
     render_claude_md,
     render_claude_md_section,
     render_curate_plan,
+    render_curation_plan_md,
     render_index_md,
     render_overview_md,
     render_proposal_md,
@@ -200,6 +201,11 @@ class TestRenderAgentsMdSection(unittest.TestCase):
         mock_date.today.return_value = FIXED_DATE
         result = render_agents_md_section("Dev", self._domain_areas())
         self.assertIn(".ref.md", result)
+
+    def test_references_curation_plan(self, mock_date):
+        mock_date.today.return_value = FIXED_DATE
+        result = render_agents_md_section("Dev", self._domain_areas())
+        self.assertIn("curation-plan.md", result)
 
 
 @patch("templates.date")
@@ -640,6 +646,92 @@ class TestRenderClaudeMdSection(unittest.TestCase):
         result = render_claude_md_section("Dev", self._domain_areas())
         self.assertIn("overview.md", result)
 
+    def test_references_curation_plan(self, mock_date):
+        mock_date.today.return_value = FIXED_DATE
+        result = render_claude_md_section("Dev", self._domain_areas())
+        self.assertIn("curation-plan.md", result)
+
+
+@patch("templates.date")
+class TestRenderCurationPlanMd(unittest.TestCase):
+    """Tests for render_curation_plan_md (persistent plan file)."""
+
+    def test_contains_frontmatter(self, mock_date):
+        mock_date.today.return_value = FIXED_DATE
+        areas = [{"name": "Testing", "slug": "testing", "starter_topics": ["Unit Testing"]}]
+        result = render_curation_plan_md(areas)
+        self.assertTrue(result.startswith("---\n"))
+        self.assertIn("last_updated: 2026-01-15", result)
+
+    def test_contains_heading(self, mock_date):
+        mock_date.today.return_value = FIXED_DATE
+        areas = [{"name": "Testing", "slug": "testing", "starter_topics": ["Unit Testing"]}]
+        result = render_curation_plan_md(areas)
+        self.assertIn("# Curation Plan", result)
+
+    def test_contains_description(self, mock_date):
+        mock_date.today.return_value = FIXED_DATE
+        areas = [{"name": "Testing", "slug": "testing", "starter_topics": ["Unit Testing"]}]
+        result = render_curation_plan_md(areas)
+        self.assertIn("/dewey:curate plan", result)
+
+    def test_area_heading_uses_slug(self, mock_date):
+        mock_date.today.return_value = FIXED_DATE
+        areas = [{"name": "Backend Development", "slug": "backend-development", "starter_topics": ["API Design"]}]
+        result = render_curation_plan_md(areas)
+        self.assertIn("## backend-development", result)
+
+    def test_topics_as_strings(self, mock_date):
+        mock_date.today.return_value = FIXED_DATE
+        areas = [{"name": "Testing", "slug": "testing", "starter_topics": ["Unit Testing", "Integration Testing"]}]
+        result = render_curation_plan_md(areas)
+        self.assertIn("- [ ] Unit Testing -- core", result)
+        self.assertIn("- [ ] Integration Testing -- core", result)
+
+    def test_topics_as_dicts(self, mock_date):
+        mock_date.today.return_value = FIXED_DATE
+        areas = [{
+            "name": "Testing",
+            "slug": "testing",
+            "starter_topics": [
+                {"name": "Unit Testing", "relevance": "core", "rationale": "isolated test practices"},
+                {"name": "E2E Testing", "relevance": "supporting"},
+            ],
+        }]
+        result = render_curation_plan_md(areas)
+        self.assertIn("- [ ] Unit Testing -- core -- isolated test practices", result)
+        self.assertIn("- [ ] E2E Testing -- supporting", result)
+
+    def test_empty_areas(self, mock_date):
+        mock_date.today.return_value = FIXED_DATE
+        result = render_curation_plan_md([])
+        self.assertIn("# Curation Plan", result)
+        self.assertNotIn("## ", result.split("# Curation Plan")[1])
+
+    def test_areas_without_topics_skipped(self, mock_date):
+        mock_date.today.return_value = FIXED_DATE
+        areas = [{"name": "Empty", "slug": "empty", "starter_topics": []}]
+        result = render_curation_plan_md(areas)
+        self.assertNotIn("## empty", result)
+
+    def test_slugifies_name_when_no_slug(self, mock_date):
+        mock_date.today.return_value = FIXED_DATE
+        areas = [{"name": "Backend Development", "starter_topics": ["API Design"]}]
+        result = render_curation_plan_md(areas)
+        self.assertIn("## backend-development", result)
+
+    def test_multiple_areas(self, mock_date):
+        mock_date.today.return_value = FIXED_DATE
+        areas = [
+            {"name": "Testing", "slug": "testing", "starter_topics": ["Unit Testing"]},
+            {"name": "Backend", "slug": "backend", "starter_topics": ["API Design"]},
+        ]
+        result = render_curation_plan_md(areas)
+        self.assertIn("## testing", result)
+        self.assertIn("## backend", result)
+        self.assertIn("- [ ] Unit Testing -- core", result)
+        self.assertIn("- [ ] API Design -- core", result)
+
 
 class TestRenderCuratePlan(unittest.TestCase):
     """Tests for render_curate_plan."""
@@ -709,6 +801,7 @@ class TestReturnTypes(unittest.TestCase):
             render_claude_md("R", domain_areas_index),
             render_claude_md_section("R", domain_areas_index),
             render_curate_plan(curate_areas),
+            render_curation_plan_md(curate_areas),
             render_index_md("R", domain_areas_index),
             render_overview_md("A", "core", topics_overview),
             render_topic_md("T", "core"),
@@ -739,6 +832,7 @@ class TestNoTrailingWhitespace(unittest.TestCase):
             ("claude_md", render_claude_md("R", domain_areas_index)),
             ("claude_md_section", render_claude_md_section("R", domain_areas_index)),
             ("curate_plan", render_curate_plan(curate_areas)),
+            ("curation_plan_md", render_curation_plan_md(curate_areas)),
             ("index_md", render_index_md("R", domain_areas_index)),
             ("overview_md", render_overview_md("A", "core", topics_overview)),
             ("topic_md", render_topic_md("T", "core")),

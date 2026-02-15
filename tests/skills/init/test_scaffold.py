@@ -182,6 +182,38 @@ class TestScaffoldKB(unittest.TestCase):
         self.assertIn("Next Steps", result)
         self.assertIn("/dewey:curate add Unit Testing in testing", result)
 
+    def test_creates_curation_plan_with_starter_topics(self):
+        """scaffold creates .dewey/curation-plan.md when starter_topics provided."""
+        scaffold_kb(
+            self.tmpdir,
+            "Analyst",
+            domain_areas=["Testing"],
+            starter_topics={"Testing": ["Unit Testing", "Integration Testing"]},
+        )
+        plan_path = self.tmpdir / ".dewey" / "curation-plan.md"
+        self.assertTrue(plan_path.is_file())
+        content = plan_path.read_text()
+        self.assertIn("# Curation Plan", content)
+        self.assertIn("## testing", content)
+        self.assertIn("- [ ] Unit Testing -- core", content)
+        self.assertIn("- [ ] Integration Testing -- core", content)
+
+    def test_no_curation_plan_without_starter_topics(self):
+        """scaffold does not create curation plan when no starter_topics."""
+        scaffold_kb(self.tmpdir, "Analyst", domain_areas=["Testing"])
+        plan_path = self.tmpdir / ".dewey" / "curation-plan.md"
+        self.assertFalse(plan_path.exists())
+
+    def test_curation_plan_in_summary(self):
+        """Summary lists .dewey/curation-plan.md as created."""
+        result = scaffold_kb(
+            self.tmpdir,
+            "Analyst",
+            domain_areas=["Testing"],
+            starter_topics={"Testing": ["Unit Testing"]},
+        )
+        self.assertIn(".dewey/curation-plan.md", result)
+
 
 class TestMergeManagedSection(unittest.TestCase):
     """Tests for the merge_managed_section helper."""

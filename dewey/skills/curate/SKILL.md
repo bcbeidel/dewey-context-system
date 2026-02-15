@@ -36,6 +36,7 @@ Managing content in a knowledge base.
 - `propose` -- Submit a topic proposal for review
 - `promote` -- Move a validated proposal into a domain area
 - `ingest` -- Ingest an external URL, evaluate against existing KB, then propose or update
+- `plan` -- View, add to, or remove items from the curation plan
 
 Parse the action from `$ARGUMENTS`. If no arguments provided, present the options and ask the user which action to take.
 </intake>
@@ -49,6 +50,7 @@ Parse `$ARGUMENTS`:
 - Starts with `propose` or contains `--propose` -> Route to `workflows/curate-propose.md`
 - Starts with `promote` or contains `--promote` -> Route to `workflows/curate-promote.md`
 - Starts with `ingest` or contains `--ingest` -> Route to `workflows/curate-ingest.md`
+- Starts with `plan` or contains `--plan` -> Route to `workflows/curate-plan.md`
 - No arguments -> Present interactive menu and route based on selection
 </routing>
 
@@ -63,6 +65,7 @@ All workflows in `workflows/`:
 | curate-propose.md | Submit a topic proposal for review |
 | curate-promote.md | Promote a validated proposal into a domain area |
 | curate-ingest.md | Ingest an external URL into a pre-filled proposal |
+| curate-plan.md | View, add to, or remove items from the curation plan |
 </workflows_index>
 
 <scripts_integration>

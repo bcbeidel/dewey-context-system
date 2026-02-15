@@ -124,6 +124,10 @@ Write the final approved content. Then report what was done:
 "The following topics were updated with new material from `<url>`:
 - `docs/<area>/<topic>.md` -- [brief description of changes]
 The source has been added to each topic's frontmatter."
+
+## Step 9: Update curation plan
+
+If `.dewey/curation-plan.md` exists, check for an item matching the topic name just created or updated (case-insensitive match on the name portion before ` -- `). If found, mark it as done by changing `- [ ]` to `- [x]`. Update `last_updated` in the frontmatter to today's date.
 </process>
 
 <success_criteria>

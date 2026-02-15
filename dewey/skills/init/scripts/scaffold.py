@@ -19,6 +19,7 @@ from templates import (
     render_claude_md,
     render_claude_md_section,
     render_curate_plan,
+    render_curation_plan_md,
     render_index_md,
     render_overview_md,
 )
@@ -179,6 +180,24 @@ def scaffold_kb(
                 render_overview_md(name, relevance="core", topics=[])
             )
             created.append(f"docs/{slug}/overview.md")
+
+    # ------------------------------------------------------------------
+    # 7. Curation plan (.dewey/curation-plan.md)
+    # ------------------------------------------------------------------
+    if starter_topics:
+        plan_areas = []
+        for name in domain_areas:
+            topics = starter_topics.get(name, [])
+            if topics:
+                plan_areas.append({
+                    "name": name,
+                    "slug": _slugify(name),
+                    "starter_topics": topics,
+                })
+        if plan_areas:
+            plan_path = target_dir / ".dewey" / "curation-plan.md"
+            plan_path.write_text(render_curation_plan_md(plan_areas))
+            created.append(".dewey/curation-plan.md")
 
     # ------------------------------------------------------------------
     # Summary

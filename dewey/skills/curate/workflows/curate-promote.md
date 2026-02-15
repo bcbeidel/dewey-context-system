@@ -95,7 +95,11 @@ CLAUDE.md's Domain Areas table lists areas, not individual topics. After promoti
 
 If the area is already listed, no changes needed -- do not add individual topics to CLAUDE.md.
 
-## Step 7: Report what was done
+## Step 7: Update curation plan
+
+If `.dewey/curation-plan.md` exists, check for an item matching the promoted topic name (case-insensitive match on the name portion before ` -- `). If found, mark it as done by changing `- [ ]` to `- [x]`. Update `last_updated` in the frontmatter to today's date.
+
+## Step 8: Report what was done
 
 Summarize all changes:
 - Promoted file location
@@ -103,6 +107,7 @@ Summarize all changes:
 - AGENTS.md row added
 - overview.md updated
 - CLAUDE.md verified
+- Curation plan updated (if applicable)
 </process>
 
 <success_criteria>

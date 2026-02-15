@@ -93,6 +93,7 @@ def render_agents_md_section(role_name: str, domain_areas: list[dict]) -> str:
     sections.append("- Use `.ref.md` files for quick lookups; use full topic files for deep context.")
     sections.append("- Cite primary sources from the `sources` frontmatter when making recommendations.")
     sections.append("- Defer to primary sources for detailed reference.")
+    sections.append("- Check `.dewey/curation-plan.md` for planned topics and curation priorities.")
 
     return "\n".join(sections)
 
@@ -297,6 +298,9 @@ def render_claude_md_section(role_name: str, domain_areas: list[dict]) -> str:
     lines.append("2. Load topic files from `docs/` when the task relates to a domain area")
     lines.append("3. Cite primary sources from the `sources` frontmatter when making recommendations")
     lines.append("4. Use `.ref.md` files for quick lookups without loading full topic context")
+    lines.append("5. Check `.dewey/curation-plan.md` for the KB roadmap -- planned topics not yet written")
+    lines.append("6. When a conversation touches knowledge areas not covered by the plan or existing topics,")
+    lines.append("   mention this to the user and ask if it should be added to the curation plan")
     lines.append("")
 
     # Directory Structure
@@ -406,6 +410,54 @@ def render_proposal_md(
     ]
 
     return fm + "\n\n" + "\n".join(body_lines) + "\n"
+
+
+def render_curation_plan_md(domain_areas: list[dict]) -> str:
+    """Render a persistent curation plan file (.dewey/curation-plan.md).
+
+    Parameters
+    ----------
+    domain_areas:
+        List of ``{"name": "Area Name", "slug": "area-slug",
+        "starter_topics": [{"name": "Topic", "relevance": "core",
+        "rationale": "brief reason"}]}``.
+        Items in ``starter_topics`` can also be plain strings, in which
+        case relevance defaults to ``"core"`` and rationale is empty.
+
+    Returns a complete markdown file with frontmatter and checkbox items.
+    """
+    fm = _frontmatter({"last_updated": _today()})
+
+    body: list[str] = [
+        "# Curation Plan",
+        "",
+        "> Planned topics for this knowledge base. Updated through conversations",
+        "> and curate workflows. Use `/dewey:curate plan` to view or update.",
+    ]
+
+    for area in domain_areas:
+        topics = area.get("starter_topics", [])
+        if not topics:
+            continue
+        slug = area.get("slug") or _slugify(area["name"])
+        body.append("")
+        body.append(f"## {slug}")
+        body.append("")
+        for topic in topics:
+            if isinstance(topic, str):
+                name = topic
+                relevance = "core"
+                rationale = ""
+            else:
+                name = topic["name"]
+                relevance = topic.get("relevance", "core")
+                rationale = topic.get("rationale", "")
+            line = f"- [ ] {name} -- {relevance}"
+            if rationale:
+                line += f" -- {rationale}"
+            body.append(line)
+
+    return fm + "\n\n" + "\n".join(body) + "\n"
 
 
 def render_curate_plan(domain_areas: list[dict]) -> str:
