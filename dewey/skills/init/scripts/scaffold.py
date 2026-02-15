@@ -28,6 +28,104 @@ from templates import (
 )
 
 
+def _read_topic_metadata(file_path: Path) -> dict:
+    """Read a single .md file's depth from frontmatter and title from the first H1.
+
+    Returns ``{"name": str, "depth": str}`` or empty dict if the file
+    cannot be read.
+    """
+    try:
+        text = file_path.read_text()
+    except OSError:
+        return {}
+
+    # Extract depth from YAML frontmatter (between --- fences)
+    depth = ""
+    fm_match = re.match(r"^---\n(.*?\n)---\n", text, re.DOTALL)
+    if fm_match:
+        depth_match = re.search(r"^depth:\s*(.+)$", fm_match.group(1), re.MULTILINE)
+        if depth_match:
+            depth = depth_match.group(1).strip()
+
+    # Extract first H1 heading
+    name = ""
+    heading_match = re.search(r"^# (.+)$", text, re.MULTILINE)
+    if heading_match:
+        name = heading_match.group(1).strip()
+
+    return {"name": name, "depth": depth}
+
+
+def _discover_index_data(kb_root: Path, knowledge_dir_name: str = "docs") -> list[dict]:
+    """Scan the knowledge directory for all area subdirectories and their topics.
+
+    Returns a list of::
+
+        {"name": str, "dirname": str, "topics": [{"name": str, "filename": str, "depth": str}]}
+
+    Key behaviours:
+    - Excludes ``overview.md`` and ``.ref.md`` files from topics
+    - Excludes directories starting with ``_`` (e.g. ``_proposals``)
+    - Reads area name from ``overview.md``'s H1 heading (falls back to dirname)
+    - Reads topic name from each file's H1 heading (falls back to filename stem)
+    - Reads depth from frontmatter
+    - Areas sorted alphabetically by dirname
+    - Topics sorted alphabetically by filename
+    """
+    knowledge_path = kb_root / knowledge_dir_name
+    if not knowledge_path.is_dir():
+        return []
+
+    areas: list[dict] = []
+    for entry in sorted(knowledge_path.iterdir()):
+        if not entry.is_dir():
+            continue
+        # Skip underscore-prefixed directories like _proposals
+        if entry.name.startswith("_"):
+            continue
+
+        dirname = entry.name
+
+        # Read area name from overview.md (fall back to dirname)
+        overview_path = entry / "overview.md"
+        area_name = dirname
+        if overview_path.is_file():
+            meta = _read_topic_metadata(overview_path)
+            if meta.get("name"):
+                area_name = meta["name"]
+
+        # Discover topics
+        topics: list[dict] = []
+        for md_file in sorted(entry.glob("*.md")):
+            fname = md_file.name
+            # Exclude overview.md and .ref.md files
+            if fname == "overview.md":
+                continue
+            if fname.endswith(".ref.md"):
+                continue
+
+            meta = _read_topic_metadata(md_file)
+            topic_name = meta.get("name", "") if meta else ""
+            if not topic_name:
+                # Fall back to filename stem (without .md)
+                topic_name = fname[:-3]  # strip .md
+            topic_depth = meta.get("depth", "") if meta else ""
+
+            topics.append({
+                "name": topic_name,
+                "filename": fname,
+                "depth": topic_depth,
+            })
+
+        areas.append({
+            "name": area_name,
+            "dirname": dirname,
+            "topics": topics,
+        })
+
+    return areas
+
+
 def _parse_agents_topics(agents_content: str) -> dict[str, list[dict]]:
     """Extract topic table entries from existing AGENTS.md managed section.
 

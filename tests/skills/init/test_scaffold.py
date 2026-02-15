@@ -6,7 +6,13 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scaffold import _parse_agents_topics, merge_managed_section, scaffold_kb
+from scaffold import (
+    _discover_index_data,
+    _parse_agents_topics,
+    _read_topic_metadata,
+    merge_managed_section,
+    scaffold_kb,
+)
 from templates import MARKER_BEGIN, MARKER_END
 
 
@@ -412,6 +418,183 @@ class TestMergeManagedSection(unittest.TestCase):
         self.assertIn("Before", result)
         self.assertIn("After", result)
         self.assertIn("new", result)
+
+
+class TestDiscoverIndexData(unittest.TestCase):
+    """Tests for _discover_index_data filesystem scanner."""
+
+    def setUp(self):
+        self.tmpdir = Path(tempfile.mkdtemp())
+        self.kb = self.tmpdir / "docs"
+        self.kb.mkdir()
+        (self.tmpdir / ".dewey").mkdir()
+        (self.tmpdir / ".dewey" / "config.json").write_text('{"knowledge_dir": "docs"}')
+
+    def tearDown(self):
+        shutil.rmtree(self.tmpdir)
+
+    def _write(self, path, content):
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(content)
+
+    def _valid_topic(self, name, depth="working"):
+        return (
+            f"---\nsources:\n  - url: https://example.com\n    title: Ex\n"
+            f"last_validated: 2026-01-15\nrelevance: core\ndepth: {depth}\n"
+            f"---\n# {name}\n"
+        )
+
+    def _valid_overview(self, name):
+        return (
+            f"---\nsources:\n  - url: https://example.com\n    title: Ex\n"
+            f"last_validated: 2026-01-15\nrelevance: core\ndepth: overview\n"
+            f"---\n# {name}\n"
+        )
+
+    def test_discovers_area_with_topics(self):
+        """Discovers area with topics, excludes overview.md and .ref.md."""
+        area = self.kb / "testing"
+        self._write(area / "overview.md", self._valid_overview("Testing"))
+        self._write(area / "unit-tests.md", self._valid_topic("Unit Tests"))
+        self._write(area / "unit-tests.ref.md", "reference content")
+
+        result = _discover_index_data(self.tmpdir, "docs")
+
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0]["name"], "Testing")
+        self.assertEqual(result[0]["dirname"], "testing")
+        topic_filenames = [t["filename"] for t in result[0]["topics"]]
+        self.assertIn("unit-tests.md", topic_filenames)
+        self.assertNotIn("overview.md", topic_filenames)
+        self.assertNotIn("unit-tests.ref.md", topic_filenames)
+
+    def test_reads_depth_from_frontmatter(self):
+        """Verifies topic depth is read correctly from frontmatter."""
+        area = self.kb / "testing"
+        self._write(area / "overview.md", self._valid_overview("Testing"))
+        self._write(area / "deep-dive.md", self._valid_topic("Deep Dive", depth="comprehensive"))
+
+        result = _discover_index_data(self.tmpdir, "docs")
+
+        topic = result[0]["topics"][0]
+        self.assertEqual(topic["depth"], "comprehensive")
+
+    def test_extracts_heading_as_name(self):
+        """Verifies H1 heading is used as topic name."""
+        area = self.kb / "testing"
+        self._write(area / "overview.md", self._valid_overview("Testing"))
+        self._write(area / "my-topic.md", self._valid_topic("My Fancy Topic Name"))
+
+        result = _discover_index_data(self.tmpdir, "docs")
+
+        topic = result[0]["topics"][0]
+        self.assertEqual(topic["name"], "My Fancy Topic Name")
+
+    def test_skips_proposals_directory(self):
+        """Directories starting with _ are excluded."""
+        self._write(self.kb / "_proposals" / "idea.md", self._valid_topic("Idea"))
+        self._write(self.kb / "testing" / "overview.md", self._valid_overview("Testing"))
+        self._write(self.kb / "testing" / "topic.md", self._valid_topic("Topic"))
+
+        result = _discover_index_data(self.tmpdir, "docs")
+
+        area_names = [a["dirname"] for a in result]
+        self.assertNotIn("_proposals", area_names)
+        self.assertIn("testing", area_names)
+
+    def test_empty_knowledge_dir(self):
+        """No subdirectories returns empty list."""
+        result = _discover_index_data(self.tmpdir, "docs")
+        self.assertEqual(result, [])
+
+    def test_areas_sorted_alphabetically(self):
+        """Areas are sorted by dirname."""
+        for name in ["zebra", "alpha", "middle"]:
+            area = self.kb / name
+            self._write(area / "overview.md", self._valid_overview(name.title()))
+            self._write(area / "topic.md", self._valid_topic("Topic"))
+
+        result = _discover_index_data(self.tmpdir, "docs")
+
+        dirnames = [a["dirname"] for a in result]
+        self.assertEqual(dirnames, ["alpha", "middle", "zebra"])
+
+    def test_topics_sorted_alphabetically(self):
+        """Topics are sorted by filename."""
+        area = self.kb / "testing"
+        self._write(area / "overview.md", self._valid_overview("Testing"))
+        self._write(area / "z-topic.md", self._valid_topic("Z Topic"))
+        self._write(area / "a-topic.md", self._valid_topic("A Topic"))
+        self._write(area / "m-topic.md", self._valid_topic("M Topic"))
+
+        result = _discover_index_data(self.tmpdir, "docs")
+
+        filenames = [t["filename"] for t in result[0]["topics"]]
+        self.assertEqual(filenames, ["a-topic.md", "m-topic.md", "z-topic.md"])
+
+    def test_area_name_falls_back_to_dirname(self):
+        """When overview.md has no H1, area name falls back to directory name."""
+        area = self.kb / "my-area"
+        self._write(area / "overview.md", "---\ndepth: overview\n---\nNo heading here.\n")
+        self._write(area / "topic.md", self._valid_topic("Topic"))
+
+        result = _discover_index_data(self.tmpdir, "docs")
+
+        self.assertEqual(result[0]["name"], "my-area")
+
+    def test_topic_name_falls_back_to_filename(self):
+        """When topic has no H1, name falls back to slugified filename."""
+        area = self.kb / "testing"
+        self._write(area / "overview.md", self._valid_overview("Testing"))
+        self._write(area / "some-topic.md", "---\ndepth: working\n---\nNo heading.\n")
+
+        result = _discover_index_data(self.tmpdir, "docs")
+
+        topic = result[0]["topics"][0]
+        self.assertEqual(topic["name"], "some-topic")
+
+
+class TestReadTopicMetadata(unittest.TestCase):
+    """Tests for _read_topic_metadata helper."""
+
+    def setUp(self):
+        self.tmpdir = Path(tempfile.mkdtemp())
+
+    def tearDown(self):
+        shutil.rmtree(self.tmpdir)
+
+    def test_reads_depth_and_name(self):
+        """Reads depth from frontmatter and name from H1."""
+        path = self.tmpdir / "topic.md"
+        path.write_text(
+            "---\nsources:\n  - url: https://example.com\n    title: Ex\n"
+            "last_validated: 2026-01-15\nrelevance: core\ndepth: working\n"
+            "---\n# My Topic\n\nContent here.\n"
+        )
+        result = _read_topic_metadata(path)
+        self.assertEqual(result["name"], "My Topic")
+        self.assertEqual(result["depth"], "working")
+
+    def test_returns_empty_for_nonexistent_file(self):
+        """Returns empty dict for nonexistent file."""
+        result = _read_topic_metadata(self.tmpdir / "nonexistent.md")
+        self.assertEqual(result, {})
+
+    def test_missing_depth_returns_empty_string(self):
+        """Returns empty string for depth when frontmatter lacks depth field."""
+        path = self.tmpdir / "topic.md"
+        path.write_text("---\nrelevance: core\n---\n# Topic\n")
+        result = _read_topic_metadata(path)
+        self.assertEqual(result["depth"], "")
+        self.assertEqual(result["name"], "Topic")
+
+    def test_missing_heading_returns_empty_name(self):
+        """Returns empty string for name when no H1 heading found."""
+        path = self.tmpdir / "topic.md"
+        path.write_text("---\ndepth: working\n---\nNo heading here.\n")
+        result = _read_topic_metadata(path)
+        self.assertEqual(result["name"], "")
+        self.assertEqual(result["depth"], "working")
 
 
 if __name__ == "__main__":
