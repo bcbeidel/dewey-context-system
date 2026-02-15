@@ -6,7 +6,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from history import record_snapshot
+from history import record_snapshot, read_history
 
 
 def _tier1_summary(fail_count=0, warn_count=0, total_files=5):
@@ -108,6 +108,79 @@ class TestRecordSnapshot(unittest.TestCase):
         log_path = self.tmpdir / ".dewey" / "history" / "health-log.jsonl"
         entry = json.loads(log_path.read_text().strip())
         self.assertIsNone(entry["tier2"])
+
+
+class TestReadHistory(unittest.TestCase):
+    """Tests for the read_history function."""
+
+    def setUp(self):
+        self.tmpdir = Path(tempfile.mkdtemp())
+
+    def tearDown(self):
+        shutil.rmtree(self.tmpdir)
+
+    # ------------------------------------------------------------------
+    # test_empty_history
+    # ------------------------------------------------------------------
+    def test_empty_history(self):
+        """No log file returns empty list."""
+        result = read_history(self.tmpdir)
+        self.assertEqual(result, [])
+
+    # ------------------------------------------------------------------
+    # test_returns_snapshots_in_order
+    # ------------------------------------------------------------------
+    def test_returns_snapshots_in_order(self):
+        """Chronological order preserved (oldest first)."""
+        record_snapshot(self.tmpdir, _tier1_summary(fail_count=3))
+        record_snapshot(self.tmpdir, _tier1_summary(fail_count=2))
+        record_snapshot(self.tmpdir, _tier1_summary(fail_count=1))
+
+        history = read_history(self.tmpdir)
+        self.assertEqual(len(history), 3)
+        self.assertEqual(history[0]["tier1"]["fail_count"], 3)
+        self.assertEqual(history[1]["tier1"]["fail_count"], 2)
+        self.assertEqual(history[2]["tier1"]["fail_count"], 1)
+
+    # ------------------------------------------------------------------
+    # test_limit_parameter
+    # ------------------------------------------------------------------
+    def test_limit_parameter(self):
+        """limit=N returns only last N snapshots."""
+        for i in range(5):
+            record_snapshot(self.tmpdir, _tier1_summary(fail_count=i))
+
+        history = read_history(self.tmpdir, limit=2)
+        self.assertEqual(len(history), 2)
+        # Last two entries: fail_count 3 and 4
+        self.assertEqual(history[0]["tier1"]["fail_count"], 3)
+        self.assertEqual(history[1]["tier1"]["fail_count"], 4)
+
+    # ------------------------------------------------------------------
+    # test_limit_larger_than_history
+    # ------------------------------------------------------------------
+    def test_limit_larger_than_history(self):
+        """limit bigger than available returns all."""
+        record_snapshot(self.tmpdir, _tier1_summary(fail_count=1))
+        record_snapshot(self.tmpdir, _tier1_summary(fail_count=2))
+
+        history = read_history(self.tmpdir, limit=100)
+        self.assertEqual(len(history), 2)
+
+    # ------------------------------------------------------------------
+    # test_each_entry_has_expected_keys
+    # ------------------------------------------------------------------
+    def test_each_entry_has_expected_keys(self):
+        """Each entry has timestamp, tier1, tier2 keys."""
+        t2 = _tier2_summary(trigger_counts={"stale_source": 1})
+        record_snapshot(self.tmpdir, _tier1_summary(), tier2_summary=t2)
+
+        history = read_history(self.tmpdir)
+        self.assertEqual(len(history), 1)
+        entry = history[0]
+        self.assertIn("timestamp", entry)
+        self.assertIn("tier1", entry)
+        self.assertIn("tier2", entry)
 
 
 if __name__ == "__main__":

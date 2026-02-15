@@ -55,3 +55,20 @@ def record_snapshot(
         fh.write(json.dumps(entry) + "\n")
 
     return log_path
+
+
+def read_history(kb_root: Path, limit: int = 10) -> list[dict]:
+    """Read the last *limit* health check snapshots.
+
+    Returns snapshots in chronological order (oldest first).
+    """
+    log_file = kb_root / ".dewey" / "history" / "health-log.jsonl"
+    if not log_file.exists():
+        return []
+
+    lines = log_file.read_text().strip().split("\n")
+    if not lines or lines == [""]:
+        return []
+
+    entries = [json.loads(line) for line in lines]
+    return entries[-limit:]
