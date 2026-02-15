@@ -419,5 +419,34 @@ class TestHistoryIntegration(unittest.TestCase):
         self.assertIn("tier2", entry)
 
 
+class TestIndexMdExclusion(unittest.TestCase):
+    """index.md is structural, not a knowledge topic — skip per-file validators."""
+
+    def setUp(self):
+        self.tmpdir = Path(tempfile.mkdtemp())
+        kb = self.tmpdir / "docs" / "area"
+        kb.mkdir(parents=True)
+        # A valid overview file
+        _write(kb / "overview.md", _valid_md("overview"))
+        # index.md with NO frontmatter (should not cause failures)
+        (self.tmpdir / "docs" / "index.md").write_text(
+            "# Knowledge Base\n\n## Domain Areas\n"
+        )
+
+    def tearDown(self):
+        shutil.rmtree(self.tmpdir)
+
+    def test_index_md_without_frontmatter_no_failures(self):
+        result = run_health_check(self.tmpdir)
+        fail_messages = [i["message"] for i in result["issues"] if i["severity"] == "fail"]
+        self.assertEqual(fail_messages, [], f"index.md should not trigger failures: {fail_messages}")
+
+    def test_discover_md_files_excludes_index(self):
+        from check_kb import _discover_md_files
+        files = _discover_md_files(self.tmpdir, "docs")
+        filenames = [f.name for f in files]
+        self.assertNotIn("index.md", filenames)
+
+
 if __name__ == "__main__":
     unittest.main()

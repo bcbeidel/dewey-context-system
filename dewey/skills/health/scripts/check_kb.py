@@ -39,7 +39,7 @@ from validators import (
 
 
 def _discover_md_files(kb_root: Path, knowledge_dir_name: str = "docs") -> list[Path]:
-    """Return all .md files under the knowledge directory, excluding _proposals/."""
+    """Return all .md files under the knowledge directory, excluding _proposals/ and index.md."""
     knowledge_dir = kb_root / knowledge_dir_name
     if not knowledge_dir.is_dir():
         return []
@@ -49,6 +49,9 @@ def _discover_md_files(kb_root: Path, knowledge_dir_name: str = "docs") -> list[
         # Skip files inside directories that start with _
         parts = md_file.relative_to(knowledge_dir).parts
         if any(part.startswith("_") for part in parts):
+            continue
+        # Skip structural files (not knowledge topics)
+        if md_file.name == "index.md":
             continue
         md_files.append(md_file)
 
