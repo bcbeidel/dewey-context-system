@@ -1,5 +1,6 @@
 """Tests for skills.health.scripts.check_kb — health check runner."""
 
+import json
 import shutil
 import tempfile
 import unittest
@@ -368,6 +369,54 @@ class TestRunCombinedReport(unittest.TestCase):
         tier2 = result["tier2"]
         self.assertIn("queue", tier2)
         self.assertIn("summary", tier2)
+
+
+class TestHistoryIntegration(unittest.TestCase):
+    """Tests for automatic history snapshot persistence."""
+
+    def setUp(self):
+        self.tmpdir = Path(tempfile.mkdtemp())
+        self.kb = self.tmpdir / "docs"
+        self.kb.mkdir()
+
+    def tearDown(self):
+        shutil.rmtree(self.tmpdir)
+
+    def test_tier1_persists_snapshot(self):
+        """run_health_check should persist a history snapshot."""
+        area = self.kb / "area-one"
+        area.mkdir()
+        _write(area / "overview.md", _valid_md("overview"))
+        run_health_check(self.tmpdir)
+        log = self.tmpdir / ".dewey" / "history" / "health-log.jsonl"
+        self.assertTrue(log.exists())
+        entry = json.loads(log.read_text().strip())
+        self.assertIn("tier1", entry)
+        self.assertIsNone(entry["tier2"])
+
+    def test_combined_persists_snapshot(self):
+        """run_combined_report should persist a snapshot with both tiers."""
+        area = self.kb / "area-one"
+        area.mkdir()
+        _write(area / "overview.md", _valid_md("overview"))
+        run_combined_report(self.tmpdir)
+        log = self.tmpdir / ".dewey" / "history" / "health-log.jsonl"
+        self.assertTrue(log.exists())
+        entry = json.loads(log.read_text().strip())
+        self.assertIn("tier1", entry)
+        self.assertIsNotNone(entry["tier2"])
+
+    def test_tier2_persists_snapshot(self):
+        """run_tier2_prescreening should persist a snapshot."""
+        area = self.kb / "area-one"
+        area.mkdir()
+        _write(area / "overview.md", _valid_md("overview"))
+        run_tier2_prescreening(self.tmpdir)
+        log = self.tmpdir / ".dewey" / "history" / "health-log.jsonl"
+        self.assertTrue(log.exists())
+        entry = json.loads(log.read_text().strip())
+        self.assertIsNone(entry["tier1"])
+        self.assertIn("tier2", entry)
 
 
 if __name__ == "__main__":

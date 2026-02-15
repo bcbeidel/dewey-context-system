@@ -19,6 +19,7 @@ if _init_scripts not in sys.path:
     sys.path.insert(0, _init_scripts)
 
 from config import read_knowledge_dir
+from history import record_snapshot
 from tier2_triggers import (
     trigger_concrete_examples,
     trigger_depth_accuracy,
@@ -54,13 +55,17 @@ def _discover_md_files(kb_root: Path, knowledge_dir_name: str = "docs") -> list[
     return md_files
 
 
-def run_health_check(kb_root: Path) -> dict:
+def run_health_check(kb_root: Path, *, _persist_history: bool = True) -> dict:
     """Run all Tier 1 validators and return a structured report.
 
     Parameters
     ----------
     kb_root:
         Root directory containing the ``docs/`` folder.
+    _persist_history:
+        When *True* (default), automatically persist a history snapshot.
+        Set to *False* when called from ``run_combined_report`` to avoid
+        duplicate entries.
 
     Returns
     -------
@@ -99,7 +104,7 @@ def run_health_check(kb_root: Path) -> dict:
     fail_count = sum(1 for i in all_issues if i["severity"] == "fail")
     warn_count = sum(1 for i in all_issues if i["severity"] == "warn")
 
-    return {
+    result = {
         "issues": all_issues,
         "summary": {
             "total_files": len(md_files),
@@ -108,6 +113,9 @@ def run_health_check(kb_root: Path) -> dict:
             "pass_count": len(md_files) - len(files_with_fails),
         },
     }
+    if _persist_history:
+        record_snapshot(kb_root, result["summary"], None)
+    return result
 
 
 _TIER2_TRIGGERS = [
@@ -119,13 +127,17 @@ _TIER2_TRIGGERS = [
 ]
 
 
-def run_tier2_prescreening(kb_root: Path) -> dict:
+def run_tier2_prescreening(kb_root: Path, *, _persist_history: bool = True) -> dict:
     """Run all Tier 2 deterministic triggers and return a structured queue.
 
     Parameters
     ----------
     kb_root:
         Root directory containing the ``docs/`` folder.
+    _persist_history:
+        When *True* (default), automatically persist a history snapshot.
+        Set to *False* when called from ``run_combined_report`` to avoid
+        duplicate entries.
 
     Returns
     -------
@@ -147,7 +159,7 @@ def run_tier2_prescreening(kb_root: Path) -> dict:
 
     files_with_triggers = len({item["file"] for item in queue})
 
-    return {
+    result = {
         "queue": queue,
         "summary": {
             "total_files_scanned": len(md_files),
@@ -155,6 +167,9 @@ def run_tier2_prescreening(kb_root: Path) -> dict:
             "trigger_counts": trigger_counts,
         },
     }
+    if _persist_history:
+        record_snapshot(kb_root, None, result["summary"])
+    return result
 
 
 def run_combined_report(kb_root: Path) -> dict:
@@ -170,10 +185,12 @@ def run_combined_report(kb_root: Path) -> dict:
     dict
         ``{"tier1": <run_health_check result>, "tier2": <run_tier2_prescreening result>}``
     """
-    return {
-        "tier1": run_health_check(kb_root),
-        "tier2": run_tier2_prescreening(kb_root),
+    result = {
+        "tier1": run_health_check(kb_root, _persist_history=False),
+        "tier2": run_tier2_prescreening(kb_root, _persist_history=False),
     }
+    record_snapshot(kb_root, result["tier1"]["summary"], result["tier2"]["summary"])
+    return result
 
 
 if __name__ == "__main__":
