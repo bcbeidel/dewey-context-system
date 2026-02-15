@@ -1,18 +1,40 @@
 {
   "name": "dewey",
-  "description": "Context optimization plugin for Claude Code - intelligently manage, analyze, and optimize your context files (uses only Python built-in libraries)",
-  "version": "0.0.8",
+  "description": "Knowledge base management plugin for Claude Code - scaffold, curate, validate, and explore structured knowledge bases",
+  "version": "1.0.0",
   "author": {
     "name": "Dewey Contributors"
   },
   "homepage": "https://github.com/bcbeidel/dewey",
   "repository": "https://github.com/bcbeidel/dewey.git",
   "keywords": [
-    "context",
-    "optimization",
-    "analysis",
-    "token-management",
-    "file-splitting"
+    "knowledge-base",
+    "knowledge-management",
+    "curation",
+    "validation",
+    "scaffolding"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "skills": [
+    {
+      "name": "init",
+      "description": "Bootstrap a new knowledge base with the standard directory structure, AGENTS.md, and content templates",
+      "source": "../../skills/init"
+    },
+    {
+      "name": "curate",
+      "description": "Add, propose, promote, and ingest content in a knowledge base following the KB specification",
+      "source": "../../skills/curate"
+    },
+    {
+      "name": "health",
+      "description": "Validate knowledge base quality, check freshness, analyze coverage gaps, and generate health reports",
+      "source": "../../skills/health"
+    },
+    {
+      "name": "explore",
+      "description": "Discover what knowledge domains to capture through guided conversation about your problems, tasks, and goals",
+      "source": "../../skills/explore"
+    }
+  ]
 }
