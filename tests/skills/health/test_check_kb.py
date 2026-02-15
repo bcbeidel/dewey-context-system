@@ -6,7 +6,7 @@ import unittest
 from datetime import date
 from pathlib import Path
 
-from check_kb import run_health_check, run_tier2_prescreening
+from check_kb import run_health_check, run_tier2_prescreening, run_combined_report
 
 
 def _write(path: Path, text: str) -> Path:
@@ -323,6 +323,51 @@ class TestTier2OutputSchema(unittest.TestCase):
                 item["trigger"], known_triggers,
                 f"Unknown trigger '{item['trigger']}' in queue item: {item}",
             )
+
+
+class TestRunCombinedReport(unittest.TestCase):
+    """Tests for the run_combined_report function."""
+
+    def setUp(self):
+        self.tmpdir = Path(tempfile.mkdtemp())
+        self.kb = self.tmpdir / "docs"
+        self.kb.mkdir()
+        area = self.kb / "area-one"
+        area.mkdir()
+        _write(area / "overview.md", _valid_md("overview"))
+        _write(area / "topic.md", _valid_md("working"))
+
+    def tearDown(self):
+        shutil.rmtree(self.tmpdir)
+
+    # ------------------------------------------------------------------
+    # test_returns_both_sections
+    # ------------------------------------------------------------------
+    def test_returns_both_sections(self):
+        """Combined report includes 'tier1' and 'tier2' keys."""
+        result = run_combined_report(self.tmpdir)
+        self.assertIn("tier1", result)
+        self.assertIn("tier2", result)
+
+    # ------------------------------------------------------------------
+    # test_tier1_has_issues_and_summary
+    # ------------------------------------------------------------------
+    def test_tier1_has_issues_and_summary(self):
+        """Tier 1 section has 'issues' and 'summary'."""
+        result = run_combined_report(self.tmpdir)
+        tier1 = result["tier1"]
+        self.assertIn("issues", tier1)
+        self.assertIn("summary", tier1)
+
+    # ------------------------------------------------------------------
+    # test_tier2_has_queue_and_summary
+    # ------------------------------------------------------------------
+    def test_tier2_has_queue_and_summary(self):
+        """Tier 2 section has 'queue' and 'summary'."""
+        result = run_combined_report(self.tmpdir)
+        tier2 = result["tier2"]
+        self.assertIn("queue", tier2)
+        self.assertIn("summary", tier2)
 
 
 if __name__ == "__main__":

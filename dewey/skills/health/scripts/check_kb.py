@@ -157,6 +157,25 @@ def run_tier2_prescreening(kb_root: Path) -> dict:
     }
 
 
+def run_combined_report(kb_root: Path) -> dict:
+    """Run both Tier 1 checks and Tier 2 pre-screening, returning a combined report.
+
+    Parameters
+    ----------
+    kb_root:
+        Root directory containing the ``docs/`` folder.
+
+    Returns
+    -------
+    dict
+        ``{"tier1": <run_health_check result>, "tier2": <run_tier2_prescreening result>}``
+    """
+    return {
+        "tier1": run_health_check(kb_root),
+        "tier2": run_tier2_prescreening(kb_root),
+    }
+
+
 if __name__ == "__main__":
     import argparse
 
@@ -171,10 +190,17 @@ if __name__ == "__main__":
         action="store_true",
         help="Run Tier 2 pre-screening instead of Tier 1 checks.",
     )
+    parser.add_argument(
+        "--both",
+        action="store_true",
+        help="Run both Tier 1 checks and Tier 2 pre-screening.",
+    )
     args = parser.parse_args()
 
     kb_path = Path(args.kb_root)
-    if args.tier2:
+    if args.both:
+        report = run_combined_report(kb_path)
+    elif args.tier2:
         report = run_tier2_prescreening(kb_path)
     else:
         report = run_health_check(kb_path)
