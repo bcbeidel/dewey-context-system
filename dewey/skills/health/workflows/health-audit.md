@@ -3,23 +3,19 @@ Run Tier 1 deterministic checks followed by Tier 2 LLM-assisted quality assessme
 </objective>
 
 <process>
-## Step 1: Run Tier 1 checks
+## Step 1: Run Tier 1 checks and Tier 2 pre-screening
 
 ```bash
-python3 ${CLAUDE_PLUGIN_ROOT}/skills/health/scripts/check_kb.py --kb-root <kb_root>
+python3 ${CLAUDE_PLUGIN_ROOT}/skills/health/scripts/check_kb.py --kb-root <kb_root> --both
 ```
 
-Capture the JSON output. Present the Tier 1 summary as in the health-check workflow.
+Capture the JSON output. It contains two top-level sections:
+- **`tier1`** -- `issues` (list of deterministic check failures) and `summary` (aggregate counts).
+- **`tier2`** -- `queue` (list of items with trigger type and pre-computed context) and `summary` (trigger counts).
 
-## Step 2: Run Tier 2 pre-screening
+Present the Tier 1 summary as in the health-check workflow.
 
-```bash
-python3 ${CLAUDE_PLUGIN_ROOT}/skills/health/scripts/check_kb.py --kb-root <kb_root> --tier2
-```
-
-Capture the JSON output. The pre-screener runs 5 deterministic triggers on each file and returns a structured queue with context data for each item.
-
-Present the trigger summary:
+The Tier 2 pre-screener runs 5 deterministic triggers on each file and returns a structured queue with context data for each item. Present the trigger summary:
 
 | Trigger | Count | Description |
 |---------|-------|-------------|
@@ -31,11 +27,11 @@ Present the trigger summary:
 
 "**Tier 2 evaluation queue:** <N> items across <M> files."
 
-## Step 3: Perform Tier 2 LLM assessment
+## Step 2: Perform Tier 2 LLM assessment
 
-Iterate the queue items from Step 2. Each item includes pre-computed context data -- use it to focus assessment rather than manually counting or re-reading.
+Iterate the queue items from Step 1. Each item includes pre-computed context data -- use it to focus assessment rather than manually counting or re-reading.
 
-### 3a. Source drift
+### 2a. Source drift
 
 For items with `trigger: source_drift`, the context includes `source_urls`. For each URL, use the **WebFetch** tool to retrieve the current content:
 
@@ -50,7 +46,7 @@ Compare the fetched content against the claims in the knowledge base entry. Flag
 
 If a source URL cannot be fetched (timeout, 404, paywall), note: "Source drift check skipped for `<url>` -- not accessible." and continue with the remaining sources.
 
-### 3b. Depth label accuracy
+### 2b. Depth label accuracy
 
 For items with `trigger: depth_accuracy`, the context includes `declared_depth`, `word_count`, `prose_ratio`, and expected ranges. Use these metrics to guide evaluation:
 - **overview** -- Should orient: what is this area, why it matters, how topics connect. Should NOT contain detailed how-to guidance.
@@ -59,7 +55,7 @@ For items with `trigger: depth_accuracy`, the context includes `declared_depth`,
 
 Flag if the content does not match its declared depth.
 
-### 3c. "Why This Matters" quality
+### 2c. "Why This Matters" quality
 
 For items with `trigger: why_quality`, the context includes `has_section`, `word_count`, and `min_required`. Evaluate:
 - Does it explain **why**, not just **what**?
@@ -68,7 +64,7 @@ For items with `trigger: why_quality`, the context includes `has_section`, `word
 
 Flag if the section reads as a description rather than a motivation.
 
-### 3d. "In Practice" concreteness
+### 2d. "In Practice" concreteness
 
 For items with `trigger: concrete_examples`, the context includes `has_section`, `has_code_block`, `has_table`, `has_numeric_example`, and `section_word_count`. Evaluate:
 - Does it contain a **concrete example** (specific scenario, numbers, names)?
@@ -77,11 +73,11 @@ For items with `trigger: concrete_examples`, the context includes `has_section`,
 
 Flag if the section is abstract or generic.
 
-### 3e. Source primacy
+### 2e. Source primacy
 
 For items with `trigger: source_primacy`, the context includes `recommendation_count`, `inline_source_count`, and `sections_checked`. Evaluate whether the guidance is adequately backed by inline citations to authoritative sources.
 
-## Step 4: Persist results
+## Step 3: Persist results
 
 Write the combined Tier 2 assessment to `.dewey/health/tier2-report.json` so `health-review.md` can read results without re-running:
 
@@ -94,7 +90,7 @@ report_dir.mkdir(parents=True, exist_ok=True)
 (report_dir / "tier2-report.json").write_text(json.dumps(report, indent=2))
 ```
 
-## Step 5: Present combined report
+## Step 4: Present combined report
 
 Format the combined Tier 1 + Tier 2 report:
 
@@ -115,7 +111,7 @@ Format the combined Tier 1 + Tier 2 report:
 <for each flagged item, provide specific reasoning and a recommendation>
 ```
 
-## Step 6: Suggest next steps
+## Step 5: Suggest next steps
 
 - Entries with Tier 2 flags -> "Re-validate these entries against their sources and update the content."
 - Entries with depth mismatches -> "Consider changing the depth label or restructuring the content."
@@ -124,8 +120,8 @@ Format the combined Tier 1 + Tier 2 report:
 </process>
 
 <success_criteria>
-- Tier 1 checks run successfully and results are presented
-- Tier 2 pre-screener runs and produces a structured trigger queue with context data
+- Combined `--both` invocation runs successfully, producing tier1 and tier2 sections
+- Tier 1 results are presented and Tier 2 pre-screener produces a structured trigger queue with context data
 - Each Tier 2 assessment uses pre-computed context to focus evaluation
 - Combined report clearly separates Tier 1 and Tier 2 findings
 - Results are persisted to `.dewey/health/tier2-report.json`
