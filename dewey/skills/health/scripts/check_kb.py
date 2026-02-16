@@ -217,6 +217,257 @@ def run_combined_report(kb_root: Path) -> dict:
     return result
 
 
+def generate_recommendations(
+    kb_root: Path,
+    min_reads: int = 10,
+    min_days: int = 7,
+) -> dict:
+    """Generate curation recommendations from utilization and health data.
+
+    Cross-references utilization log (which files agents actually read)
+    against the file inventory and health signals to surface actionable
+    curation suggestions.
+
+    Parameters
+    ----------
+    kb_root:
+        Root directory containing the knowledge base.
+    min_reads:
+        Minimum total reads across all files before recommendations
+        are generated.  Set to 0 to bypass.
+    min_days:
+        Minimum number of days spanned by utilization data before
+        recommendations are generated.  Set to 0 to bypass.
+
+    Returns
+    -------
+    dict
+        ``{"recommendations": [...], "summary": {...}}``
+        or ``{"recommendations": [], "skipped": str}`` if gating fails.
+    """
+    from datetime import datetime
+    from utilization import read_utilization
+    from validators import check_freshness, parse_frontmatter
+
+    knowledge_dir_name = read_knowledge_dir(kb_root)
+    md_files = _discover_md_files(kb_root, knowledge_dir_name)
+    knowledge_dir = kb_root / knowledge_dir_name
+
+    # Build file paths relative to kb_root (with knowledge_dir prefix)
+    file_paths = {}
+    for f in md_files:
+        rel_to_kd = str(f.relative_to(knowledge_dir))
+        rel_to_root = f"{knowledge_dir_name}/{rel_to_kd}"
+        file_paths[rel_to_root] = f
+
+    # Read utilization data
+    utilization = read_utilization(kb_root)
+
+    # --- Gating ---
+    total_reads = sum(entry["count"] for entry in utilization.values())
+
+    if not utilization or total_reads < min_reads:
+        return {
+            "recommendations": [],
+            "skipped": (
+                f"Insufficient data: {total_reads} reads"
+                f" (need {min_reads} reads over {min_days} days)"
+            ),
+        }
+
+    # Check day span
+    all_timestamps = []
+    for entry in utilization.values():
+        all_timestamps.append(entry["first_referenced"])
+        all_timestamps.append(entry["last_referenced"])
+    if all_timestamps:
+        earliest = min(all_timestamps)
+        latest = max(all_timestamps)
+        try:
+            earliest_dt = datetime.fromisoformat(earliest)
+            latest_dt = datetime.fromisoformat(latest)
+            day_span = (latest_dt - earliest_dt).days
+        except ValueError:
+            day_span = 0
+    else:
+        day_span = 0
+
+    if day_span < min_days:
+        return {
+            "recommendations": [],
+            "skipped": (
+                f"Insufficient data: {total_reads} reads over {day_span} day(s)"
+                f" (need {min_reads} reads over {min_days} days)"
+            ),
+        }
+
+    # --- Build per-file stats ---
+    read_counts = {}
+    for rel_path in file_paths:
+        entry = utilization.get(rel_path)
+        read_counts[rel_path] = entry["count"] if entry else 0
+
+    # Compute median read count
+    counts = sorted(read_counts.values())
+    mid = len(counts) // 2
+    if len(counts) % 2 == 0 and len(counts) > 0:
+        median_reads = (counts[mid - 1] + counts[mid]) / 2
+    elif counts:
+        median_reads = counts[mid]
+    else:
+        median_reads = 0
+
+    # Group by area
+    areas: dict[str, dict] = {}
+    for rel_path, abs_path in file_paths.items():
+        # rel_path is like "docs/area/file.md"
+        parts = rel_path.split("/")
+        if len(parts) < 3:
+            continue
+        area_name = parts[1]
+        filename = parts[-1]
+
+        if area_name not in areas:
+            areas[area_name] = {"overview_reads": 0, "files": {}}
+
+        areas[area_name]["files"][rel_path] = {
+            "abs_path": abs_path,
+            "reads": read_counts.get(rel_path, 0),
+            "is_overview": filename == "overview.md",
+        }
+        if filename == "overview.md":
+            areas[area_name]["overview_reads"] = read_counts.get(rel_path, 0)
+
+    # Read depth from frontmatter for each file
+    depths = {}
+    for rel_path, abs_path in file_paths.items():
+        try:
+            fm = parse_frontmatter(abs_path)
+            depths[rel_path] = fm.get("depth", "")
+        except Exception:
+            depths[rel_path] = ""
+
+    # Check freshness for high-read files
+    stale_files: set[str] = set()
+    for rel_path, abs_path in file_paths.items():
+        if read_counts.get(rel_path, 0) > median_reads:
+            issues = check_freshness(abs_path)
+            if issues:
+                stale_files.add(rel_path)
+
+    # --- Classify files ---
+    recommendations: list[dict] = []
+    classified: set[str] = set()
+
+    # Priority 1: stale_high_use
+    for rel_path in sorted(file_paths):
+        if rel_path in stale_files:
+            area_parts = rel_path.split("/")
+            area_name = area_parts[1] if len(area_parts) >= 3 else ""
+            recommendations.append({
+                "file": rel_path,
+                "recommendation": "stale_high_use",
+                "reason": (
+                    f"Read {read_counts[rel_path]} times but content is stale"
+                    " -- prioritize freshening"
+                ),
+                "data": {
+                    "read_count": read_counts[rel_path],
+                    "depth": depths.get(rel_path, ""),
+                    "area": area_name,
+                },
+            })
+            classified.add(rel_path)
+
+    # Priority 2: expand_depth
+    for rel_path in sorted(file_paths):
+        if rel_path in classified:
+            continue
+        if depths.get(rel_path) != "overview":
+            continue
+        reads = read_counts.get(rel_path, 0)
+        if median_reads > 0 and reads > 2 * median_reads:
+            area_parts = rel_path.split("/")
+            area_name = area_parts[1] if len(area_parts) >= 3 else ""
+            recommendations.append({
+                "file": rel_path,
+                "recommendation": "expand_depth",
+                "reason": (
+                    f"Read {reads} times but only overview depth"
+                    " -- consider adding working-knowledge file"
+                ),
+                "data": {
+                    "read_count": reads,
+                    "depth": "overview",
+                    "area": area_name,
+                },
+            })
+            classified.add(rel_path)
+
+    # Priority 3: low_utilization
+    for area_name, area_data in sorted(areas.items()):
+        overview_reads = area_data["overview_reads"]
+        if overview_reads < 10:
+            continue
+        threshold = overview_reads * 0.1
+        for rel_path, info in sorted(area_data["files"].items()):
+            if rel_path in classified:
+                continue
+            if info["is_overview"]:
+                continue
+            if info["reads"] < threshold:
+                recommendations.append({
+                    "file": rel_path,
+                    "recommendation": "low_utilization",
+                    "reason": (
+                        f"Read {info['reads']} times vs {overview_reads}"
+                        f" for {area_name} overview"
+                        " -- consider demoting or merging"
+                    ),
+                    "data": {
+                        "read_count": info["reads"],
+                        "overview_reads": overview_reads,
+                        "depth": depths.get(rel_path, ""),
+                        "area": area_name,
+                    },
+                })
+                classified.add(rel_path)
+
+    # Priority 4: never_referenced
+    for rel_path in sorted(file_paths):
+        if rel_path in classified:
+            continue
+        if read_counts.get(rel_path, 0) == 0:
+            area_parts = rel_path.split("/")
+            area_name = area_parts[1] if len(area_parts) >= 3 else ""
+            recommendations.append({
+                "file": rel_path,
+                "recommendation": "never_referenced",
+                "reason": "No reads recorded -- review relevance or discoverability",
+                "data": {
+                    "read_count": 0,
+                    "depth": depths.get(rel_path, ""),
+                    "area": area_name,
+                },
+            })
+            classified.add(rel_path)
+
+    # --- Summary ---
+    by_category: dict[str, int] = {}
+    for rec in recommendations:
+        cat = rec["recommendation"]
+        by_category[cat] = by_category.get(cat, 0) + 1
+
+    return {
+        "recommendations": recommendations,
+        "summary": {
+            "total_files": len(file_paths),
+            "files_with_recommendations": len(recommendations),
+            "by_category": by_category,
+        },
+    }
+
+
 if __name__ == "__main__":
     import argparse
 
