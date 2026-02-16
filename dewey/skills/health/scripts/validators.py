@@ -222,8 +222,8 @@ def check_coverage(kb_root: Path, *, knowledge_dir_name: str = "docs") -> list[d
     for child in sorted(knowledge_dir.iterdir()):
         if not child.is_dir():
             continue
-        # Skip _proposals and other special directories
-        if child.name.startswith("_"):
+        # Skip _proposals, hidden directories, and other special directories
+        if child.name.startswith("_") or child.name.startswith("."):
             continue
 
         # Every area directory must have an overview.md

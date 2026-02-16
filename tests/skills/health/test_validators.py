@@ -322,6 +322,14 @@ class TestCheckCoverage(unittest.TestCase):
         proposal_issues = [i for i in issues if "_proposals" in i.get("file", "")]
         self.assertEqual(proposal_issues, [])
 
+    def test_hidden_dir_skipped(self):
+        hidden = self.kb / ".dewey"
+        hidden.mkdir()
+        _write(hidden / "log.md", "# Log\n")
+        issues = check_coverage(self.tmpdir)
+        hidden_issues = [i for i in issues if ".dewey" in i.get("file", "")]
+        self.assertEqual(hidden_issues, [])
+
 
 # ------------------------------------------------------------------
 # check_freshness
