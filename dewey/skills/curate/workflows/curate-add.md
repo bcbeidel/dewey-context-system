@@ -148,7 +148,7 @@ The human brings domain judgment. Accept their edits and corrections. If they ap
 
 ## Step 6: Write approved content and update manifest
 
-Write the approved content to both topic files, then update the three index files below. When updating AGENTS.md or CLAUDE.md, only modify content between `<!-- dewey:knowledge-base:begin -->` / `<!-- dewey:knowledge-base:end -->` markers.
+Write the approved content to both topic files, then update the index files below. When updating AGENTS.md, only modify content between `<!-- dewey:kb:begin -->` / `<!-- dewey:kb:end -->` markers.
 
 ### 6a. AGENTS.md — add topic to the domain area table
 
@@ -189,15 +189,15 @@ Links are relative within the area directory, so use `<slug>.md` (not the full `
 
 List the 3-5 authoritative sources that were used during the research step. Never leave this as a placeholder.
 
-### 6c. CLAUDE.md — verify domain area is listed
+### 6c. dewey-kb.md — verify domain area is listed
 
-CLAUDE.md's Domain Areas table lists areas, not individual topics. After adding a topic, verify the area already appears in the table (it should if the area was initialized). If the area is missing, add a row:
+`.claude/rules/dewey-kb.md`'s Domain Areas table lists areas, not individual topics. After adding a topic, verify the area already appears in the table (it should if the area was initialized). If the area is missing, add a row:
 
 ```markdown
 | area-name | `docs/area-slug/` | [overview.md](docs/area-slug/overview.md) |
 ```
 
-If the area is already listed, no changes needed — do not add individual topics to CLAUDE.md.
+If the area is already listed, no changes needed — do not add individual topics to dewey-kb.md.
 
 ## Step 7: Rebuild index.md
 
@@ -226,5 +226,5 @@ If `.dewey/curation-plan.md` exists, check for an item matching the topic name j
 - AGENTS.md has a linked table row (`[Topic](docs/<area>/<slug>.md)`) under the domain area heading — not a bullet
 - overview.md "How It's Organized" has a linked table row (`[Topic](<slug>.md)`) for the topic
 - overview.md "Key Sources" is populated with actual sources found during research — not a placeholder
-- CLAUDE.md domain area is present in the Domain Areas table
+- dewey-kb.md domain area is present in the Domain Areas table
 </success_criteria>

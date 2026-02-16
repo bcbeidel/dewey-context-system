@@ -1,8 +1,8 @@
 """Cross-file consistency validators for knowledge-base health checks.
 
 Operates on the knowledge base as a whole rather than individual files.  Checks
-manifest sync (AGENTS.md / CLAUDE.md), curation plan sync, proposal
-integrity, and the internal link graph.
+manifest sync (AGENTS.md / .claude/rules/dewey-kb.md), curation plan sync,
+proposal integrity, and the internal link graph.
 
 Every validator returns ``list[dict]`` with
 ``{"file": str, "message": str, "severity": "warn"}``.
@@ -120,17 +120,20 @@ def _parse_agents_managed(text: str) -> dict[str, list[dict]]:
 
 
 # ------------------------------------------------------------------
-# CLAUDE.md parser
+# dewey-kb.md / legacy CLAUDE.md parser
 # ------------------------------------------------------------------
 
-def _parse_claude_managed(text: str) -> list[dict]:
-    """Extract Domain Areas table entries from CLAUDE.md managed section.
+def _parse_domain_areas_table(text: str) -> list[dict]:
+    """Extract Domain Areas table entries from dewey-kb.md or legacy CLAUDE.md.
+
+    Tries the managed section first (legacy CLAUDE.md); falls back to the
+    full text (dewey-kb.md has no markers).
 
     Returns ``[{"name": str, "path": str, "overview": str}, ...]``
     """
     section = _managed_section(text)
     if section is None:
-        return []
+        section = text
 
     entries: list[dict] = []
     in_domain_table = False
@@ -213,7 +216,7 @@ def _parse_curation_plan(text: str) -> list[dict]:
 # ------------------------------------------------------------------
 
 def check_manifest_sync(knowledge_base_root: Path, *, knowledge_dir_name: str = "docs") -> list[dict]:
-    """Check AGENTS.md and CLAUDE.md are in sync with files on disk."""
+    """Check AGENTS.md and dewey-kb.md are in sync with files on disk."""
     issues: list[dict] = []
     areas_on_disk = _discover_areas_and_topics(knowledge_base_root, knowledge_dir_name)
 
@@ -273,47 +276,56 @@ def check_manifest_sync(knowledge_base_root: Path, *, knowledge_dir_name: str = 
                             "severity": "warn",
                         })
 
-    # --- CLAUDE.md ---
-    claude_path = knowledge_base_root / "CLAUDE.md"
-    if claude_path.exists():
-        claude_text = claude_path.read_text()
-        has_claude_managed = _managed_section(claude_text) is not None
-        claude_entries = _parse_claude_managed(claude_text)
+    # --- .claude/rules/dewey-kb.md (or legacy CLAUDE.md) ---
+    rules_path = knowledge_base_root / ".claude" / "rules" / "dewey-kb.md"
+    legacy_claude_path = knowledge_base_root / "CLAUDE.md"
 
-        if has_claude_managed:  # has markers — check sync
-            claude_dir_slugs = set()
-            for entry in claude_entries:
-                # path is like "docs/area-slug/" — extract slug
-                parts = entry["path"].strip("/").split("/")
-                if len(parts) >= 2:
-                    claude_dir_slugs.add(parts[1])
+    kb_rules_path = None
+    if rules_path.exists():
+        kb_rules_path = rules_path
+    elif legacy_claude_path.exists():
+        # Fallback: check legacy CLAUDE.md for managed section
+        legacy_text = legacy_claude_path.read_text()
+        if _managed_section(legacy_text) is not None:
+            kb_rules_path = legacy_claude_path
 
-            # Areas on disk not in CLAUDE.md
-            for area_slug in sorted(areas_on_disk):
-                if area_slug not in claude_dir_slugs:
+    if kb_rules_path is not None:
+        rules_text = kb_rules_path.read_text()
+        rules_entries = _parse_domain_areas_table(rules_text)
+
+        rules_dir_slugs = set()
+        for entry in rules_entries:
+            # path is like "docs/area-slug/" — extract slug
+            parts = entry["path"].strip("/").split("/")
+            if len(parts) >= 2:
+                rules_dir_slugs.add(parts[1])
+
+        # Areas on disk not in dewey-kb.md
+        for area_slug in sorted(areas_on_disk):
+            if area_slug not in rules_dir_slugs:
+                issues.append({
+                    "file": str(kb_rules_path),
+                    "message": f"Area '{area_slug}' on disk not listed in dewey-kb.md",
+                    "severity": "warn",
+                })
+
+        # dewey-kb.md entries referencing nonexistent dirs/overviews
+        for entry in rules_entries:
+            dir_path = knowledge_base_root / entry["path"].strip("/")
+            if not dir_path.is_dir():
+                issues.append({
+                    "file": str(kb_rules_path),
+                    "message": f"dewey-kb.md references nonexistent directory: {entry['path']}",
+                    "severity": "warn",
+                })
+            if entry.get("overview"):
+                overview_path = knowledge_base_root / entry["overview"]
+                if not overview_path.exists():
                     issues.append({
-                        "file": str(claude_path),
-                        "message": f"Area '{area_slug}' on disk not listed in CLAUDE.md",
+                        "file": str(kb_rules_path),
+                        "message": f"dewey-kb.md references nonexistent overview: {entry['overview']}",
                         "severity": "warn",
                     })
-
-            # CLAUDE.md entries referencing nonexistent dirs/overviews
-            for entry in claude_entries:
-                dir_path = knowledge_base_root / entry["path"].strip("/")
-                if not dir_path.is_dir():
-                    issues.append({
-                        "file": str(claude_path),
-                        "message": f"CLAUDE.md references nonexistent directory: {entry['path']}",
-                        "severity": "warn",
-                    })
-                if entry.get("overview"):
-                    overview_path = knowledge_base_root / entry["overview"]
-                    if not overview_path.exists():
-                        issues.append({
-                            "file": str(claude_path),
-                            "message": f"CLAUDE.md references nonexistent overview: {entry['overview']}",
-                            "severity": "warn",
-                        })
 
     return issues
 

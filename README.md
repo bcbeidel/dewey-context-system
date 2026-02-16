@@ -60,7 +60,7 @@ A Dewey-conformant knowledge base looks like:
 ```
 project-root/
   AGENTS.md                          # Role persona + topic manifest
-  CLAUDE.md                          # Agent instructions + domain area index
+  .claude/rules/dewey-kb.md           # KB instructions + domain area index
   docs/
     <domain-area>/
       overview.md                    # Area orientation (depth: overview)

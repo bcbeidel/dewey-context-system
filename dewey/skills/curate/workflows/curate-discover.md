@@ -133,7 +133,7 @@ After scaffolding:
 - User feels heard and understood
 - 3-5 domain areas identified with clear rationale tied to real problems
 - Role framing agreed upon by the user
-- Knowledge base scaffolded (directories, AGENTS.md, CLAUDE.md, index.md, overviews)
+- Knowledge base scaffolded (directories, AGENTS.md, .claude/rules/dewey-kb.md, index.md, overviews)
 - Curation plan created with starter topics
 - User's original intent resumed if applicable
 </success_criteria>

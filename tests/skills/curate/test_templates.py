@@ -15,6 +15,8 @@ from templates import (
     render_claude_md_section,
     render_curate_plan,
     render_curation_plan_md,
+    render_dewey_rules,
+    render_dewey_rules_section,
     render_hooks_json,
     render_index_md,
     render_overview_md,
@@ -728,6 +730,74 @@ class TestRenderClaudeMdSection(unittest.TestCase):
 
 
 @patch("templates.date")
+class TestRenderDeweyRules(unittest.TestCase):
+    """Tests for render_dewey_rules (.claude/rules/dewey-kb.md — no markers)."""
+
+    def _domain_areas(self):
+        return [
+            {"name": "Backend Development", "dirname": "backend-development"},
+            {"name": "Testing", "dirname": "testing"},
+        ]
+
+    def test_no_markers(self, mock_date):
+        mock_date.today.return_value = FIXED_DATE
+        result = render_dewey_rules("Senior Python Developer", self._domain_areas())
+        self.assertNotIn(MARKER_BEGIN, result)
+        self.assertNotIn(MARKER_END, result)
+
+    def test_contains_kb_heading(self, mock_date):
+        mock_date.today.return_value = FIXED_DATE
+        result = render_dewey_rules("Senior Python Developer", self._domain_areas())
+        self.assertIn("## Knowledge Base", result)
+
+    def test_references_agents_md(self, mock_date):
+        mock_date.today.return_value = FIXED_DATE
+        result = render_dewey_rules("Senior Python Developer", self._domain_areas())
+        self.assertIn("AGENTS.md", result)
+
+    def test_contains_domain_area_table(self, mock_date):
+        mock_date.today.return_value = FIXED_DATE
+        result = render_dewey_rules("Senior Python Developer", self._domain_areas())
+        self.assertIn("| Area | Path | Overview |", result)
+        self.assertIn("backend-development", result)
+        self.assertIn("testing", result)
+
+    def test_custom_knowledge_dir(self, mock_date):
+        mock_date.today.return_value = FIXED_DATE
+        result = render_dewey_rules("Dev", self._domain_areas(), knowledge_dir="knowledge")
+        self.assertIn("knowledge/", result)
+        self.assertIn("`knowledge/backend-development/`", result)
+
+
+@patch("templates.date")
+class TestRenderDeweyRulesSection(unittest.TestCase):
+    """Tests for render_dewey_rules_section (content without markers)."""
+
+    def _domain_areas(self):
+        return [
+            {"name": "Backend Development", "dirname": "backend-development"},
+            {"name": "Testing", "dirname": "testing"},
+        ]
+
+    def test_no_markers(self, mock_date):
+        mock_date.today.return_value = FIXED_DATE
+        result = render_dewey_rules_section("Dev", self._domain_areas())
+        self.assertNotIn(MARKER_BEGIN, result)
+        self.assertNotIn(MARKER_END, result)
+
+    def test_contains_domain_areas(self, mock_date):
+        mock_date.today.return_value = FIXED_DATE
+        result = render_dewey_rules_section("Dev", self._domain_areas())
+        self.assertIn("Backend Development", result)
+        self.assertIn("Testing", result)
+
+    def test_contains_frontmatter_reference(self, mock_date):
+        mock_date.today.return_value = FIXED_DATE
+        result = render_dewey_rules_section("Dev", self._domain_areas())
+        self.assertIn("### Frontmatter Reference", result)
+
+
+@patch("templates.date")
 class TestRenderCurationPlanMd(unittest.TestCase):
     """Tests for render_curation_plan_md (persistent plan file)."""
 
@@ -904,6 +974,8 @@ class TestReturnTypes(unittest.TestCase):
             render_claude_md_section("R", domain_areas_index),
             render_curate_plan(curate_areas),
             render_curation_plan_md(curate_areas),
+            render_dewey_rules("R", domain_areas_index),
+            render_dewey_rules_section("R", domain_areas_index),
             render_hooks_json("/plugin", "/kb"),
             render_index_md("R", domain_areas_index),
             render_overview_md("A", "core", topics_overview),
@@ -936,6 +1008,8 @@ class TestNoTrailingWhitespace(unittest.TestCase):
             ("claude_md_section", render_claude_md_section("R", domain_areas_index)),
             ("curate_plan", render_curate_plan(curate_areas)),
             ("curation_plan_md", render_curation_plan_md(curate_areas)),
+            ("dewey_rules", render_dewey_rules("R", domain_areas_index)),
+            ("dewey_rules_section", render_dewey_rules_section("R", domain_areas_index)),
             ("hooks_json", render_hooks_json("/plugin", "/kb")),
             ("index_md", render_index_md("R", domain_areas_index)),
             ("overview_md", render_overview_md("A", "core", topics_overview)),

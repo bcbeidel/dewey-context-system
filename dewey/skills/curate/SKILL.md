@@ -149,5 +149,5 @@ Curation is successful when:
 - AGENTS.md has linked table rows for each topic
 - overview.md "How It's Organized" has linked table rows for each topic in the area
 - overview.md "Key Sources" is populated with actual sources
-- CLAUDE.md Domain Areas table lists the area
+- dewey-kb.md Domain Areas table lists the area
 </success_criteria>

@@ -37,26 +37,29 @@ class TestScaffoldKnowledgeBase(unittest.TestCase):
         scaffold_knowledge_base(self.tmpdir, "Paid Media Analyst")
         self.assertTrue((self.tmpdir / "docs").is_dir())
 
-    def test_creates_claude_md(self):
-        """CLAUDE.md exists after scaffold."""
+    def test_creates_dewey_rules(self):
+        """.claude/rules/dewey-kb.md exists after scaffold."""
         scaffold_knowledge_base(self.tmpdir, "Paid Media Analyst")
-        self.assertTrue((self.tmpdir / "CLAUDE.md").is_file())
+        self.assertTrue((self.tmpdir / ".claude" / "rules" / "dewey-kb.md").is_file())
 
-    def test_claude_md_references_agents(self):
-        """CLAUDE.md references AGENTS.md."""
+    def test_dewey_rules_references_agents(self):
+        """dewey-kb.md references AGENTS.md."""
         scaffold_knowledge_base(self.tmpdir, "Paid Media Analyst")
-        content = (self.tmpdir / "CLAUDE.md").read_text()
+        content = (self.tmpdir / ".claude" / "rules" / "dewey-kb.md").read_text()
         self.assertIn("AGENTS.md", content)
 
-    def test_merges_into_existing_claude_md(self):
-        """Existing CLAUDE.md is preserved with knowledge base section appended."""
+    def test_does_not_create_claude_md(self):
+        """Scaffold does not create CLAUDE.md (uses .claude/rules/dewey-kb.md instead)."""
+        scaffold_knowledge_base(self.tmpdir, "Paid Media Analyst")
+        self.assertFalse((self.tmpdir / "CLAUDE.md").exists())
+
+    def test_preserves_existing_claude_md(self):
+        """Scaffold does not modify a pre-existing CLAUDE.md."""
         claude_path = self.tmpdir / "CLAUDE.md"
         claude_path.write_text("# Custom content\n")
         scaffold_knowledge_base(self.tmpdir, "Paid Media Analyst")
         content = claude_path.read_text()
-        self.assertIn("# Custom content", content)
-        self.assertIn(MARKER_BEGIN, content)
-        self.assertIn(MARKER_END, content)
+        self.assertEqual(content, "# Custom content\n")
 
     def test_merges_into_existing_agents_md(self):
         """Existing AGENTS.md is preserved with knowledge base section appended."""
@@ -137,12 +140,12 @@ class TestScaffoldKnowledgeBase(unittest.TestCase):
         self.assertIn("campaign-management/overview.md", content)
         self.assertIn("measurement/overview.md", content)
 
-    def test_claude_md_contains_markers(self):
-        """CLAUDE.md contains managed-section markers."""
+    def test_dewey_rules_no_markers(self):
+        """dewey-kb.md does not contain managed-section markers (Dewey-owned file)."""
         scaffold_knowledge_base(self.tmpdir, "Paid Media Analyst")
-        content = (self.tmpdir / "CLAUDE.md").read_text()
-        self.assertIn(MARKER_BEGIN, content)
-        self.assertIn(MARKER_END, content)
+        content = (self.tmpdir / ".claude" / "rules" / "dewey-kb.md").read_text()
+        self.assertNotIn(MARKER_BEGIN, content)
+        self.assertNotIn(MARKER_END, content)
 
     def test_agents_md_contains_markers(self):
         """AGENTS.md contains managed-section markers."""
@@ -151,27 +154,27 @@ class TestScaffoldKnowledgeBase(unittest.TestCase):
         self.assertIn(MARKER_BEGIN, content)
         self.assertIn(MARKER_END, content)
 
-    def test_merge_is_idempotent(self):
+    def test_scaffold_is_idempotent(self):
         """Running scaffold twice produces the same content."""
         scaffold_knowledge_base(self.tmpdir, "Paid Media Analyst", domain_areas=["Testing"])
-        claude_first = (self.tmpdir / "CLAUDE.md").read_text()
+        rules_first = (self.tmpdir / ".claude" / "rules" / "dewey-kb.md").read_text()
         agents_first = (self.tmpdir / "AGENTS.md").read_text()
 
         scaffold_knowledge_base(self.tmpdir, "Paid Media Analyst", domain_areas=["Testing"])
-        claude_second = (self.tmpdir / "CLAUDE.md").read_text()
+        rules_second = (self.tmpdir / ".claude" / "rules" / "dewey-kb.md").read_text()
         agents_second = (self.tmpdir / "AGENTS.md").read_text()
 
-        self.assertEqual(claude_first, claude_second)
+        self.assertEqual(rules_first, rules_second)
         self.assertEqual(agents_first, agents_second)
 
-    def test_merge_updates_managed_section(self):
-        """Re-running with new areas updates the managed section."""
+    def test_rescaffold_updates_rules_file(self):
+        """Re-running with new areas updates dewey-kb.md."""
         scaffold_knowledge_base(self.tmpdir, "Analyst", domain_areas=["Testing"])
         scaffold_knowledge_base(self.tmpdir, "Analyst", domain_areas=["Testing", "Backend"])
 
-        claude_content = (self.tmpdir / "CLAUDE.md").read_text()
-        self.assertIn("Backend", claude_content)
-        self.assertIn("Testing", claude_content)
+        rules_content = (self.tmpdir / ".claude" / "rules" / "dewey-kb.md").read_text()
+        self.assertIn("Backend", rules_content)
+        self.assertIn("Testing", rules_content)
 
     def test_summary_reports_merged(self):
         """Summary says 'merged' when files already existed."""
@@ -253,10 +256,10 @@ class TestScaffoldKnowledgeBase(unittest.TestCase):
         self.assertIn("knowledge/", result)
         self.assertNotIn("docs/", result)
 
-    def test_custom_knowledge_dir_in_claude_md(self):
-        """CLAUDE.md references the custom knowledge directory."""
+    def test_custom_knowledge_dir_in_dewey_rules(self):
+        """dewey-kb.md references the custom knowledge directory."""
         scaffold_knowledge_base(self.tmpdir, "Analyst", knowledge_dir="knowledge")
-        content = (self.tmpdir / "CLAUDE.md").read_text()
+        content = (self.tmpdir / ".claude" / "rules" / "dewey-kb.md").read_text()
         self.assertIn("knowledge/", content)
 
     def test_custom_knowledge_dir_in_agents_md(self):

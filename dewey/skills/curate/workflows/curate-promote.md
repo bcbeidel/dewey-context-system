@@ -69,7 +69,7 @@ If `docs/<target_area>/<slug>.ref.md` does not already exist, create it with:
 
 ## Step 7: Update indexes
 
-Update the three index files. When updating AGENTS.md or CLAUDE.md, only modify content between `<!-- dewey:knowledge-base:begin -->` / `<!-- dewey:knowledge-base:end -->` markers.
+Update the index files. When updating AGENTS.md, only modify content between `<!-- dewey:kb:begin -->` / `<!-- dewey:kb:end -->` markers.
 
 ### 6a. AGENTS.md -- add topic to the domain area table
 
@@ -107,15 +107,15 @@ Links are relative within the area directory, so use `<slug>.md` (not the full `
 - [Source Title](https://example.com) -- Brief description
 ```
 
-### 6c. CLAUDE.md -- verify domain area is listed
+### 6c. dewey-kb.md -- verify domain area is listed
 
-CLAUDE.md's Domain Areas table lists areas, not individual topics. After promoting, verify the area already appears in the table. If the area is missing, add a row:
+`.claude/rules/dewey-kb.md`'s Domain Areas table lists areas, not individual topics. After promoting, verify the area already appears in the table. If the area is missing, add a row:
 
 ```markdown
 | area-name | `docs/area-slug/` | [overview.md](docs/area-slug/overview.md) |
 ```
 
-If the area is already listed, no changes needed -- do not add individual topics to CLAUDE.md.
+If the area is already listed, no changes needed -- do not add individual topics to dewey-kb.md.
 
 ## Step 8: Update curation plan
 
@@ -136,7 +136,7 @@ Summarize all changes:
 - Reference companion created (if new)
 - AGENTS.md row added
 - overview.md updated
-- CLAUDE.md verified
+- dewey-kb.md verified
 - Curation plan updated (if applicable)
 </process>
 
@@ -147,6 +147,6 @@ Summarize all changes:
 - AGENTS.md has a linked table row (`[Topic](docs/<area>/<slug>.md)`) under the domain area heading -- not a bullet
 - overview.md "How It's Organized" has a linked table row for the topic
 - overview.md "Key Sources" is populated (not a placeholder) if this is the first topic in the area
-- CLAUDE.md domain area is present in the Domain Areas table
+- dewey-kb.md domain area is present in the Domain Areas table
 - Source Evaluation section present in promoted topic with visible table and `<!-- dewey:provenance -->` block
 </success_criteria>

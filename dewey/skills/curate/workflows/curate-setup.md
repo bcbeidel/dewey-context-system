@@ -26,7 +26,7 @@ If no config exists, proceed to Step 1 as normal.
 ## Step 1: Evaluate the repo
 
 Look at what already exists in the target directory:
-- README, CLAUDE.md, or other documentation
+- README, CLAUDE.md, .claude/rules/, or other documentation
 - Directory structure and key files
 - Recent git history (if available)
 
@@ -115,7 +115,7 @@ If no specific intent was expressed (user just wanted to set up the knowledge ba
 - User's goals understood before any scaffolding
 - Persona and domain areas proposed and confirmed
 - Directory structure created with domain area directories
-- AGENTS.md, CLAUDE.md, and index.md generated
+- AGENTS.md, .claude/rules/dewey-kb.md, and index.md generated
 - Curation plan created with starter topics
 - User's original intent resumed if applicable
 - User has clear next steps

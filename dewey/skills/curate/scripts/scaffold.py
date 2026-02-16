@@ -21,8 +21,7 @@ from templates import (
     render_agents_md_section,
     render_curate_plan,
     render_curation_plan_md,
-    render_claude_md,
-    render_claude_md_section,
+    render_dewey_rules,
     render_hooks_json,
     render_index_md,
     render_overview_md,
@@ -331,18 +330,15 @@ def scaffold_knowledge_base(
         created.append("AGENTS.md (merged)")
 
     # ------------------------------------------------------------------
-    # 4. CLAUDE.md (merge-safe)
+    # 4. .claude/rules/dewey-kb.md (Dewey-owned, no merge needed)
     # ------------------------------------------------------------------
-    claude_path = target_dir / "CLAUDE.md"
-    existing_claude = claude_path.read_text() if claude_path.exists() else None
-    claude_section = render_claude_md_section(role_name, area_slugs, knowledge_dir=knowledge_dir)
-    claude_full = render_claude_md(role_name, area_slugs, knowledge_dir=knowledge_dir)
-    claude_new = merge_managed_section(existing_claude, claude_section, claude_full)
-    claude_path.write_text(claude_new)
-    if existing_claude is None:
-        created.append("CLAUDE.md")
-    else:
-        created.append("CLAUDE.md (merged)")
+    rules_dir = target_dir / ".claude" / "rules"
+    rules_dir.mkdir(parents=True, exist_ok=True)
+    rules_path = rules_dir / "dewey-kb.md"
+    rules_path.write_text(
+        render_dewey_rules(role_name, area_slugs, knowledge_dir=knowledge_dir)
+    )
+    created.append(".claude/rules/dewey-kb.md")
 
     # ------------------------------------------------------------------
     # 5. Domain area directories + overview.md

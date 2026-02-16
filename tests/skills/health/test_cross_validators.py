@@ -69,12 +69,9 @@ def _agents_md(areas: list[dict], knowledge_dir: str = "docs") -> str:
     return "\n".join(lines) + "\n"
 
 
-def _claude_md(areas: list[dict], knowledge_dir: str = "docs") -> str:
-    """Build a CLAUDE.md with managed section containing Domain Areas table."""
+def _dewey_rules(areas: list[dict], knowledge_dir: str = "docs") -> str:
+    """Build a dewey-kb.md with Domain Areas table (no managed-section markers)."""
     lines = [
-        "# Project",
-        "",
-        MARKER_BEGIN,
         "## Knowledge Base",
         "",
         "### Domain Areas",
@@ -89,7 +86,6 @@ def _claude_md(areas: list[dict], knowledge_dir: str = "docs") -> str:
             f"| `{knowledge_dir}/{slug}/` "
             f"| [overview.md]({knowledge_dir}/{slug}/overview.md) |"
         )
-    lines.append(MARKER_END)
     return "\n".join(lines) + "\n"
 
 
@@ -106,8 +102,8 @@ class TestCheckManifestSync(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.tmpdir)
 
-    def test_synced_agents_and_claude_no_issues(self):
-        """Perfectly synced AGENTS.md + CLAUDE.md -> no issues."""
+    def test_synced_agents_and_rules_no_issues(self):
+        """Perfectly synced AGENTS.md + dewey-kb.md -> no issues."""
         area = self.knowledge_base / "area-one"
         area.mkdir()
         _write(area / "overview.md", _valid_fm("overview") + "\n# Area One\n")
@@ -117,7 +113,7 @@ class TestCheckManifestSync(unittest.TestCase):
             "name": "Area One", "slug": "area-one",
             "topics": [{"name": "Topic", "file": "topic.md"}],
         }]))
-        _write(self.tmpdir / "CLAUDE.md", _claude_md([{
+        _write(self.tmpdir / ".claude" / "rules" / "dewey-kb.md", _dewey_rules([{
             "name": "Area One", "slug": "area-one",
         }]))
 
@@ -167,21 +163,21 @@ class TestCheckManifestSync(unittest.TestCase):
         msgs = [i["message"] for i in issues]
         self.assertTrue(any("nonexistent" in m and "ghost.md" in m for m in msgs))
 
-    def test_area_on_disk_not_in_claude(self):
-        """Area dir on disk not listed in CLAUDE.md -> warn."""
+    def test_area_on_disk_not_in_dewey_rules(self):
+        """Area dir on disk not listed in dewey-kb.md -> warn."""
         area = self.knowledge_base / "area-one"
         area.mkdir()
         _write(area / "overview.md", _valid_fm("overview") + "\n# Area\n")
 
-        _write(self.tmpdir / "CLAUDE.md", _claude_md([]))  # empty table
+        _write(self.tmpdir / ".claude" / "rules" / "dewey-kb.md", _dewey_rules([]))  # empty table
 
         issues = check_manifest_sync(self.tmpdir, knowledge_dir_name="docs")
         msgs = [i["message"] for i in issues]
-        self.assertTrue(any("area-one" in m and "CLAUDE.md" in m for m in msgs))
+        self.assertTrue(any("area-one" in m and "dewey-kb.md" in m for m in msgs))
 
-    def test_claude_entry_references_missing_dir(self):
-        """CLAUDE.md entry referencing nonexistent directory -> warn."""
-        _write(self.tmpdir / "CLAUDE.md", _claude_md([{
+    def test_dewey_rules_entry_references_missing_dir(self):
+        """dewey-kb.md entry referencing nonexistent directory -> warn."""
+        _write(self.tmpdir / ".claude" / "rules" / "dewey-kb.md", _dewey_rules([{
             "name": "Ghost Area", "slug": "ghost-area",
         }]))
 

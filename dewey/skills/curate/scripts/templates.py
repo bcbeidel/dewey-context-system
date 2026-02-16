@@ -402,6 +402,37 @@ def render_claude_md(role_name: str, domain_areas: list[dict], *, knowledge_dir:
     return "\n".join(lines) + "\n"
 
 
+# ------------------------------------------------------------------
+# .claude/rules/dewey-kb.md renderers (Dewey-owned, no markers)
+# ------------------------------------------------------------------
+
+def render_dewey_rules_section(
+    role_name: str,
+    domain_areas: list[dict],
+    *,
+    knowledge_dir: str = "docs",
+) -> str:
+    """Render the content for .claude/rules/dewey-kb.md (no markers).
+
+    Delegates to ``render_claude_md_section`` which produces the same content.
+    """
+    return render_claude_md_section(role_name, domain_areas, knowledge_dir=knowledge_dir)
+
+
+def render_dewey_rules(
+    role_name: str,
+    domain_areas: list[dict],
+    *,
+    knowledge_dir: str = "docs",
+) -> str:
+    """Render .claude/rules/dewey-kb.md for Claude Code discovery.
+
+    This file is entirely Dewey-owned (not merged into user files),
+    so no managed-section markers are needed.
+    """
+    return render_dewey_rules_section(role_name, domain_areas, knowledge_dir=knowledge_dir) + "\n"
+
+
 def render_proposal_md(
     topic_name: str,
     relevance: str,

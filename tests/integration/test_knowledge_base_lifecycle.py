@@ -26,10 +26,11 @@ class TestKnowledgeBaseLifecycle(unittest.TestCase):
         self.assertTrue((self.tmpdir / "AGENTS.md").exists())
         self.assertTrue((self.tmpdir / "docs" / "domain-a" / "overview.md").exists())
 
-        # Verify markers in generated files
-        claude_content = (self.tmpdir / "CLAUDE.md").read_text()
-        self.assertIn(MARKER_BEGIN, claude_content)
-        self.assertIn(MARKER_END, claude_content)
+        # Verify dewey-kb.md exists (no markers — Dewey-owned file)
+        rules_content = (self.tmpdir / ".claude" / "rules" / "dewey-kb.md").read_text()
+        self.assertNotIn(MARKER_BEGIN, rules_content)
+        self.assertNotIn(MARKER_END, rules_content)
+        # AGENTS.md still uses managed sections
         agents_content = (self.tmpdir / "AGENTS.md").read_text()
         self.assertIn(MARKER_BEGIN, agents_content)
         self.assertIn(MARKER_END, agents_content)
