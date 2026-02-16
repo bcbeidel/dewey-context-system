@@ -36,6 +36,7 @@ dewey/
 |-------|---------|
 | `curate` | Single entry point for all knowledge-base content operations: discover domains, scaffold structure, add/update topics, ingest URLs, manage proposals and curation plan |
 | `health` | Validate quality, check freshness, analyze coverage gaps, generate reports |
+| `report-issue` | Submit bug reports, feature ideas, or general feedback to the Dewey GitHub repo via `gh` |
 
 ### Three-Tier Health Model
 
