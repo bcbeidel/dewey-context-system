@@ -20,7 +20,7 @@ Before creating the proposal, check whether the topic already exists:
 2. Scan `<knowledge-dir>/_proposals/` for any pending proposal with a matching topic name
 
 If a match is found:
-- **Existing topic:** "A topic matching '<name>' already exists at `<path>`. Did you mean to update it with `/dewey:curate add`, or is this a distinct topic?"
+- **Existing topic:** "A topic matching '<name>' already exists at `<path>`. Did you mean to update it, or is this a distinct topic?"
 - **Pending proposal:** "A pending proposal for '<name>' already exists at `<knowledge-dir>/_proposals/<slug>.md`. Review or promote it instead?"
 
 Only proceed if the user confirms it is a genuinely new topic.
@@ -48,7 +48,7 @@ Show the user the proposal file that was created:
 
 1. **Validate the proposal** -- Use `/dewey:health` to run validators against the knowledge base and check proposal quality
 2. **Review and refine** -- Edit the proposal file to flesh out the template sections if desired
-3. **Promote when ready** -- Use `/dewey:curate promote` to move the proposal into a domain area once it has been validated"
+3. **Promote when ready** -- Ask to promote the proposal into a domain area once it has been validated"
 </process>
 
 <success_criteria>
