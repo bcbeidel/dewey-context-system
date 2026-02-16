@@ -12,6 +12,7 @@ Only stdlib is used.
 from __future__ import annotations
 
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -217,6 +218,62 @@ def fix_missing_cross_links(file_path: Path, issues: list[dict]) -> list[dict]:
                                 "detail": f"Added link to {stem}.ref.md in Go Deeper",
                             })
                             break
+
+    return actions
+
+
+def fix_curation_plan_checkmarks(kb_root: Path, *, knowledge_dir_name: str = "docs") -> list[dict]:
+    """Check off curation plan items when matching files exist on disk.
+
+    For each ``[ ]`` item in the curation plan, if the corresponding
+    topic file exists at ``<knowledge_dir>/<area>/<slugify(name)>.md``,
+    replace ``- [ ]`` with ``- [x]``.
+
+    Returns a list of action dicts describing what was changed.
+    """
+    from cross_validators import _parse_curation_plan
+    from templates import _slugify
+
+    plan_path = kb_root / ".dewey" / "curation-plan.md"
+    if not plan_path.exists():
+        return []
+
+    knowledge_dir = kb_root / knowledge_dir_name
+    plan_text = plan_path.read_text()
+    items = _parse_curation_plan(plan_text)
+
+    if not items:
+        return []
+
+    actions: list[dict] = []
+    lines = plan_text.split("\n")
+    modified = False
+
+    for item in items:
+        if item["checked"]:
+            continue
+
+        area = item["area"]
+        name = item["name"]
+        slug = _slugify(name)
+        topic_path = knowledge_dir / area / f"{slug}.md"
+
+        if topic_path.exists():
+            # Find and replace the line
+            for idx, line in enumerate(lines):
+                # Match "- [ ] Name" (with possible trailing -- content)
+                if re.match(r"^-\s+\[ \]\s+" + re.escape(name), line):
+                    lines[idx] = line.replace("- [ ]", "- [x]", 1)
+                    modified = True
+                    actions.append({
+                        "file": str(plan_path),
+                        "action": "checked_plan_item",
+                        "detail": f"Checked off '{name}' — file exists: {area}/{slug}.md",
+                    })
+                    break
+
+    if modified:
+        plan_path.write_text("\n".join(lines))
 
     return actions
 

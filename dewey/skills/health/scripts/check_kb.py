@@ -29,7 +29,13 @@ from tier2_triggers import (
     trigger_source_primacy,
     trigger_why_quality,
 )
-from auto_fix import fix_missing_cross_links, fix_missing_sections
+from auto_fix import fix_curation_plan_checkmarks, fix_missing_cross_links, fix_missing_sections
+from cross_validators import (
+    check_curation_plan_sync,
+    check_link_graph,
+    check_manifest_sync,
+    check_proposal_integrity,
+)
 from utilization import read_utilization
 from validators import (
     check_coverage,
@@ -123,6 +129,12 @@ def run_health_check(
     all_issues.extend(check_index_sync(kb_root, knowledge_dir_name=knowledge_dir_name))
     all_issues.extend(check_inventory_regression(kb_root, file_list))
 
+    # Cross-file consistency validators
+    all_issues.extend(check_manifest_sync(kb_root, knowledge_dir_name=knowledge_dir_name))
+    all_issues.extend(check_curation_plan_sync(kb_root, knowledge_dir_name=knowledge_dir_name))
+    all_issues.extend(check_proposal_integrity(kb_root, knowledge_dir_name=knowledge_dir_name))
+    all_issues.extend(check_link_graph(kb_root, knowledge_dir_name=knowledge_dir_name))
+
     # Build summary
     files_with_fails = set()
     files_with_warns = set()
@@ -176,6 +188,24 @@ def run_health_check(
             else:
                 fixes.extend(fix_missing_sections(md_file, file_issues))
                 fixes.extend(fix_missing_cross_links(md_file, file_issues))
+
+        # Curation plan auto-fix
+        plan_issues = [
+            i for i in all_issues
+            if "should be checked off" in i.get("message", "")
+        ]
+        if dry_run:
+            for issue in plan_issues:
+                fixes.append({
+                    "file": issue["file"],
+                    "action": "would_check_plan_item",
+                    "detail": issue["message"],
+                })
+        elif plan_issues:
+            fixes.extend(fix_curation_plan_checkmarks(
+                kb_root, knowledge_dir_name=knowledge_dir_name,
+            ))
+
         result["fixes"] = fixes
 
     if _persist_history:

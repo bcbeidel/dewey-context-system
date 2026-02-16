@@ -188,5 +188,89 @@ class TestFixMissingCrossLinks(unittest.TestCase):
         self.assertEqual(f.read_text(), original)
 
 
+# ------------------------------------------------------------------
+# fix_curation_plan_checkmarks
+# ------------------------------------------------------------------
+class TestFixCurationPlanCheckmarks(unittest.TestCase):
+    """Tests for fix_curation_plan_checkmarks."""
+
+    def setUp(self):
+        self.tmpdir = Path(tempfile.mkdtemp())
+        self.kb = self.tmpdir / "docs"
+        self.kb.mkdir()
+
+    def tearDown(self):
+        shutil.rmtree(self.tmpdir)
+
+    def _write_plan(self, content: str) -> Path:
+        plan_path = self.tmpdir / ".dewey" / "curation-plan.md"
+        plan_path.parent.mkdir(parents=True, exist_ok=True)
+        plan_path.write_text(content)
+        return plan_path
+
+    def test_checks_off_existing_topics(self):
+        """Unchecked item with file on disk -> checked off."""
+        from auto_fix import fix_curation_plan_checkmarks
+
+        area = self.kb / "area-one"
+        area.mkdir()
+        _write(area / "topic-a.md", "# Topic A\n")
+
+        plan = self._write_plan(
+            "---\nlast_updated: 2026-02-15\n---\n\n"
+            "# Curation Plan\n\n"
+            "## area-one\n\n"
+            "- [ ] Topic A -- core\n"
+        )
+
+        actions = fix_curation_plan_checkmarks(self.tmpdir, knowledge_dir_name="docs")
+        self.assertEqual(len(actions), 1)
+        self.assertEqual(actions[0]["action"], "checked_plan_item")
+        self.assertIn("[x]", plan.read_text())
+
+    def test_preserves_already_checked(self):
+        """Already checked item stays checked."""
+        from auto_fix import fix_curation_plan_checkmarks
+
+        area = self.kb / "area-one"
+        area.mkdir()
+        _write(area / "topic-a.md", "# Topic A\n")
+
+        plan = self._write_plan(
+            "---\nlast_updated: 2026-02-15\n---\n\n"
+            "# Curation Plan\n\n"
+            "## area-one\n\n"
+            "- [x] Topic A -- core\n"
+        )
+        original = plan.read_text()
+
+        actions = fix_curation_plan_checkmarks(self.tmpdir, knowledge_dir_name="docs")
+        self.assertEqual(actions, [])
+        self.assertEqual(plan.read_text(), original)
+
+    def test_preserves_unchecked_without_file(self):
+        """Unchecked item without file stays unchecked."""
+        from auto_fix import fix_curation_plan_checkmarks
+
+        plan = self._write_plan(
+            "---\nlast_updated: 2026-02-15\n---\n\n"
+            "# Curation Plan\n\n"
+            "## area-one\n\n"
+            "- [ ] Missing Topic -- core\n"
+        )
+        original = plan.read_text()
+
+        actions = fix_curation_plan_checkmarks(self.tmpdir, knowledge_dir_name="docs")
+        self.assertEqual(actions, [])
+        self.assertEqual(plan.read_text(), original)
+
+    def test_no_plan_file_returns_empty(self):
+        """No plan file -> empty list."""
+        from auto_fix import fix_curation_plan_checkmarks
+
+        actions = fix_curation_plan_checkmarks(self.tmpdir, knowledge_dir_name="docs")
+        self.assertEqual(actions, [])
+
+
 if __name__ == "__main__":
     unittest.main()

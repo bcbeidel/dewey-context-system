@@ -156,17 +156,26 @@ class TestRunHealthCheck(unittest.TestCase):
     # ------------------------------------------------------------------
     # test_skips_proposals
     # ------------------------------------------------------------------
-    def test_skips_proposals(self):
-        """Files inside _proposals/ are not validated."""
+    def test_skips_proposals_per_file_validators(self):
+        """Per-file validators skip _proposals/ (proposal integrity is separate)."""
         proposals = self.kb / "_proposals"
         proposals.mkdir()
         _write(proposals / "draft.md", "# No frontmatter at all\n")
         result = run_health_check(self.tmpdir)
-        proposal_issues = [
+        # Per-file validators (frontmatter, sections, etc.) should not fire
+        per_file_issues = [
             i for i in result["issues"]
             if "_proposals" in i.get("file", "")
+            and "Missing frontmatter" in i.get("message", "")
         ]
-        self.assertEqual(proposal_issues, [])
+        self.assertEqual(per_file_issues, [])
+        # But proposal integrity warnings ARE expected from cross-validators
+        proposal_integrity = [
+            i for i in result["issues"]
+            if "_proposals" in i.get("file", "")
+            and "Proposal" in i.get("message", "")
+        ]
+        self.assertTrue(len(proposal_integrity) > 0)
 
     # ------------------------------------------------------------------
     # test_total_files_count
@@ -749,6 +758,102 @@ class TestAutoFixIntegration(unittest.TestCase):
         self._make_incomplete_kb()
         result = run_health_check(self.tmpdir)
         self.assertNotIn("fixes", result)
+
+
+class TestManifestSyncIntegration(unittest.TestCase):
+    """Verify manifest sync fires through run_health_check pipeline."""
+
+    def setUp(self):
+        self.tmpdir = Path(tempfile.mkdtemp())
+        self.kb = self.tmpdir / "docs"
+        self.kb.mkdir()
+
+    def tearDown(self):
+        shutil.rmtree(self.tmpdir)
+
+    def test_manifest_sync_fires_in_pipeline(self):
+        """AGENTS.md referencing nonexistent file -> warn through pipeline."""
+        from templates import MARKER_BEGIN, MARKER_END
+
+        area = self.kb / "area-one"
+        area.mkdir()
+        _write(area / "overview.md", _valid_md("overview"))
+
+        agents_text = (
+            "# Role\n\n"
+            f"{MARKER_BEGIN}\n"
+            "## What You Have Access To\n"
+            "### Area One\n\n"
+            "| Topic | Description |\n"
+            "|-------|-------------|\n"
+            "| [Ghost](docs/area-one/ghost.md) | Missing |\n\n"
+            f"{MARKER_END}\n"
+        )
+        _write(self.tmpdir / "AGENTS.md", agents_text)
+
+        result = run_health_check(self.tmpdir)
+        manifest_issues = [
+            i for i in result["issues"]
+            if "AGENTS.md" in i.get("message", "") and "nonexistent" in i.get("message", "")
+        ]
+        self.assertTrue(len(manifest_issues) > 0)
+
+
+class TestPlanFixIntegration(unittest.TestCase):
+    """Verify curation plan fix works through run_health_check pipeline."""
+
+    def setUp(self):
+        self.tmpdir = Path(tempfile.mkdtemp())
+        self.kb = self.tmpdir / "docs"
+        self.kb.mkdir()
+
+    def tearDown(self):
+        shutil.rmtree(self.tmpdir)
+
+    def test_plan_fix_with_fix_flag(self):
+        """fix=True checks off plan items with existing files."""
+        area = self.kb / "area-one"
+        area.mkdir()
+        _write(area / "overview.md", _valid_md("overview"))
+        _write(area / "topic-a.md", _valid_md("working", stem="topic-a"))
+        _write(area / "topic-a.ref.md", _valid_md("reference", stem="topic-a"))
+
+        plan_path = self.tmpdir / ".dewey" / "curation-plan.md"
+        _write(plan_path, (
+            "---\nlast_updated: 2026-02-15\n---\n\n"
+            "# Curation Plan\n\n"
+            "## area-one\n\n"
+            "- [ ] Topic A -- core\n"
+        ))
+
+        result = run_health_check(self.tmpdir, fix=True)
+        self.assertIn("fixes", result)
+        plan_fixes = [f for f in result["fixes"] if f.get("action") == "checked_plan_item"]
+        self.assertTrue(len(plan_fixes) > 0)
+        self.assertIn("[x]", plan_path.read_text())
+
+
+class TestCrossValidatorSkip(unittest.TestCase):
+    """Cross validators skip gracefully when manifests absent."""
+
+    def setUp(self):
+        self.tmpdir = Path(tempfile.mkdtemp())
+        self.kb = self.tmpdir / "docs"
+        self.kb.mkdir()
+
+    def tearDown(self):
+        shutil.rmtree(self.tmpdir)
+
+    def test_clean_kb_still_passes_without_manifests(self):
+        """Clean KB with no AGENTS.md/CLAUDE.md/plan still has zero fails."""
+        area = self.kb / "area-one"
+        area.mkdir()
+        _write(area / "overview.md", _valid_md("overview"))
+        _write(area / "topic.md", _valid_md("working"))
+        _write(area / "topic.ref.md", _valid_md("reference"))
+        result = run_health_check(self.tmpdir)
+        fails = [i for i in result["issues"] if i["severity"] == "fail"]
+        self.assertEqual(fails, [], f"Unexpected failures: {fails}")
 
 
 if __name__ == "__main__":
