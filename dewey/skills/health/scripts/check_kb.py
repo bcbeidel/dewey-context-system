@@ -516,6 +516,13 @@ if __name__ == "__main__":
         )
     elif args.both:
         report = run_combined_report(kb_path)
+    elif args.tier2 and args.recommendations:
+        report = {
+            "tier2": run_tier2_prescreening(kb_path),
+            "recommendations": generate_recommendations(
+                kb_path, min_reads=args.min_reads, min_days=args.min_days,
+            ),
+        }
     elif args.tier2:
         report = run_tier2_prescreening(kb_path)
     elif args.recommendations:

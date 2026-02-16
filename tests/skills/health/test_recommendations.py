@@ -435,6 +435,7 @@ class TestCLI(unittest.TestCase):
             _log_entry("docs/area/overview.md", now),
         ])
         result = self._run("--recommendations", "--min-reads", "999", "--min-days", "0")
+        self.assertEqual(result.returncode, 0)
         parsed = json.loads(result.stdout)
         self.assertIn("skipped", parsed)
 
@@ -445,6 +446,7 @@ class TestCLI(unittest.TestCase):
             _log_entry("docs/area/overview.md", now),
         ])
         result = self._run("--recommendations", "--min-reads", "0", "--min-days", "999")
+        self.assertEqual(result.returncode, 0)
         parsed = json.loads(result.stdout)
         self.assertIn("skipped", parsed)
 
