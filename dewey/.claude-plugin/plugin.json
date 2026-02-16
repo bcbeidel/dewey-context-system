@@ -1,6 +1,6 @@
 {
   "name": "dewey",
-  "description": "Knowledge base management plugin for Claude Code - scaffold, curate, validate, and explore structured knowledge bases",
+  "description": "Knowledge base management plugin for Claude Code — curate and validate structured knowledge bases",
   "version": "1.0.0",
   "author": {
     "name": "Dewey Contributors"
