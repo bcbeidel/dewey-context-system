@@ -8,6 +8,35 @@ AI agents produce better outputs when they have access to curated, relevant know
 
 Dewey currently runs as a Claude Code plugin. The knowledge base output format is designed to be provider-agnostic -- cross-provider support (Codex, Gemini CLI, Cursor, etc.) is a future goal.
 
+## Installation
+
+Requires [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview) v1.0.33 or later.
+
+**Add the marketplace and install:**
+
+```bash
+# Add the Dewey marketplace
+/plugin marketplace add bcbeidel/dewey
+
+# Install the plugin
+/plugin install dewey@bcbeidel-dewey
+```
+
+Or browse and install interactively:
+
+```bash
+# Open the plugin manager, then go to the Discover tab
+/plugin
+```
+
+**Choose an installation scope** when prompted:
+
+- **User** -- available across all your projects
+- **Project** -- shared with collaborators via `.claude/settings.json`
+- **Local** -- just you, just this repo
+
+After installing, restart Claude Code. Dewey's skills will be available as `/dewey:curate`, `/dewey:health`, and `/dewey:report-issue`.
+
 ## Skills
 
 | Skill | Purpose |
@@ -112,8 +141,8 @@ See the [design principles reference](dewey/skills/health/references/design-prin
 git clone https://github.com/bcbeidel/dewey.git
 cd dewey
 
-# Symlink the plugin for local development
-ln -s "$(pwd)/dewey" ~/.claude/plugins/dewey
+# Load the plugin from your local clone for development
+claude --plugin-dir ./dewey
 
 # Run tests
 python3 -m pytest tests/ -v
