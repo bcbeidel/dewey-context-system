@@ -11,6 +11,9 @@ from tier2_triggers import (
     trigger_citation_quality,
     trigger_concrete_examples,
     trigger_depth_accuracy,
+    trigger_provenance_completeness,
+    trigger_recommendation_coverage,
+    trigger_source_authority,
     trigger_source_drift,
     trigger_source_primacy,
     trigger_why_quality,
@@ -470,6 +473,199 @@ class TestTriggerCitationQuality(unittest.TestCase):
         body = "## In Practice\nSome [link](https://example.com/same) repeated [here](https://example.com/same) and [here](https://example.com/same).\n"
         f = _write(self.tmpdir / "topic.md", _fm("working") + body)
         self.assertEqual(trigger_citation_quality(f), [])
+
+
+# ======================================================================
+# TestTriggerSourceAuthority
+# ======================================================================
+
+
+class TestTriggerSourceAuthority(unittest.TestCase):
+    """Tests for trigger_source_authority."""
+
+    def setUp(self):
+        self.tmpdir = Path(tempfile.mkdtemp())
+
+    def tearDown(self):
+        shutil.rmtree(self.tmpdir)
+
+    def test_authoritative_sources_no_trigger(self):
+        """File with authoritative source should not trigger."""
+        f = _write(self.tmpdir / "topic.md", _fm(
+            sources="  - https://developer.mozilla.org/docs\n  - https://example.edu/paper",
+        ))
+        self.assertEqual(trigger_source_authority(f), [])
+
+    def test_all_community_sources_fires(self):
+        """File with only community sources should trigger."""
+        f = _write(self.tmpdir / "topic.md", _fm(
+            sources="  - https://medium.com/article\n  - https://dev.to/post",
+        ))
+        results = trigger_source_authority(f)
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]["trigger"], "source_authority")
+
+    def test_mixed_sources_no_trigger(self):
+        """File with mix of community and authoritative should not trigger."""
+        f = _write(self.tmpdir / "topic.md", _fm(
+            sources="  - https://medium.com/article\n  - https://python.org/docs",
+        ))
+        self.assertEqual(trigger_source_authority(f), [])
+
+    def test_non_working_depth_skipped(self):
+        """Non-working depth should not trigger."""
+        f = _write(self.tmpdir / "topic.md", _fm(
+            depth="overview",
+            sources="  - https://medium.com/article",
+        ))
+        self.assertEqual(trigger_source_authority(f), [])
+
+    def test_no_source_urls_skipped(self):
+        """File without source URLs should not trigger."""
+        f = _write(self.tmpdir / "topic.md",
+                   "---\nsources:\nlast_validated: 2026-01-01\nrelevance: core\ndepth: working\n---\n")
+        self.assertEqual(trigger_source_authority(f), [])
+
+    def test_other_domains_no_trigger(self):
+        """File with non-community non-authoritative sources should not trigger."""
+        f = _write(self.tmpdir / "topic.md", _fm(
+            sources="  - https://docs.stripe.com/api\n  - https://cloud.google.com/docs",
+        ))
+        self.assertEqual(trigger_source_authority(f), [])
+
+
+# ======================================================================
+# TestTriggerProvenanceCompleteness
+# ======================================================================
+
+
+class TestTriggerProvenanceCompleteness(unittest.TestCase):
+    """Tests for trigger_provenance_completeness."""
+
+    def setUp(self):
+        self.tmpdir = Path(tempfile.mkdtemp())
+
+    def tearDown(self):
+        shutil.rmtree(self.tmpdir)
+
+    def test_no_source_eval_section_skipped(self):
+        """File without Source Evaluation section should not trigger."""
+        body = "## Key Guidance\n- Do stuff\n"
+        f = _write(self.tmpdir / "topic.md", _fm() + body)
+        self.assertEqual(trigger_provenance_completeness(f), [])
+
+    def test_template_placeholder_only_skipped(self):
+        """Section with only template placeholder should not trigger."""
+        body = "## Source Evaluation\n<!-- Complete during research step: source scoring table and provenance block -->\n"
+        f = _write(self.tmpdir / "topic.md", _fm() + body)
+        self.assertEqual(trigger_provenance_completeness(f), [])
+
+    def test_section_present_no_provenance_fires(self):
+        """Section present but no provenance block should trigger."""
+        body = "## Source Evaluation\nSome evaluation text here.\n"
+        f = _write(self.tmpdir / "topic.md", _fm() + body)
+        results = trigger_provenance_completeness(f)
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]["trigger"], "provenance_completeness")
+        self.assertIn("missing provenance block", results[0]["reason"])
+
+    def test_complete_provenance_no_trigger(self):
+        """Complete provenance block should not trigger."""
+        import json
+        prov = json.dumps({
+            "evaluated": "2026-01-15",
+            "sources": [{"url": "https://example.com", "score": 8}],
+            "counter_evidence": "None found",
+            "cross_validation": {"claims_total": 5, "claims_verified": 4},
+        })
+        body = f"## Source Evaluation\nEvaluation text.\n\n<!-- dewey:provenance {prov} -->\n"
+        f = _write(self.tmpdir / "topic.md", _fm() + body)
+        self.assertEqual(trigger_provenance_completeness(f), [])
+
+    def test_missing_required_fields_fires(self):
+        """Provenance block missing required fields should trigger."""
+        import json
+        prov = json.dumps({"evaluated": "2026-01-15"})
+        body = f"## Source Evaluation\nText.\n\n<!-- dewey:provenance {prov} -->\n"
+        f = _write(self.tmpdir / "topic.md", _fm() + body)
+        results = trigger_provenance_completeness(f)
+        self.assertEqual(len(results), 1)
+        missing = results[0]["context"]["missing_fields"]
+        self.assertIn("sources", missing)
+        self.assertIn("counter_evidence", missing)
+        self.assertIn("cross_validation", missing)
+
+    def test_non_working_depth_skipped(self):
+        """Non-working depth should not trigger."""
+        body = "## Source Evaluation\nSome text.\n"
+        f = _write(self.tmpdir / "topic.md", _fm(depth="overview") + body)
+        self.assertEqual(trigger_provenance_completeness(f), [])
+
+
+# ======================================================================
+# TestTriggerRecommendationCoverage
+# ======================================================================
+
+
+class TestTriggerRecommendationCoverage(unittest.TestCase):
+    """Tests for trigger_recommendation_coverage."""
+
+    def setUp(self):
+        self.tmpdir = Path(tempfile.mkdtemp())
+
+    def tearDown(self):
+        shutil.rmtree(self.tmpdir)
+
+    def test_all_cited_no_trigger(self):
+        """All recommendations cited should not trigger."""
+        body = (
+            "## Key Guidance\n"
+            "- Do this [source](https://example.com/1)\n"
+            "- Do that [source](https://example.com/2)\n"
+        )
+        f = _write(self.tmpdir / "topic.md", _fm() + body)
+        self.assertEqual(trigger_recommendation_coverage(f), [])
+
+    def test_majority_uncited_fires(self):
+        """More than 50% uncited recommendations should trigger."""
+        body = (
+            "## Key Guidance\n"
+            "- Recommendation one\n"
+            "- Recommendation two\n"
+            "- Recommendation three\n"
+            "- Cited [source](https://example.com/1)\n"
+        )
+        f = _write(self.tmpdir / "topic.md", _fm() + body)
+        results = trigger_recommendation_coverage(f)
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]["trigger"], "recommendation_coverage")
+        self.assertEqual(results[0]["context"]["total_recommendations"], 4)
+        self.assertEqual(results[0]["context"]["cited_recommendations"], 1)
+
+    def test_non_working_depth_skipped(self):
+        """Non-working depth should not trigger."""
+        body = "## Key Guidance\n- Rec one\n- Rec two\n"
+        f = _write(self.tmpdir / "topic.md", _fm(depth="overview") + body)
+        self.assertEqual(trigger_recommendation_coverage(f), [])
+
+    def test_no_sections_skipped(self):
+        """File without Key Guidance or Watch Out For should not trigger."""
+        body = "## In Practice\nSome text.\n"
+        f = _write(self.tmpdir / "topic.md", _fm() + body)
+        self.assertEqual(trigger_recommendation_coverage(f), [])
+
+    def test_watch_out_for_counted(self):
+        """Watch Out For recommendations also counted."""
+        body = (
+            "## Watch Out For\n"
+            "- Danger one\n"
+            "- Danger two\n"
+            "- Danger three\n"
+        )
+        f = _write(self.tmpdir / "topic.md", _fm() + body)
+        results = trigger_recommendation_coverage(f)
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]["context"]["total_recommendations"], 3)
 
 
 if __name__ == "__main__":

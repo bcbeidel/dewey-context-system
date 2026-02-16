@@ -357,7 +357,7 @@ class TestTier2OutputSchema(unittest.TestCase):
     # test_valid_trigger_names
     # ------------------------------------------------------------------
     def test_valid_trigger_names(self):
-        """Every trigger name must be one of the 6 known triggers."""
+        """Every trigger name must be one of the 9 known triggers."""
         known_triggers = {
             "source_drift",
             "depth_accuracy",
@@ -365,6 +365,9 @@ class TestTier2OutputSchema(unittest.TestCase):
             "why_quality",
             "concrete_examples",
             "citation_quality",
+            "source_authority",
+            "provenance_completeness",
+            "recommendation_coverage",
         }
         queue = self.result["queue"]
         self.assertTrue(len(queue) > 0, "Expected at least one queue item")
@@ -950,6 +953,73 @@ class TestCleanKbStillPasses(unittest.TestCase):
         result = run_health_check(self.tmpdir)
         fails = [i for i in result["issues"] if i["severity"] == "fail"]
         self.assertEqual(fails, [], f"Unexpected failures: {fails}")
+
+
+class TestPlaceholderIntegration(unittest.TestCase):
+    """Verify placeholder detection fires through run_health_check pipeline."""
+
+    def setUp(self):
+        self.tmpdir = Path(tempfile.mkdtemp())
+        self.kb = self.tmpdir / "docs"
+        self.kb.mkdir()
+
+    def tearDown(self):
+        shutil.rmtree(self.tmpdir)
+
+    def test_placeholder_fires_in_pipeline(self):
+        """File with template placeholders -> placeholder warn through pipeline."""
+        area = self.kb / "area"
+        area.mkdir()
+        _write(area / "overview.md", _valid_md("overview"))
+        today = date.today().isoformat()
+        doc = (
+            f"---\nsources:\n  - https://example.com/doc\n"
+            f"last_validated: {today}\nrelevance: core\ndepth: working\n---\n\n"
+            f"# Topic\n\n"
+            f"## Why This Matters\n<!-- Explain why this topic is important in your domain -->\n\n"
+            f"## In Practice\nConcrete guidance.\n\n"
+            f"## Key Guidance\nAbstract principles.\n\n"
+            f"## Watch Out For\nPitfalls.\n\n"
+            f"## Go Deeper\n"
+            f"- [topic Reference](topic.ref.md) -- quick-lookup\n"
+            f"- [External](https://example.com/resource)\n"
+        )
+        _write(area / "topic.md", doc)
+        _write(area / "topic.ref.md", _valid_md("reference"))
+        result = run_health_check(self.tmpdir)
+        placeholder_issues = [
+            i for i in result["issues"]
+            if "placeholder" in i.get("message", "").lower()
+        ]
+        self.assertTrue(len(placeholder_issues) > 0)
+
+
+class TestSourceAuthorityIntegration(unittest.TestCase):
+    """Verify source authority trigger fires through prescreening pipeline."""
+
+    def setUp(self):
+        self.tmpdir = Path(tempfile.mkdtemp())
+        self.kb = self.tmpdir / "docs"
+        self.kb.mkdir()
+
+    def tearDown(self):
+        shutil.rmtree(self.tmpdir)
+
+    def test_community_sources_appear_in_queue(self):
+        """File with all community sources produces a source_authority trigger."""
+        area = self.kb / "area"
+        area.mkdir()
+        _write(area / "overview.md", _valid_md("overview"))
+        today = date.today().isoformat()
+        doc = (
+            f"---\nsources:\n  - https://medium.com/article\n  - https://dev.to/post\n"
+            f"last_validated: {today}\nrelevance: core\ndepth: working\n---\n\n"
+            f"# Topic\n\nContent.\n"
+        )
+        _write(area / "topic.md", doc)
+        result = run_tier2_prescreening(self.tmpdir)
+        authority_items = [i for i in result["queue"] if i["trigger"] == "source_authority"]
+        self.assertTrue(len(authority_items) > 0)
 
 
 if __name__ == "__main__":

@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import hashlib
 import re
+import urllib.parse
 from datetime import date
 from pathlib import Path
 
@@ -725,5 +726,193 @@ def check_readability(file_path: Path) -> list[dict]:
             "message": f"Readability grade {grade:.1f} above {hi} for depth '{depth}' — may be too complex",
             "severity": "warn",
         })
+
+    return issues
+
+
+# ------------------------------------------------------------------
+# Source quality validators
+# ------------------------------------------------------------------
+
+_PLACEHOLDER_PATTERNS = [
+    "<!-- placeholder -->",
+    "<!-- Add primary source URL -->",
+    "<!-- Add source title -->",
+    "<!-- Explain why this topic is important in your domain -->",
+    "<!-- Describe how this topic is applied day-to-day -->",
+    "<!-- Actionable recommendations and best practices -->",
+    "<!-- Common pitfalls, anti-patterns, and mistakes -->",
+    "<!-- Complete during research step: source scoring table and provenance block -->",
+    "<!-- Quick-reference notes: keep terse and scannable -->",
+    "<!-- Links to primary sources, books, talks, and further reading -->",
+]
+
+# Markers to exclude — these are managed-section or provenance markers, not placeholders
+_MANAGED_MARKERS = [
+    "<!-- dewey:kb:begin -->",
+    "<!-- dewey:kb:end -->",
+    "<!-- dewey:provenance",
+]
+
+
+def check_placeholder_comments(file_path: Path) -> list[dict]:
+    """Detect unfilled template placeholders left in a file."""
+    issues: list[dict] = []
+    name = str(file_path)
+    text = file_path.read_text()
+
+    found: list[str] = []
+    for pattern in _PLACEHOLDER_PATTERNS:
+        if pattern in text:
+            found.append(pattern)
+
+    # Cap at 5 warnings per file
+    for placeholder in found[:5]:
+        issues.append({
+            "file": name,
+            "message": f"Unfilled template placeholder: {placeholder}",
+            "severity": "warn",
+        })
+
+    return issues
+
+
+def _extract_source_domains(fm: dict) -> list[str]:
+    """Extract normalized domains from frontmatter source URLs."""
+    sources = fm.get("sources")
+    if not isinstance(sources, list):
+        return []
+
+    domains: list[str] = []
+    for entry in sources:
+        url = str(entry).strip()
+        if url.startswith("url:"):
+            url = url[4:].strip()
+        if "<!--" in url:
+            continue
+        if not url.startswith(("http://", "https://")):
+            continue
+        netloc = urllib.parse.urlparse(url).netloc
+        if netloc.startswith("www."):
+            netloc = netloc[4:]
+        if netloc:
+            domains.append(netloc)
+    return domains
+
+
+def check_source_diversity(file_path: Path) -> list[dict]:
+    """Warn when all frontmatter sources come from a single domain."""
+    issues: list[dict] = []
+    name = str(file_path)
+    fm = parse_frontmatter(file_path)
+    domains = _extract_source_domains(fm)
+
+    if len(domains) < 2:
+        return issues
+
+    unique = set(domains)
+    if len(unique) == 1:
+        issues.append({
+            "file": name,
+            "message": f"All {len(domains)} sources come from a single domain: {domains[0]}",
+            "severity": "warn",
+        })
+
+    return issues
+
+
+def check_citation_grounding(file_path: Path) -> list[dict]:
+    """Warn when inline URLs in body are not grounded in frontmatter sources."""
+    issues: list[dict] = []
+    name = str(file_path)
+    fm = parse_frontmatter(file_path)
+
+    if fm.get("depth") != "working":
+        return issues
+
+    fm_domains = set(_extract_source_domains(fm))
+    if not fm_domains:
+        return issues
+
+    text = file_path.read_text()
+    body = _body_without_frontmatter(text)
+
+    # Extract inline external URLs: [text](https://...)
+    inline_urls = re.findall(r"\[[^\]]*\]\((https?://[^)]+)\)", body)
+
+    count = 0
+    for url in inline_urls:
+        netloc = urllib.parse.urlparse(url).netloc
+        if netloc.startswith("www."):
+            netloc = netloc[4:]
+        if netloc not in fm_domains:
+            issues.append({
+                "file": name,
+                "message": f"Inline URL domain '{netloc}' not in frontmatter sources",
+                "severity": "warn",
+            })
+            count += 1
+            if count >= 5:
+                break
+
+    return issues
+
+
+def check_source_accessibility(file_path: Path, *, timeout: int = 10) -> list[dict]:
+    """Check that frontmatter source URLs are reachable (opt-in, requires network).
+
+    Not included in the default health check pipeline.  Gated behind
+    ``check_links=True`` / ``--check-links`` on the CLI.
+    """
+    import urllib.request
+    import urllib.error
+
+    issues: list[dict] = []
+    name = str(file_path)
+    fm = parse_frontmatter(file_path)
+    sources = fm.get("sources")
+
+    if not isinstance(sources, list):
+        return issues
+
+    for entry in sources:
+        url = str(entry).strip()
+        if url.startswith("url:"):
+            url = url[4:].strip()
+        if "<!--" in url:
+            continue
+        if not url.startswith(("http://", "https://")):
+            continue
+
+        try:
+            req = urllib.request.Request(url, method="HEAD")
+            req.add_header("User-Agent", "dewey-health-check/1.0")
+            urllib.request.urlopen(req, timeout=timeout)
+        except urllib.error.HTTPError as e:
+            if e.code == 405:
+                # HEAD not allowed — retry with GET
+                try:
+                    req = urllib.request.Request(url, method="GET")
+                    req.add_header("User-Agent", "dewey-health-check/1.0")
+                    urllib.request.urlopen(req, timeout=timeout)
+                except Exception as e2:
+                    status = getattr(e2, "code", "error")
+                    issues.append({
+                        "file": name,
+                        "message": f"Source URL unreachable ({status}): {url}",
+                        "severity": "warn",
+                    })
+            else:
+                issues.append({
+                    "file": name,
+                    "message": f"Source URL unreachable ({e.code}): {url}",
+                    "severity": "warn",
+                })
+        except Exception:
+            issues.append({
+                "file": name,
+                "message": f"Source URL unreachable (timeout/error): {url}",
+                "severity": "warn",
+            })
 
     return issues

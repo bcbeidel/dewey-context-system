@@ -3,10 +3,12 @@
 import shutil
 import tempfile
 import unittest
+import unittest.mock
 from datetime import date, timedelta
 from pathlib import Path
 
 from validators import (
+    check_citation_grounding,
     check_coverage,
     check_cross_references,
     check_freshness,
@@ -14,11 +16,14 @@ from validators import (
     check_go_deeper_links,
     check_heading_hierarchy,
     check_inventory_regression,
+    check_placeholder_comments,
     check_readability,
     check_ref_see_also,
     check_section_completeness,
     check_section_ordering,
     check_size_bounds,
+    check_source_accessibility,
+    check_source_diversity,
     check_source_urls,
     parse_frontmatter,
 )
@@ -890,6 +895,298 @@ class TestCheckReadability(unittest.TestCase):
         f = _write(self.tmpdir / "a.md", doc)
         issues = check_readability(f)
         self.assertTrue(all(i["severity"] == "warn" for i in issues))
+
+
+# ------------------------------------------------------------------
+# check_placeholder_comments
+# ------------------------------------------------------------------
+class TestCheckPlaceholderComments(unittest.TestCase):
+    """Tests for check_placeholder_comments validator."""
+
+    def setUp(self):
+        self.tmpdir = Path(tempfile.mkdtemp())
+        self.today = date.today().isoformat()
+
+    def tearDown(self):
+        shutil.rmtree(self.tmpdir)
+
+    def _fm(self) -> str:
+        return (
+            f"---\nsources:\n  - https://example.com/doc\nlast_validated: {self.today}\n"
+            f"relevance: core\ndepth: working\n---\n"
+        )
+
+    def test_no_placeholders_passes(self):
+        doc = self._fm() + "\n# Topic\n\nReal content here.\n"
+        f = _write(self.tmpdir / "a.md", doc)
+        self.assertEqual(check_placeholder_comments(f), [])
+
+    def test_section_placeholder_warns(self):
+        doc = self._fm() + "\n# Topic\n\n<!-- Explain why this topic is important in your domain -->\n"
+        f = _write(self.tmpdir / "a.md", doc)
+        issues = check_placeholder_comments(f)
+        self.assertTrue(len(issues) > 0)
+        self.assertTrue(any("placeholder" in i["message"].lower() for i in issues))
+
+    def test_source_url_placeholder_warns(self):
+        doc = "---\nsources:\n  - url: <!-- Add primary source URL -->\nlast_validated: 2026-01-01\nrelevance: core\ndepth: working\n---\n\n# Topic\n"
+        f = _write(self.tmpdir / "a.md", doc)
+        issues = check_placeholder_comments(f)
+        self.assertTrue(len(issues) > 0)
+
+    def test_multiple_placeholders_warns(self):
+        doc = (
+            self._fm()
+            + "\n# Topic\n\n"
+            + "<!-- Explain why this topic is important in your domain -->\n"
+            + "<!-- Describe how this topic is applied day-to-day -->\n"
+            + "<!-- Actionable recommendations and best practices -->\n"
+        )
+        f = _write(self.tmpdir / "a.md", doc)
+        issues = check_placeholder_comments(f)
+        self.assertEqual(len(issues), 3)
+
+    def test_cap_at_five(self):
+        doc = (
+            "---\nsources:\n  - url: <!-- Add primary source URL -->\n"
+            "  title: <!-- Add source title -->\n"
+            "last_validated: 2026-01-01\nrelevance: core\ndepth: working\n---\n\n"
+            "# Topic\n\n"
+            "<!-- placeholder -->\n"
+            "<!-- Explain why this topic is important in your domain -->\n"
+            "<!-- Describe how this topic is applied day-to-day -->\n"
+            "<!-- Actionable recommendations and best practices -->\n"
+            "<!-- Common pitfalls, anti-patterns, and mistakes -->\n"
+            "<!-- Complete during research step: source scoring table and provenance block -->\n"
+            "<!-- Quick-reference notes: keep terse and scannable -->\n"
+        )
+        f = _write(self.tmpdir / "a.md", doc)
+        issues = check_placeholder_comments(f)
+        self.assertLessEqual(len(issues), 5)
+
+    def test_managed_section_markers_not_flagged(self):
+        doc = self._fm() + "\n<!-- dewey:kb:begin -->\n# Topic\n<!-- dewey:kb:end -->\n"
+        f = _write(self.tmpdir / "a.md", doc)
+        self.assertEqual(check_placeholder_comments(f), [])
+
+    def test_provenance_marker_not_flagged(self):
+        doc = self._fm() + '\n<!-- dewey:provenance {"evaluated": "2026-01-01"} -->\n'
+        f = _write(self.tmpdir / "a.md", doc)
+        self.assertEqual(check_placeholder_comments(f), [])
+
+    def test_severity_is_warn(self):
+        doc = self._fm() + "\n<!-- placeholder -->\n"
+        f = _write(self.tmpdir / "a.md", doc)
+        issues = check_placeholder_comments(f)
+        self.assertTrue(all(i["severity"] == "warn" for i in issues))
+
+
+# ------------------------------------------------------------------
+# check_source_diversity
+# ------------------------------------------------------------------
+class TestCheckSourceDiversity(unittest.TestCase):
+    """Tests for check_source_diversity validator."""
+
+    def setUp(self):
+        self.tmpdir = Path(tempfile.mkdtemp())
+
+    def tearDown(self):
+        shutil.rmtree(self.tmpdir)
+
+    def test_diverse_sources_passes(self):
+        f = _write(
+            self.tmpdir / "a.md",
+            "---\nsources:\n  - https://example.com/a\n  - https://other.org/b\n  - https://third.net/c\n---\n",
+        )
+        self.assertEqual(check_source_diversity(f), [])
+
+    def test_all_same_domain_warns(self):
+        f = _write(
+            self.tmpdir / "a.md",
+            "---\nsources:\n  - https://example.com/a\n  - https://example.com/b\n---\n",
+        )
+        issues = check_source_diversity(f)
+        self.assertEqual(len(issues), 1)
+        self.assertIn("single domain", issues[0]["message"])
+
+    def test_single_source_skipped(self):
+        f = _write(
+            self.tmpdir / "a.md",
+            "---\nsources:\n  - https://example.com/a\n---\n",
+        )
+        self.assertEqual(check_source_diversity(f), [])
+
+    def test_placeholder_sources_skipped(self):
+        f = _write(
+            self.tmpdir / "a.md",
+            "---\nsources:\n  - <!-- Add primary source URL -->\n  - <!-- Add primary source URL -->\n---\n",
+        )
+        self.assertEqual(check_source_diversity(f), [])
+
+    def test_severity_is_warn(self):
+        f = _write(
+            self.tmpdir / "a.md",
+            "---\nsources:\n  - https://example.com/a\n  - https://example.com/b\n---\n",
+        )
+        issues = check_source_diversity(f)
+        self.assertTrue(all(i["severity"] == "warn" for i in issues))
+
+    def test_www_stripped(self):
+        """www.example.com and example.com should count as same domain."""
+        f = _write(
+            self.tmpdir / "a.md",
+            "---\nsources:\n  - https://www.example.com/a\n  - https://example.com/b\n---\n",
+        )
+        issues = check_source_diversity(f)
+        self.assertEqual(len(issues), 1)
+
+
+# ------------------------------------------------------------------
+# check_citation_grounding
+# ------------------------------------------------------------------
+class TestCheckCitationGrounding(unittest.TestCase):
+    """Tests for check_citation_grounding validator."""
+
+    def setUp(self):
+        self.tmpdir = Path(tempfile.mkdtemp())
+        self.today = date.today().isoformat()
+
+    def tearDown(self):
+        shutil.rmtree(self.tmpdir)
+
+    def _fm(self, sources: str = "  - https://example.com/doc") -> str:
+        return (
+            f"---\nsources:\n{sources}\n"
+            f"last_validated: {self.today}\nrelevance: core\ndepth: working\n---\n"
+        )
+
+    def test_grounded_urls_passes(self):
+        doc = self._fm() + "\n# Topic\n\nSee [docs](https://example.com/guide) for details.\n"
+        f = _write(self.tmpdir / "a.md", doc)
+        self.assertEqual(check_citation_grounding(f), [])
+
+    def test_ungrounded_url_warns(self):
+        doc = self._fm() + "\n# Topic\n\nSee [other](https://unknown.org/page) for details.\n"
+        f = _write(self.tmpdir / "a.md", doc)
+        issues = check_citation_grounding(f)
+        self.assertEqual(len(issues), 1)
+        self.assertIn("unknown.org", issues[0]["message"])
+
+    def test_internal_links_ignored(self):
+        doc = self._fm() + "\n# Topic\n\nSee [ref](topic.ref.md) for details.\n"
+        f = _write(self.tmpdir / "a.md", doc)
+        self.assertEqual(check_citation_grounding(f), [])
+
+    def test_non_working_depth_skipped(self):
+        doc = (
+            f"---\nsources:\n  - https://example.com/doc\n"
+            f"last_validated: {self.today}\nrelevance: core\ndepth: overview\n---\n"
+            "\n# Topic\n\nSee [other](https://unknown.org/page) for details.\n"
+        )
+        f = _write(self.tmpdir / "a.md", doc)
+        self.assertEqual(check_citation_grounding(f), [])
+
+    def test_url_prefix_handled(self):
+        doc = (
+            f"---\nsources:\n  - url: https://example.com/doc\n"
+            f"last_validated: {self.today}\nrelevance: core\ndepth: working\n---\n"
+            "\n# Topic\n\nSee [docs](https://example.com/guide) for details.\n"
+        )
+        f = _write(self.tmpdir / "a.md", doc)
+        self.assertEqual(check_citation_grounding(f), [])
+
+    def test_cap_at_five_warnings(self):
+        urls = "\n".join([
+            f"See [link{i}](https://unknown{i}.org/page) for details."
+            for i in range(8)
+        ])
+        doc = self._fm() + f"\n# Topic\n\n{urls}\n"
+        f = _write(self.tmpdir / "a.md", doc)
+        issues = check_citation_grounding(f)
+        self.assertLessEqual(len(issues), 5)
+
+
+# ------------------------------------------------------------------
+# check_source_accessibility
+# ------------------------------------------------------------------
+class TestCheckSourceAccessibility(unittest.TestCase):
+    """Tests for check_source_accessibility validator."""
+
+    def setUp(self):
+        self.tmpdir = Path(tempfile.mkdtemp())
+
+    def tearDown(self):
+        shutil.rmtree(self.tmpdir)
+
+    def test_200_response_passes(self):
+        f = _write(
+            self.tmpdir / "a.md",
+            "---\nsources:\n  - https://example.com/doc\n---\n",
+        )
+        with unittest.mock.patch("urllib.request.urlopen") as mock_open:
+            mock_open.return_value.__enter__ = lambda s: s
+            mock_open.return_value.__exit__ = lambda s, *a: None
+            issues = check_source_accessibility(f)
+        self.assertEqual(issues, [])
+
+    def test_404_response_warns(self):
+        import urllib.error
+        f = _write(
+            self.tmpdir / "a.md",
+            "---\nsources:\n  - https://example.com/missing\n---\n",
+        )
+        with unittest.mock.patch("urllib.request.urlopen") as mock_open:
+            mock_open.side_effect = urllib.error.HTTPError(
+                "https://example.com/missing", 404, "Not Found", {}, None
+            )
+            issues = check_source_accessibility(f)
+        self.assertEqual(len(issues), 1)
+        self.assertIn("404", issues[0]["message"])
+        self.assertEqual(issues[0]["severity"], "warn")
+
+    def test_timeout_warns(self):
+        f = _write(
+            self.tmpdir / "a.md",
+            "---\nsources:\n  - https://example.com/slow\n---\n",
+        )
+        with unittest.mock.patch("urllib.request.urlopen") as mock_open:
+            mock_open.side_effect = TimeoutError("timed out")
+            issues = check_source_accessibility(f)
+        self.assertEqual(len(issues), 1)
+        self.assertIn("timeout", issues[0]["message"].lower())
+
+    def test_placeholder_url_skipped(self):
+        f = _write(
+            self.tmpdir / "a.md",
+            "---\nsources:\n  - <!-- Add primary source URL -->\n---\n",
+        )
+        with unittest.mock.patch("urllib.request.urlopen") as mock_open:
+            issues = check_source_accessibility(f)
+        mock_open.assert_not_called()
+        self.assertEqual(issues, [])
+
+    def test_head_405_falls_back_to_get(self):
+        import urllib.error
+        f = _write(
+            self.tmpdir / "a.md",
+            "---\nsources:\n  - https://example.com/no-head\n---\n",
+        )
+        call_count = 0
+        def side_effect(*args, **kwargs):
+            nonlocal call_count
+            call_count += 1
+            if call_count == 1:
+                raise urllib.error.HTTPError(
+                    "https://example.com/no-head", 405, "Method Not Allowed", {}, None
+                )
+            # Second call (GET) succeeds
+            return unittest.mock.MagicMock()
+
+        with unittest.mock.patch("urllib.request.urlopen") as mock_open:
+            mock_open.side_effect = side_effect
+            issues = check_source_accessibility(f)
+        self.assertEqual(issues, [])
+        self.assertEqual(call_count, 2)
 
 
 if __name__ == "__main__":

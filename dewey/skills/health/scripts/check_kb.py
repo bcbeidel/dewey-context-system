@@ -25,6 +25,9 @@ from tier2_triggers import (
     trigger_citation_quality,
     trigger_concrete_examples,
     trigger_depth_accuracy,
+    trigger_provenance_completeness,
+    trigger_recommendation_coverage,
+    trigger_source_authority,
     trigger_source_drift,
     trigger_source_primacy,
     trigger_why_quality,
@@ -40,6 +43,7 @@ from cross_validators import (
 )
 from utilization import read_utilization
 from validators import (
+    check_citation_grounding,
     check_coverage,
     check_cross_references,
     check_freshness,
@@ -48,11 +52,14 @@ from validators import (
     check_heading_hierarchy,
     check_index_sync,
     check_inventory_regression,
+    check_placeholder_comments,
     check_readability,
     check_ref_see_also,
     check_section_completeness,
     check_section_ordering,
     check_size_bounds,
+    check_source_accessibility,
+    check_source_diversity,
     check_source_urls,
     parse_frontmatter,
 )
@@ -84,6 +91,7 @@ def run_health_check(
     _persist_history: bool = True,
     fix: bool = False,
     dry_run: bool = False,
+    check_links: bool = False,
 ) -> dict:
     """Run all Tier 1 validators and return a structured report.
 
@@ -127,6 +135,11 @@ def run_health_check(
         all_issues.extend(check_go_deeper_links(md_file))
         all_issues.extend(check_ref_see_also(md_file))
         all_issues.extend(check_readability(md_file))
+        all_issues.extend(check_placeholder_comments(md_file))
+        all_issues.extend(check_source_diversity(md_file))
+        all_issues.extend(check_citation_grounding(md_file))
+        if check_links:
+            all_issues.extend(check_source_accessibility(md_file))
 
     # Structural validators (run once)
     all_issues.extend(check_coverage(kb_root, knowledge_dir_name=knowledge_dir_name))
@@ -228,6 +241,9 @@ _TIER2_TRIGGERS = [
     trigger_why_quality,
     trigger_concrete_examples,
     trigger_citation_quality,
+    trigger_source_authority,
+    trigger_provenance_completeness,
+    trigger_recommendation_coverage,
 ]
 
 
@@ -592,6 +608,11 @@ if __name__ == "__main__":
         help="Minimum days of utilization data before generating recommendations (default: 7).",
     )
     parser.add_argument(
+        "--check-links",
+        action="store_true",
+        help="Check source URL accessibility (requires network).",
+    )
+    parser.add_argument(
         "--fix",
         action="store_true",
         help="Apply conservative auto-fixes for fixable issues.",
@@ -626,5 +647,5 @@ if __name__ == "__main__":
             kb_path, min_reads=args.min_reads, min_days=args.min_days,
         )
     else:
-        report = run_health_check(kb_path, fix=args.fix, dry_run=args.dry_run)
+        report = run_health_check(kb_path, fix=args.fix, dry_run=args.dry_run, check_links=args.check_links)
     print(json.dumps(report, indent=2))

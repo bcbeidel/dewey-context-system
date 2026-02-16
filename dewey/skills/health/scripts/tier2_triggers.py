@@ -13,7 +13,9 @@ Only stdlib is used.  No network requests are made.
 
 from __future__ import annotations
 
+import json
 import re
+import urllib.parse
 from datetime import date
 from pathlib import Path
 
@@ -401,6 +403,230 @@ def trigger_citation_quality(file_path: Path) -> list[dict]:
                 "duplicate_urls": duplicate_urls,
                 "total_inline_citations": total,
                 "unique_inline_citations": unique,
+            },
+        })
+
+    return results
+
+
+# ------------------------------------------------------------------
+# Source quality triggers
+# ------------------------------------------------------------------
+
+_AUTHORITATIVE_DOMAINS = {
+    "w3.org",
+    "ietf.org",
+    "rfc-editor.org",
+    "python.org",
+    "developer.mozilla.org",
+}
+
+_AUTHORITATIVE_SUFFIXES = (
+    ".gov",
+    ".edu",
+    ".ac.uk",
+)
+
+_COMMUNITY_DOMAINS = {
+    "medium.com",
+    "dev.to",
+    "substack.com",
+    "wordpress.com",
+    "blogspot.com",
+    "stackoverflow.com",
+    "reddit.com",
+    "news.ycombinator.com",
+}
+
+
+def _classify_domain(netloc: str) -> str:
+    """Classify a domain as 'authoritative', 'community', or 'other'."""
+    if netloc in _AUTHORITATIVE_DOMAINS:
+        return "authoritative"
+    for suffix in _AUTHORITATIVE_SUFFIXES:
+        if netloc.endswith(suffix):
+            return "authoritative"
+    if netloc in _COMMUNITY_DOMAINS:
+        return "community"
+    return "other"
+
+
+def trigger_source_authority(file_path: Path) -> list[dict]:
+    """Trigger when all source URLs are community-tier (no authoritative anchor).
+
+    Working-depth only.
+    """
+    results: list[dict] = []
+    name = str(file_path)
+    fm = parse_frontmatter(file_path)
+
+    if fm.get("depth") != "working":
+        return results
+
+    source_urls = _extract_source_urls(fm)
+    if not source_urls:
+        return results
+
+    classifications: dict[str, str] = {}
+    for url in source_urls:
+        netloc = urllib.parse.urlparse(url).netloc
+        if netloc.startswith("www."):
+            netloc = netloc[4:]
+        classifications[url] = _classify_domain(netloc)
+
+    has_authoritative = any(c == "authoritative" for c in classifications.values())
+
+    if not has_authoritative and all(c == "community" for c in classifications.values()):
+        results.append({
+            "file": name,
+            "trigger": "source_authority",
+            "reason": (
+                f"All {len(source_urls)} source(s) are community-tier; "
+                f"no authoritative anchor"
+            ),
+            "context": {
+                "source_count": len(source_urls),
+                "classifications": classifications,
+            },
+        })
+
+    return results
+
+
+def trigger_provenance_completeness(file_path: Path) -> list[dict]:
+    """Trigger when Source Evaluation section exists but provenance block is incomplete.
+
+    Working-depth only.
+    """
+    results: list[dict] = []
+    name = str(file_path)
+    fm = parse_frontmatter(file_path)
+
+    if fm.get("depth") != "working":
+        return results
+
+    text = file_path.read_text()
+    body = _body_without_frontmatter(text)
+    section = _extract_section(body, "Source Evaluation")
+
+    if section is None:
+        return results
+
+    # If section is just the template placeholder, skip
+    if section.strip().startswith("<!-- Complete during research step"):
+        return results
+
+    # Check for provenance block
+    prov_match = re.search(
+        r"<!--\s*dewey:provenance\s*(.*?)-->",
+        section,
+        re.DOTALL,
+    )
+
+    if not prov_match:
+        results.append({
+            "file": name,
+            "trigger": "provenance_completeness",
+            "reason": "Source Evaluation exists but missing provenance block",
+            "context": {
+                "has_section": True,
+                "has_provenance_block": False,
+                "missing_fields": [],
+            },
+        })
+        return results
+
+    # Parse JSON from provenance block
+    prov_text = prov_match.group(1).strip()
+    try:
+        prov_data = json.loads(prov_text)
+    except (json.JSONDecodeError, ValueError):
+        results.append({
+            "file": name,
+            "trigger": "provenance_completeness",
+            "reason": "Provenance block contains invalid JSON",
+            "context": {
+                "has_section": True,
+                "has_provenance_block": True,
+                "missing_fields": ["valid_json"],
+            },
+        })
+        return results
+
+    # Check required fields
+    missing: list[str] = []
+    if "evaluated" not in prov_data:
+        missing.append("evaluated")
+    sources = prov_data.get("sources")
+    if not isinstance(sources, list) or len(sources) == 0:
+        missing.append("sources")
+    if "counter_evidence" not in prov_data:
+        missing.append("counter_evidence")
+    cross_val = prov_data.get("cross_validation")
+    if not isinstance(cross_val, dict) or cross_val.get("claims_total", 0) <= 0:
+        missing.append("cross_validation")
+
+    if missing:
+        results.append({
+            "file": name,
+            "trigger": "provenance_completeness",
+            "reason": f"Provenance block missing required fields: {', '.join(missing)}",
+            "context": {
+                "has_section": True,
+                "has_provenance_block": True,
+                "missing_fields": missing,
+            },
+        })
+
+    return results
+
+
+def trigger_recommendation_coverage(file_path: Path) -> list[dict]:
+    """Trigger when >50% of recommendations lack inline citations.
+
+    Working-depth only.  Checks "Key Guidance" and "Watch Out For" sections.
+    """
+    results: list[dict] = []
+    name = str(file_path)
+    fm = parse_frontmatter(file_path)
+
+    if fm.get("depth") != "working":
+        return results
+
+    text = file_path.read_text()
+    body = _body_without_frontmatter(text)
+
+    total_recs = 0
+    cited_recs = 0
+
+    for section_name in ("Key Guidance", "Watch Out For"):
+        section = _extract_section(body, section_name)
+        if section is None:
+            continue
+
+        for line in section.split("\n"):
+            # Match list items
+            if re.match(r"^\s*[-*]\s+", line):
+                total_recs += 1
+                if re.search(r"\[[^\]]*\]\(https?://[^)]+\)", line):
+                    cited_recs += 1
+
+    if total_recs == 0:
+        return results
+
+    uncited = total_recs - cited_recs
+    if uncited > total_recs * 0.5:
+        results.append({
+            "file": name,
+            "trigger": "recommendation_coverage",
+            "reason": (
+                f"{uncited}/{total_recs} recommendations lack inline citations"
+            ),
+            "context": {
+                "total_recommendations": total_recs,
+                "cited_recommendations": cited_recs,
+                "uncited_recommendations": uncited,
+                "uncited_ratio": round(uncited / total_recs, 2),
             },
         })
 
