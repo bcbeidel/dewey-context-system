@@ -196,6 +196,15 @@ tests/                                # Test suite (536 tests)
 | Cross-provider support | Planned — [MCP server](https://github.com/bcbeidel/dewey/issues/1), [Cursor](https://github.com/bcbeidel/dewey/issues/5), [Copilot/Codex](https://github.com/bcbeidel/dewey/issues/6), [Gemini CLI](https://github.com/bcbeidel/dewey/issues/7), [Windsurf](https://github.com/bcbeidel/dewey/issues/8) |
 | Research: design principle validation | Planned — [context effectiveness](https://github.com/bcbeidel/dewey/issues/9), [cognitive load](https://github.com/bcbeidel/dewey/issues/10), [information foraging](https://github.com/bcbeidel/dewey/issues/11), [source provenance](https://github.com/bcbeidel/dewey/issues/12), [multi-agent sharing](https://github.com/bcbeidel/dewey/issues/13) |
 
+## What We Learned
+
+- **Three-tier validation model** -- Deterministic checks are cheap and catch most issues. LLM-assisted checks add judgment but need a pre-screener to avoid waste. Human judgment is the hardest tier to operationalize.
+- **Skill consolidation** -- Started with separate explore/init/curate skills, converged to one free-text intake skill (curate) that routes internally. Simpler UX, same power.
+- **Stdlib-only constraint** -- Zero dependencies kept the project portable and easy to test, but the document type system research pushed toward Pydantic for schema validation -- a sign the project was outgrowing the constraint.
+- **Design principles grounded in research** -- The 12 principles (cognitive science + agent context research) gave the project a backbone that guided every content decision. Worth the upfront investment.
+- **Agent + human dual audience** -- Writing for both consumers is the core tension. Favor human readability since agents adapt more easily.
+- **Knowledge base as curation problem** -- What you exclude matters as much as what you include. The hardest part isn't adding content, it's deciding what doesn't belong.
+
 ## Documentation
 
 - [Design Principles](dewey/skills/health/references/design-principles.md) -- The twelve principles guiding knowledge base content
